@@ -37,7 +37,7 @@ impl GetDeviceSpec {
         if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
             get_device_spec.arg(bundletool_path);
         } else {
-            return Err(Error::BundletoolNotFound.into());
+            return Err(Error::BundletoolNotFound);
         }
         get_device_spec.arg("get-device-spec");
         get_device_spec.arg("--output").arg(&self.output);

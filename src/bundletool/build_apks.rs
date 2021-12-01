@@ -224,7 +224,7 @@ impl BuildApks {
         if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
             build_apks.arg(bundletool_path);
         } else {
-            return Err(Error::BundletoolNotFound.into());
+            return Err(Error::BundletoolNotFound);
         }
         build_apks.arg("build-apks");
         build_apks.arg("--bundle").arg(&self.bundle);

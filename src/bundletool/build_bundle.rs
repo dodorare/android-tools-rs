@@ -66,7 +66,7 @@ impl BuildBundle {
         if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
             build_bundle.arg(bundletool_path);
         } else {
-            return Err(Error::BundletoolNotFound.into());
+            return Err(Error::BundletoolNotFound);
         }
         build_bundle.arg("build-bundle");
         build_bundle.arg("--modules");
