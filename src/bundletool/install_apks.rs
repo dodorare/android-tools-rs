@@ -49,7 +49,7 @@ impl InstallApks {
         if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
             install_apks.arg(bundletool_path);
         } else {
-            return Err(Error::BundletoolNotFound.into());
+            return Err(Error::BundletoolNotFound);
         }
         install_apks.arg("install-apks");
         install_apks.arg("--apks");
