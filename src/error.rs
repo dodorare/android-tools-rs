@@ -4,12 +4,9 @@ use displaydoc::Display;
 use std::process::Command;
 use thiserror::Error;
 
-/// `Result` type that used in `crossbundle-tools`.
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// Main error type.
 #[derive(Display, Debug, Error)]
-#[ignore_extra_doc_attributes]
 pub enum Error {
     /// Command '{0:?}' had a non-zero exit code. Stdout: {1} Stderr: {2}
     CmdFailed(Command, String, String),
