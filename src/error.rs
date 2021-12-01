@@ -8,18 +8,14 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Display, Debug, Error)]
 pub enum Error {
-    /// Command '{0:?}' had a non-zero exit code. Stdout: {1} Stderr: {2}
-    CmdFailed(Command, String, String),
+    /// Command had a non-zero exit code. Stdout: {0} Stderr: {1}
+    CmdFailed(String, String),
     /// Bundletool is not found
     BundletoolNotFound,
-    /// Command execution failed error: {0}
-    CommandFailed(String),
-}
-
-impl From<std::io::Error> for Error {
-    fn from(error: std::io::Error) -> Self {
-        Error::CommandFailed(error.to_string())
-    }
+    /// Compiled resources not found
+    CompiledResourcesNotFound,
+    /// IO error
+    Io(#[from] std::io::Error),
 }
 
 /// Extension trait for [`Command`] that helps
@@ -41,7 +37,6 @@ impl CommandExt for Command {
         };
         if !output.status.success() {
             return Err(Error::CmdFailed(
-                self,
                 String::from_utf8_lossy(&output.stdout).to_string(),
                 String::from_utf8_lossy(&output.stderr).to_string(),
             ));

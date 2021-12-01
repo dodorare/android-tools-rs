@@ -19,7 +19,7 @@ use std::path::{Path, PathBuf};
 /// and Google Play use to build an Android App Bundle, and convert an app bundle into
 /// the various APKs that are deployed to devices. bundletool is also available to you
 /// as a command line tool, so you can build app bundles yourself and recreate
-/// Google Play’s server-side build of your app’s APKs.
+/// Google Play's server-side build of your app's APKs.
 ///
 ///
 /// ## Download bundletool

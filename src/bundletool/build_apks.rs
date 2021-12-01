@@ -13,7 +13,7 @@ use std::process::Command;
 /// bundletool build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks
 /// ```
 ///
-/// If you want to deploy the APKs to a device, you need to also include your app’s
+/// If you want to deploy the APKs to a device, you need to also include your app's
 /// signing information, as shown in the command below. If you do not specify signing
 /// information, `bundletool` attempts to sign your APKs with a debug key for you.
 ///
@@ -113,8 +113,8 @@ impl BuildApks {
         self
     }
 
-    /// Specifies your keystore’s password. If you’re specifying a password in plain text,
-    /// qualify it with pass:. If you’re passing the path to a file that contains the
+    /// Specifies your keystore's password. If you're specifying a password in plain text,
+    /// qualify it with pass:. If you're passing the path to a file that contains the
     /// password, qualify it with file:. If you specify a keystore using the `--ks` flag
     /// without specifying `--ks-pass`, `bundletool` prompts you for a password from the
     /// command line.
@@ -123,8 +123,8 @@ impl BuildApks {
         self
     }
 
-    /// Specifies your keystore’s password. If you’re specifying a password in plain text,
-    /// qualify it with pass:. If you’re passing the path to a file that contains the
+    /// Specifies your keystore's password. If you're specifying a password in plain text,
+    /// qualify it with pass:. If you're passing the path to a file that contains the
     /// password, qualify it with file:. If you specify a keystore using the `--ks` flag
     /// without specifying `--ks-pass`, `bundletool` prompts you for a password from the
     /// command line.
@@ -139,8 +139,8 @@ impl BuildApks {
         self
     }
 
-    ///Specifies the password for the signing key. If you’re specifying a password in
-    /// plain text, qualify it with pass:. If you’re passing the path to a file that
+    ///Specifies the password for the signing key. If you're specifying a password in
+    /// plain text, qualify it with pass:. If you're passing the path to a file that
     /// contains the password, qualify it with file:.
     ///
     /// If this password is identical to the one for the keystore itself, you can omit
@@ -150,8 +150,8 @@ impl BuildApks {
         self
     }
 
-    ///Specifies the password for the signing key. If you’re specifying a password in
-    /// plain text, qualify it with pass:. If you’re passing the path to a file that
+    ///Specifies the password for the signing key. If you're specifying a password in
+    /// plain text, qualify it with pass:. If you're passing the path to a file that
     /// contains the password, qualify it with file:.
     ///
     /// If this password is identical to the one for the keystore itself, you can omit
@@ -162,7 +162,7 @@ impl BuildApks {
     }
 
     /// Instructs `bundletool` to build APKs that target the configuration of a connected
-    /// device. If you don’t include this flag, `bundletool` generates APKs for all device
+    /// device. If you don't include this flag, `bundletool` generates APKs for all device
     /// configurations your app supports.
     pub fn connected_device(&mut self, connected_device: bool) -> &mut Self {
         self.connected_device = connected_device;
@@ -196,7 +196,7 @@ impl BuildApks {
     /// about the [`feature module manifest`].
     ///
     /// Keep in mind, these APKs are larger than those optimized for a particular device
-    /// configuration. However, they’re easier to share with internal testers who, for
+    /// configuration. However, they're easier to share with internal testers who, for
     /// example, want to test your app on multiple device configurations.
     ///
     /// [`feature module manifest`]::https://developer.android.com/guide/playcore/feature-delivery#dynamic_feature_manifest

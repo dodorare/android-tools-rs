@@ -1,4 +1,4 @@
-use crate::error::{CommandExt, Result};
+use crate::error::{CommandExt, Error, Result};
 use std::{
     path::{Path, PathBuf},
     process::Command,
@@ -445,7 +445,7 @@ impl Aapt2Link {
         self
     }
 
-    /// Generates `R.java` with non-final resource IDs (references to the IDs from app’s
+    /// Generates `R.java` with non-final resource IDs (references to the IDs from app's
     /// code will not get inlined during kotlinc/javac compilation)
     pub fn non_final_ids(&mut self, non_final_ids: bool) -> &mut Self {
         self.non_final_ids = non_final_ids;
@@ -610,8 +610,8 @@ impl Aapt2Link {
                 aapt2.arg(input);
             });
         } else if let Some(compiled_res) = &self.compiled_res {
-            // TODO: handle errors, return err if path not found
-            let paths = std::fs::read_dir(compiled_res)?
+            let paths = std::fs::read_dir(compiled_res)
+                .map_err(|_| Error::CompiledResourcesNotFound)?
                 .map(|e| e.map(|x| x.path()))
                 .flatten()
                 .collect::<Vec<_>>();
