@@ -1,6 +1,8 @@
 # Rust Android Tools
 
-Android related tools for building and developing applications:
+[![Rust](https://github.com/dodorare/android-tools-rs/workflows/ci/badge.svg)](https://github.com/dodorare/android-tools-rs/actions) ![APACHE2 license](https://img.shields.io/badge/License-APACHE2-green.svg)
+
+Android-related tools for building and developing applications:
 
 | Name | Description | Status |
 | -----: | ----------- | ------------- |
