@@ -1,0 +1,20 @@
+[package]
+name = "android-tools-rs"
+version = "0.1.0"
+edition = "2021"
+authors = ["DodoRare Team <support@dodorare.com>"]
+description = "Android related tools for building and developing applications 🛠"
+repository = "https://github.com/dodorare/android-tools-rs"
+license = "Apache-2.0"
+keywords = ["android", "sdk", "tools", "cli"]
+readme = "README.md"
+
+[dependencies]
+thiserror = "1.0"
+displaydoc = "0.2"
+walkdir = "2.3"
+
+[features]
+default = ["aapt2", "bundletool"]
+aapt2 = []
+bundletool = []
