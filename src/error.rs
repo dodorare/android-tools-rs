@@ -12,10 +12,14 @@ pub enum Error {
     CmdFailed(Command, String, String),
     /// Bundletool is not found
     BundletoolNotFound,
-    /// IO error
-    Io(#[from] std::io::Error),
-    /// Other error
-    OtherError(#[from] Box<dyn std::error::Error>),
+    /// Command execution failed error: {0}
+    CommandFailed(String),
+}
+
+impl From<std::io::Error> for Error {
+    fn from(error: std::io::Error) -> Self {
+        Error::CommandFailed(error.to_string())
+    }
 }
 
 /// Extension trait for [`Command`] that helps
