@@ -831,72 +831,70 @@ impl Aapt2Link {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::{commands::android, tools::AndroidSdk};
+#[cfg(test)]
+mod tests {
 
-//     #[test]
-//     fn test_command_run() {
-//         // Creates a temporary directory and specify resources
-//         let tempfile = tempfile::tempdir().unwrap();
-//         let tempdir = tempfile.path().to_path_buf();
+    use crate::aapt2::Aapt2;
 
-//         // Specifies path to needed resources
-//         let sdk = AndroidSdk::from_env().unwrap();
-//         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-//         let dir = user_dirs.parent().unwrap().parent().unwrap().to_path_buf();
-//         let res_path = dir
-//             .join("examples")
-//             .join("bevy-2d")
-//             .join("res")
-//             .join("android")
-//             .join("mipmap-hdpi");
-//         res_path.canonicalize().unwrap();
+    use super::*;
 
-//         // Compiles resources for aapt2 link
-//         let aapt2_compile = sdk.aapt2().unwrap().compile_dir(
-//             dunce::simplified(&res_path),
-//             &dunce::simplified(&tempdir).to_owned(),
-//         );
-//         let compiled_res = aapt2_compile.run().unwrap();
+    #[test]
+    fn test_command_run() {
+        // Creates a temporary directory and specify resources
+        let tempfile = tempfile::tempdir().unwrap();
+        let tempdir = tempfile.path().to_path_buf();
 
-//         println!("compiled_res {:?}", compiled_res);
-//         // Generates minimal android manifest
-//         let manifest = android::gen_minimal_android_manifest(
-//             None,
-//             "example",
-//             None,
-//             "0.0.1".to_string(),
-//             None,
-//             None,
-//             30,
-//             None,
-//             None,
-//             false,
-//         );
+        // Specifies path to needed resources
+        let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let res_path = user_dirs
+            .join("src")
+            .join("examples")
+            .join("macroquad-3d")
+            .join("res")
+            .join("android")
+            .join("mipmap-hdpi");
 
-//         // Saves android manifest into temporary directory
-//         let manifest_path = android::save_android_manifest(&tempdir, &manifest).unwrap();
-//         assert!(manifest_path.exists());
+        // Compiles resources for aapt2 link
+        let aapt2_compile =
+            Aapt2.compile_incremental(dunce::simplified(&res_path), dunce::simplified(&tempdir));
+        let compiled_res = aapt2_compile.run().unwrap();
 
-//         // Generates apk file
-//         let target_sdk_version = 30;
-//         let apk_path = tempdir.join("test.apk");
-//         let extracted_files = tempdir.join("extracted_files");
-//         if !extracted_files.exists() {
-//             std::fs::create_dir_all(&extracted_files).unwrap();
-//         }
+        println!("compiled_res {:?}", compiled_res);
 
-//         let mut aapt2_link =
-//             sdk.aapt2()
-//                 .unwrap()
-//                 .link_inputs(&[compiled_res], &apk_path, &manifest_path);
-//         aapt2_link
-//             .android_jar(sdk.android_jar(target_sdk_version).unwrap())
-//             .proto_format(true)
-//             .auto_add_overlay(true)
-//             .output_to_dir(&extracted_files)
-//             .verbose(true);
-//         aapt2_link.run().unwrap();
-//     }
-// }
+        // Defines path to android manifest
+        let manifest_path = user_dirs
+            .join("src")
+            .join("examples")
+            .join("macroquad-3d")
+            .join("manifest")
+            .join("AndroidManifest.xml");
+        assert!(manifest_path.exists());
+
+        // Generates apk file
+        let target_sdk_version = 30;
+        let apk_path = tempdir.join("test.apk");
+
+        // Defines path to  Android SDk and android.jar
+        let sdk_path = {
+            let sdk_path = std::env::var("ANDROID_SDK_ROOT")
+                .ok()
+                .or_else(|| std::env::var("ANDROID_SDK_PATH").ok())
+                .or_else(|| std::env::var("ANDROID_HOME").ok());
+            PathBuf::from(sdk_path.expect("Android SDK was not found"))
+        };
+        let platforms_path = sdk_path.join("platforms");
+        let platform_dir = platforms_path.join(format!("android-{}", target_sdk_version));
+        if !platform_dir.exists() {
+            panic!("Platform not found");
+        }
+        let android_jar = platform_dir.join("android.jar");
+        if !android_jar.exists() {
+            panic!("Android.jar not found");
+        }
+
+        // Links compiled res with specified manifest file and generates an APK
+        let mut aapt2_link = Aapt2.link_compiled_res(Some(compiled_res), &apk_path, &manifest_path);
+        aapt2_link.android_jar(android_jar).verbose(true);
+        aapt2_link.run().unwrap();
+    }
+}

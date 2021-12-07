@@ -242,62 +242,31 @@ impl Aapt2Compile {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::tools::AndroidSdk;
+#[cfg(test)]
+mod tests {
 
-//     #[test]
-//     fn aapt2_compile_new_test() {
-//         // Creates a temporary directory and specify resources
-//         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-//         let dir = user_dirs.parent().unwrap().parent().unwrap().to_path_buf();
-//         let res_path = dir
-//             .join("examples")
-//             .join("bevy-2d")
-//             .join("res")
-//             .join("android")
-//             .join("mipmap-hdpi")
-//             .join("ic_launcher.png");
-//         res_path.canonicalize().unwrap();
-//         let sdk = AndroidSdk::from_env().unwrap();
-//         let tempfile = tempfile::tempdir().unwrap();
-//         let compiled_res_dir = tempfile.path().to_path_buf();
-//         assert!(compiled_res_dir.exists());
+    use crate::aapt2::Aapt2;
 
-//         // Compiles resources
-//         let compiled_res = sdk
-//             .aapt2()
-//             .unwrap()
-//             .compile_incremental(&res_path, &compiled_res_dir)
-//             .run()
-//             .unwrap();
-//         assert!(compiled_res.exists());
-//     }
+    #[test]
+    fn aapt2_compile_new_test() {
+        // Creates a temporary directory and specify resources.
+        let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let res_path = user_dirs
+            .join("src")
+            .join("examples")
+            .join("res")
+            .join("res")
+            .join("android")
+            .join("mipmap-hdpi");
+        let tempfile = tempfile::tempdir().unwrap();
+        let compiled_res_dir = tempfile.path().to_path_buf();
+        assert!(compiled_res_dir.exists());
 
-//     #[test]
-//     fn aapt2_compile_new_from_res_dir() {
-//         // Creates a temporary directory and specify resources
-//         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-//         let dir = user_dirs.parent().unwrap().parent().unwrap().to_path_buf();
-//         let res_path = dir
-//             .join("examples")
-//             .join("bevy-3d")
-//             .join("assets")
-//             .join("models")
-//             .join("helmet");
-//         res_path.canonicalize().unwrap();
-//         let sdk = AndroidSdk::from_env().unwrap();
-//         let tempfile = tempfile::tempdir().unwrap();
-//         let compiled_res_dir = tempfile.path().to_path_buf();
-//         assert!(compiled_res_dir.exists());
-
-//         // Compiles resources
-//         let compiled_res = sdk
-//             .aapt2()
-//             .unwrap()
-//             .compile_dir(&res_path, &compiled_res_dir)
-//             .run()
-//             .unwrap();
-//         assert!(compiled_res.exists());
-//     }
-// }
+        // Compiles resources
+        let compiled_res = Aapt2
+            .compile_incremental(&res_path, &compiled_res_dir)
+            .run()
+            .unwrap();
+        assert!(compiled_res.exists());
+    }
+}
