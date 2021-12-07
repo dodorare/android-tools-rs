@@ -4,8 +4,10 @@ mod extract_apks;
 mod get_device_spec;
 mod get_size_total;
 mod install_apks;
+mod jarsigner;
 
 pub use build_apks::*;
+pub use jarsigner::*;
 pub use build_bundle::*;
 pub use extract_apks::*;
 pub use get_device_spec::*;
