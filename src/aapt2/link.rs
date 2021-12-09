@@ -602,7 +602,7 @@ impl Aapt2Link {
     }
 
     /// Executes aapt2 link with arguments
-    pub fn run(&self) -> Result<()> {
+    pub fn run(&self) -> Result<PathBuf> {
         let mut aapt2 = Command::new("aapt2");
         aapt2.arg("link");
         if !self.inputs.is_empty() {
@@ -616,7 +616,9 @@ impl Aapt2Link {
                 .flatten()
                 .collect::<Vec<_>>();
             paths.iter().for_each(|input| {
-                aapt2.arg(input);
+                if !input.ends_with("AndroidManifest.xml") {
+                    aapt2.arg(input);
+                }
             });
         }
         aapt2.arg("-o").arg(&self.output_apk);
@@ -827,16 +829,15 @@ impl Aapt2Link {
             aapt2.arg("--merge-only");
         }
         aapt2.output_err(true)?;
-        Ok(())
+        Ok(self.output_apk.clone())
     }
 }
 
 #[cfg(test)]
 mod tests {
 
-    use crate::aapt2::Aapt2;
-
     use super::*;
+    use crate::aapt2::Aapt2;
 
     #[test]
     fn test_command_run() {
@@ -855,8 +856,14 @@ mod tests {
             .join("mipmap-hdpi");
 
         // Compiles resources for aapt2 link
-        let aapt2_compile =
-            Aapt2.compile_incremental(dunce::simplified(&res_path), dunce::simplified(&tempdir));
+        let compiled_res_path = tempdir.join("compiled_res");
+        if !compiled_res_path.exists() {
+            std::fs::create_dir_all(&compiled_res_path).unwrap();
+        }
+        let aapt2_compile = Aapt2.compile_incremental(
+            dunce::simplified(&res_path),
+            &dunce::simplified(&compiled_res_path),
+        );
         let compiled_res = aapt2_compile.run().unwrap();
 
         println!("compiled_res {:?}", compiled_res);
@@ -896,5 +903,6 @@ mod tests {
         let mut aapt2_link = Aapt2.link_compiled_res(Some(compiled_res), &apk_path, &manifest_path);
         aapt2_link.android_jar(android_jar).verbose(true);
         aapt2_link.run().unwrap();
+        std::thread::sleep(std::time::Duration::from_secs(11111));
     }
 }

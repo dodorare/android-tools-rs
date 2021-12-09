@@ -285,50 +285,33 @@ impl BuildApks {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use crate::{
-//         commands::android::{
-//             android_dir, gen_aab_key, gen_minimal_unsigned_aab, jarsigner, remove, AabKey,
-//         },
-//         tools::{AndroidSdk, BuildApks, GetSizeTotal},
-//     };
+#[cfg(test)]
+mod tests {
 
-//     #[test]
-//     fn build_apks_test() {
-//         // Creates a temporary directory
-//         let tempfile = tempfile::tempdir().unwrap();
-//         let build_dir = tempfile.path().to_path_buf();
+    use crate::bundletool::{BuildApks, GetSizeTotal};
 
-//         // Assigns configuratin to generate aab
-//         let sdk = AndroidSdk::from_env().unwrap();
-//         let package_name = "test";
-//         let target_sdk_version = 30;
-//         assert!(build_dir.exists());
+    #[test]
+    fn test_build_apks_from_aab() {
+        // Creates a temporary directory
+        let tempfile = tempfile::tempdir().unwrap();
+        let build_dir = tempfile.path().to_path_buf();
 
-//         // Generates mininmal unsigned aab
-//         let aab_path =
-//             gen_minimal_unsigned_aab(sdk, "unsigned", target_sdk_version, &build_dir).unwrap();
+        // Assigns configuratin to generate aab
+        let package_name = "test";
+        assert!(build_dir.exists());
 
-//         // Removes old keystore if it exists
-//         let android_dir = android_dir().unwrap();
-//         let target = vec![android_dir.join("aab.keystore")];
-//         remove(target).unwrap();
+        // Specifies path to minimal unsigned aab
+        let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let aab_path = user_dirs
+            .join("src")
+            .join("examples")
+            .join("macroquad-3d")
+            .join("android_app_bundle")
+            .join("minimal_unsigned.aab");
 
-//         // Creates new keystore to sign aab
-//         let aab_key = AabKey::default();
-//         let key_path = gen_aab_key(aab_key).unwrap();
-
-//         // Signs aab with key
-//         jarsigner(&aab_path, &key_path).unwrap();
-
-//         // Replace unsigned aab with signed aab
-//         let signed_aab = build_dir.join(format!("{}_signed.aab", package_name));
-//         std::fs::rename(&aab_path, &signed_aab).unwrap();
-
-//         // Test build_apks
-//         let apks_path = build_dir.join(format!("{}.apks", package_name));
-//         let apks = BuildApks::new(&signed_aab, &apks_path).run().unwrap();
-//         GetSizeTotal::new(&apks).run().unwrap();
-//     }
-// }
+        // Test build_apks
+        let apks_path = build_dir.join(format!("{}.apks", package_name));
+        let apks = BuildApks::new(&aab_path, &apks_path).run().unwrap();
+        GetSizeTotal::new(&apks).run().unwrap();
+    }
+}

@@ -44,7 +44,7 @@ impl Jarsigner {
     ///
     /// If you also specified the -strict option, and the jarsigner command detected
     /// severe warnings, the message, "jar signed, with signer errors" is displayed.
-    /// 
+    ///
     /// ## Alias
     /// The aliases are defined in the keystore specified by -keystore or the default
     /// keystore.
@@ -324,15 +324,15 @@ impl Jarsigner {
     pub fn h(&mut self, h: bool) -> &mut Self {
         self.h = h;
         self
-    } 
+    }
     /// Print this help message
     pub fn help(&mut self, help: bool) -> &mut Self {
         self.help = help;
         self
     }
 
-    pub fn run(&self) -> Result<()> {
-        let mut jarsigner = Command::new("jarsigner");
+    pub fn run(&self) -> Result<PathBuf> {
+        let mut jarsigner = jarsigner_tool()?;
         if self.verify {
             jarsigner.arg("-verify");
         }
@@ -389,13 +389,14 @@ impl Jarsigner {
         if let Some(altsigner) = &self.altsigner {
             jarsigner.arg("-altsigner").arg(altsigner);
         }
-        // TODO this vec
         if let Some(altsignerpath) = &self.altsignerpath {
-            jarsigner.arg("-altsigner").arg(altsignerpath
-                .iter()
-                .map(|v| v.to_string_lossy().to_string())
-                .collect::<Vec<String>>()
-                .join(","));
+            jarsigner.arg("-altsigner").arg(
+                altsignerpath
+                    .iter()
+                    .map(|v| v.to_string_lossy().to_string())
+                    .collect::<Vec<String>>()
+                    .join(","),
+            );
         }
         if self.internalsf {
             jarsigner.arg("-internalsf");
@@ -430,63 +431,71 @@ impl Jarsigner {
         if self.help {
             jarsigner.arg("-help");
         }
-        Ok(())
+        jarsigner.output_err(true)?;
+        Ok(self.jar_file.clone())
     }
 }
 
-// pub fn android_dir() -> Result<PathBuf> {
-//     let android_dir = dirs::home_dir()
-//         .ok_or_else(|| Error::PathNotFound(PathBuf::from("$HOME")))?
-//         .join(".android");
-//     std::fs::create_dir_all(&android_dir)?;
-//     Ok(android_dir)
-// }
+/// Signs and verifies `.aab` and Java Archive (JAR) files
+fn jarsigner_tool() -> Result<Command> {
+    if let Ok(jarsigner) = which::which(bin!("jarsigner")) {
+        return Ok(Command::new(jarsigner));
+    }
+    if let Ok(java) = std::env::var("JAVA_HOME") {
+        let keytool = PathBuf::from(java).join("bin").join(bin!("jarsigner.exe"));
+        if keytool.exists() {
+            return Ok(Command::new(keytool));
+        }
+    }
+    Err(Error::CmdNotFound("jarsigner".to_string()))
+}
 
-// #[cfg(test)]
-// mod tests {
-//     use gen_aab_key::AabKey;
+#[cfg(test)]
+mod tests {
 
-//     use super::*;
-//     use crate::{
-//         commands::android::{gen_aab_key, gen_minimal_unsigned_aab, remove},
-//         tools::AndroidSdk,
-//     };
+    use super::Jarsigner;
+    use crate::bundletool::{android_dir, gen_key, AabKey};
 
-//     #[test]
-//     fn test_jarsigner() {
-//         // Creates a temporary directory
-//         let tempdir = tempfile::tempdir().unwrap();
-//         let aab_build_dir = tempdir.path();
+    #[test]
+    fn test_signing_application_with_jarsigner() {
+        // Creates a temporary directory
+        let tempdir = tempfile::tempdir().unwrap();
+        let aab_build_dir = tempdir.path();
 
-//         // Assigns configuration for aab generation
-//         let sdk = AndroidSdk::from_env().unwrap();
-//         let package_name = "minimal_unsigned_aab";
-//         let target_sdk_version = 30;
+        // Generates minimal unsigned aab
+        let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let aab_path = user_dirs
+            .join("src")
+            .join("examples")
+            .join("macroquad-3d")
+            .join("android_app_bundle")
+            .join("minimal_unsigned.aab");
+        let cloned_aab = aab_build_dir.join("minimal_unsigned.aab").to_path_buf();
+        if aab_path.exists() {
+            std::fs::copy(&aab_path, &cloned_aab).unwrap();
+        }
 
-//         // Generates minimal unsigned aab
-//         let aab_path =
-//             gen_minimal_unsigned_aab(sdk, package_name, target_sdk_version, aab_build_dir).unwrap();
+        // Removes old keystore if it exists
+        let android_dir = android_dir().unwrap();
+        let target = vec![android_dir.join("aab.keystore")];
+        target.iter().for_each(|content| {
+            if content.is_file() {
+                std::fs::remove_file(&content).unwrap();
+            }
+        });
 
-//         // Removes old keystore if it exists
-//         let android_dir = android_dir().unwrap();
-//         let target = vec![android_dir.join("aab.keystore")];
-//         remove(target).unwrap();
+        // Creates new keystore to sign aab
+        let key = AabKey::default();
+        gen_key(key.clone()).unwrap();
 
-//         // Creates new keystore to sign aab
-//         let aab_key = AabKey::default();
-//         let key = gen_aab_key(aab_key).unwrap();
-
-//         // Signs aab with key
-//         // jarsigner(&aab_path, &key_path).unwrap();
-//         Jarsigner::new(&aab_path, &key.key_alias)
-//         .verbose(true)
-//         .sigalg("SHA256withRSA".to_string())
-//         .digestalg("SHA-256".to_string())
-//         .keystore(&key.key_path)
-//         .storepass(key.key_pass)
-//         .run()
-//         .unwrap();
-
-//         std::thread::sleep(std::time::Duration::from_secs(10000));
-// }
-// }
+        // Signs aab with key
+        Jarsigner::new(&cloned_aab, &key.key_alias)
+            .verbose(true)
+            .sigalg("SHA256withRSA".to_string())
+            .digestalg("SHA-256".to_string())
+            .keystore(&key.key_path)
+            .storepass(key.key_pass.to_string())
+            .run()
+            .unwrap();
+    }
+}

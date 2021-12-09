@@ -15,6 +15,11 @@ displaydoc = "0.2"
 walkdir = "2.3"
 tempfile = "3.2"
 dunce = "1.0"
+dirs = "4.0.0"
+which = "4.0"
+zip = "0.5.13"
+fs_extra = "1.2"
+zip-extensions = "0.6"
 
 
 [features]

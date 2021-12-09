@@ -5,6 +5,7 @@ mod get_device_spec;
 mod get_size_total;
 mod install_apks;
 mod jarsigner;
+mod keytool;
 
 pub use build_apks::*;
 pub use jarsigner::*;
@@ -13,6 +14,7 @@ pub use extract_apks::*;
 pub use get_device_spec::*;
 pub use get_size_total::*;
 pub use install_apks::*;
+pub use keytool::*;
 
 use std::path::{Path, PathBuf};
 

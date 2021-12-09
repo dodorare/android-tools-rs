@@ -89,63 +89,113 @@ impl BuildBundle {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use crate::{
-//         commands::android::{
-//             self, android_dir, gen_aab_key, gen_minimal_unsigned_aab, jarsigner, remove, AabKey,
-//         },
-//         tools::{AndroidSdk, BuildBundle},
-//     };
+    use crate::{aapt2::Aapt2, bundletool::BuildBundle};
+    use zip::ZipWriter;
+    use zip_extensions::write::ZipWriterExtensions;
 
-//     #[test]
-//     fn build_bundle_test() {
-//         // Creates a temporary directory
-//         let tempfile = tempfile::tempdir().unwrap();
-//         let build_dir = tempfile.path().to_path_buf();
+    #[test]
+    fn test_build_android_app_bundle() {
+        // Creates a temporary directory and specify resources
+        let tempfile = tempfile::tempdir().unwrap();
+        let build_dir = tempfile.path().to_path_buf();
 
-//         // Assigns configuratin to generate aab
-//         let sdk = AndroidSdk::from_env().unwrap();
-//         let package_name = "test";
-//         let target_sdk_version = 30;
-//         assert!(build_dir.exists());
+        // Specifies path to needed resources
+        let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let res_path = user_dirs
+            .join("src")
+            .join("examples")
+            .join("macroquad-3d")
+            .join("res")
+            .join("android")
+            .join("mipmap-hdpi");
 
-//         // Generates mininmal unsigned aab
-//         let aab_path =
-//             gen_minimal_unsigned_aab(sdk, "unsigned", target_sdk_version, &build_dir).unwrap();
+        // Compiles resources for aapt2 link
+        let aapt2_compile =
+            Aapt2.compile_incremental(dunce::simplified(&res_path), dunce::simplified(&build_dir));
+        let compiled_res = aapt2_compile.run().unwrap();
+        println!("{:?}", compiled_res);
 
-//         // Removes old keystore if it exists
-//         let android_dir = android_dir().unwrap();
-//         let target = vec![android_dir.join("aab.keystore")];
-//         remove(target).unwrap();
+        println!("compiled_res {:?}", compiled_res);
 
-//         // Creates new keystore to sign aab
-//         let aab_key = AabKey::default();
-//         let key_path = gen_aab_key(aab_key).unwrap();
+        // Defines path to android manifest
+        let manifest_example = user_dirs
+            .join("src")
+            .join("examples")
+            .join("macroquad-3d")
+            .join("manifest")
+            .join("AndroidManifest.xml");
+        let manifest_path = build_dir.join("AndroidManifest.xml");
+        std::fs::copy(manifest_example, &manifest_path).unwrap();
+        assert!(manifest_path.exists());
 
-//         // Signs aab with key
-//         jarsigner(&aab_path, &key_path).unwrap();
+        // Assigns configuration to generate APK
+        let package_name = "test";
+        let target_sdk_version = 30;
+        let apk_path = build_dir.join("test.apk");
 
-//         // Replaces unsigned aab with signed aab
-//         let signed_aab = build_dir.join(format!("{}_signed.aab", package_name));
-//         std::fs::rename(&aab_path, &signed_aab).unwrap();
+        // Defines path to  Android SDk and android.jar
+        let sdk_path = {
+            let sdk_path = std::env::var("ANDROID_SDK_ROOT")
+                .ok()
+                .or_else(|| std::env::var("ANDROID_SDK_PATH").ok())
+                .or_else(|| std::env::var("ANDROID_HOME").ok());
+            std::path::PathBuf::from(sdk_path.expect("Android SDK was not found"))
+        };
+        let platforms_path = sdk_path.join("platforms");
+        let platform_dir = platforms_path.join(format!("android-{}", target_sdk_version));
+        if !platform_dir.exists() {
+            panic!("Platform not found");
+        }
+        let android_jar = platform_dir.join("android.jar");
+        if !android_jar.exists() {
+            panic!("Android.jar not found");
+        }
 
-//         // Defines apk path from build directory
-//         for apk in std::fs::read_dir(build_dir).unwrap() {
-//             let apk_path = apk.unwrap().path();
-//             if apk_path.ends_with("apk") {
-//                 let build_dir = apk_path.parent().unwrap();
-//                 let output_dir = build_dir.join("extracted_apk_files");
-//                 // Extracts files from apk to defined path
-//                 let extracted_files = android::extract_apk(&apk_path, &output_dir).unwrap();
-//                 // Generates zip archive from extracted files
-//                 let gen_zip_modules =
-//                     android::gen_zip_modules(&build_dir, "test", &extracted_files).unwrap();
-//                 let aab = build_dir.join(format!("{}_unsigned.aab", package_name));
-//                 // Builds app bundle
-//                 BuildBundle::new(&[gen_zip_modules], &aab).run().unwrap();
-//             }
-//         }
-//     }
-// }
+        // Links compiled res with specified manifest file and generates an APK
+        let gen_apk = Aapt2
+            .link_compiled_res(Some(compiled_res), &apk_path, &manifest_path)
+            .android_jar(android_jar)
+            .verbose(true)
+            .proto_format(true)
+            .auto_add_overlay(true)
+            .run()
+            .unwrap();
+
+        // Defines apk path from build directory
+        let output_dir = build_dir.join("extracted_files");
+        if !output_dir.exists() {
+            std::fs::create_dir_all(&output_dir).unwrap();
+        }
+
+        // Extracts files from APK to defined output directory and prepares files to generate archive
+        let filename = std::path::Path::new(&gen_apk);
+        let file = std::fs::File::open(&filename).unwrap();
+        let mut apk = zip::ZipArchive::new(file).unwrap();
+        apk.extract(&output_dir).unwrap();
+        let path = output_dir.join("AndroidManifest.xml");
+        let manifest_path = output_dir.join("manifest");
+        if !manifest_path.exists() {
+            std::fs::create_dir_all(&manifest_path).unwrap();
+        }
+        let mut options = fs_extra::file::CopyOptions::new();
+        options.overwrite = true;
+        fs_extra::file::move_file(&path, &manifest_path.join("AndroidManifest.xml"), &options)
+            .unwrap();
+
+        // Generates zip archive from extracted files
+        let zip_path = build_dir.join("extracted_files.zip");
+        let file = std::fs::File::create(&zip_path).unwrap();
+        let mut zip = ZipWriter::new(file);
+        zip.create_from_directory(&output_dir.to_path_buf())
+            .unwrap();
+        println!("output_dir {:?}", output_dir);
+        println!("zip_path {:?}", zip_path);
+        let aab = build_dir.join(format!("{}_unsigned.aab", package_name));
+
+        // Builds app bundle
+        BuildBundle::new(&[zip_path], &aab).run().unwrap();
+    }
+}

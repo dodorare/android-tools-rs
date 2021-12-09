@@ -46,21 +46,22 @@ impl GetDeviceSpec {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
+#[cfg(test)]
+mod tests {
 
-//     use super::*;
+    use super::*;
 
-//     #[test]
-//     fn build_apks_test() {
-//         // Creates a temporary directory
-//         let tempfile = tempfile::tempdir().unwrap();
-//         let build_dir = tempfile.path().to_path_buf();
-//         let package_name = "test";
+    #[test]
+    #[should_panic]
+    fn build_apks_test() {
+        // Creates a temporary directory
+        let tempfile = tempfile::tempdir().unwrap();
+        let build_dir = tempfile.path().to_path_buf();
+        let package_name = "test";
 
-//         // Connect your device or emulator to generate device spec in `.json` format
-//         GetDeviceSpec::new(&build_dir.join(format!("{}.json", package_name)))
-//             .run()
-//             .unwrap();
-//     }
-// }
+        // Connect your device or emulator to generate device spec in `.json` format
+        GetDeviceSpec::new(&build_dir.join(format!("{}.json", package_name)))
+            .run()
+            .unwrap();
+    }
+}
