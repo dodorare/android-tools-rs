@@ -53,7 +53,7 @@ mod tests {
 
     #[test]
     #[should_panic]
-    fn build_apks_test() {
+    fn test_get_connected_device_or_emulator_spec() {
         // Creates a temporary directory
         let tempfile = tempfile::tempdir().unwrap();
         let build_dir = tempfile.path().to_path_buf();

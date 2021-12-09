@@ -84,7 +84,7 @@ mod tests {
     use crate::bundletool::{android_dir, gen_key, AabKey};
 
     #[test]
-    fn test_creating_keystore_with_keytool() {
+    fn test_create_keystore_with_keytool() {
         // Creates a temporary directory
         let tempdir = tempfile::tempdir().unwrap();
         let aab_build_dir = tempdir.path();

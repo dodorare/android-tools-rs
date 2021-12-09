@@ -248,7 +248,7 @@ mod tests {
     use crate::aapt2::Aapt2;
 
     #[test]
-    fn aapt2_compile_new_test() {
+    fn test_compile_resources_with_aapt2() {
         // Creates a temporary directory and specify resources.
         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let res_path = user_dirs

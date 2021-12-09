@@ -840,7 +840,7 @@ mod tests {
     use crate::aapt2::Aapt2;
 
     #[test]
-    fn test_command_run() {
+    fn test_link_files_with_aapt2_to_generate_apk() {
         // Creates a temporary directory and specify resources
         let tempfile = tempfile::tempdir().unwrap();
         let tempdir = tempfile.path().to_path_buf();
@@ -865,8 +865,6 @@ mod tests {
             &dunce::simplified(&compiled_res_path),
         );
         let compiled_res = aapt2_compile.run().unwrap();
-
-        println!("compiled_res {:?}", compiled_res);
 
         // Defines path to android manifest
         let manifest_path = user_dirs
@@ -903,6 +901,5 @@ mod tests {
         let mut aapt2_link = Aapt2.link_compiled_res(Some(compiled_res), &apk_path, &manifest_path);
         aapt2_link.android_jar(android_jar).verbose(true);
         aapt2_link.run().unwrap();
-        std::thread::sleep(std::time::Duration::from_secs(11111));
     }
 }
