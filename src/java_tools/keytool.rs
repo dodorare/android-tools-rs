@@ -81,7 +81,7 @@ pub fn keytool() -> Result<Command> {
 #[cfg(test)]
 mod tests {
 
-    use crate::bundletool::{android_dir, gen_key, AabKey};
+    use super::{android_dir, gen_key, AabKey};
 
     #[test]
     fn test_create_keystore_with_keytool() {

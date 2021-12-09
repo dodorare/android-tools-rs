@@ -105,7 +105,6 @@ mod tests {
         // Specifies path to needed resources
         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let res_path = user_dirs
-            .join("src")
             .join("examples")
             .join("macroquad-3d")
             .join("res")

@@ -55,6 +55,7 @@ impl Jarsigner {
             ..Default::default()
         }
     }
+
     /// Specifies the URL that tells the keystore location. This defaults to the file
     /// .keystore in the user's home directory, as determined by the user.home system
     /// property. A keystore is required when signing. You must explicitly specify a
@@ -85,6 +86,7 @@ impl Jarsigner {
         self.keystore = Some(keystore.to_owned());
         self
     }
+
     /// Specifies the password that is required to access the keystore. This is only
     /// needed when signing (not verifying) a JAR file. In that case, if a `-storepass`
     /// option is not provided at the command line, then the user is prompted for the
@@ -97,6 +99,7 @@ impl Jarsigner {
         self.storepass = Some(storepass);
         self
     }
+
     /// Specifies the type of keystore to be instantiated. The default keystore type is
     /// the one that is specified as the value of the `keystore.type` property in the
     /// security properties file, which is returned by the static `getDefaultType` method
@@ -110,6 +113,7 @@ impl Jarsigner {
         self.storetype = Some(storetype);
         self
     }
+
     /// Specifies the password used to protect the private key of the keystore entry
     /// addressed by the alias specified on the command line. The password is required
     /// when using jarsigner to sign a JAR file. If no password is provided on the command
@@ -129,6 +133,7 @@ impl Jarsigner {
         self.keypass = Some(keypass);
         self
     }
+
     /// Specifies the certificate chain to be used when the certificate chain associated
     /// with the private key of the keystore entry that is addressed by the alias
     /// specified on the command line is not complete. This can happen when the keystore
@@ -142,6 +147,7 @@ impl Jarsigner {
         self.certchain = Some(certchain.to_owned());
         self
     }
+
     /// Specifies the base file name to be used for the generated .SF and .DSA files. For
     /// example, if file is DUKESIGN, then the generated .SF and .DSA files are named
     /// DUKESIGN.SF and DUKESIGN.DSA, and placed in the META-INF directory of the signed
@@ -162,16 +168,19 @@ impl Jarsigner {
         self.sigfile = Some(sigfile.to_owned());
         self
     }
+
     /// name of signed JAR file
     pub fn signedjar(&mut self, signedjar: &Path) -> &mut Self {
         self.signedjar = Some(signedjar.to_owned());
         self
     }
+
     /// name of digest algorithm
     pub fn digestalg(&mut self, digestalg: String) -> &mut Self {
         self.digestalg = Some(digestalg);
         self
     }
+
     /// Specifies the name of the signature algorithm to use to sign the JAR file
     ///
     /// For a list of standard signature algorithm names, see "Appendix A: Standard Names"
@@ -187,6 +196,7 @@ impl Jarsigner {
         self.sigalg = Some(sigalg);
         self
     }
+
     /// When the -verbose option appears on the command line, it indicates verbose mode,
     /// which causes jarsigner to output extra information about the progress of the JAR
     /// signing or verification
@@ -194,6 +204,7 @@ impl Jarsigner {
         self.verbose = verbose;
         self
     }
+
     /// If the -certs option appears on the command line with the -verify and -verbose
     /// options, then the output includes certificate information for each signer of the
     /// JAR file. This information includes the name of the type of certificate (stored in
@@ -209,11 +220,13 @@ impl Jarsigner {
         self.certs = certs;
         self
     }
+
     /// Enable certificate revocation check
     pub fn rev_check(&mut self, rev_check: bool) -> &mut Self {
         self.rev_check = rev_check;
         self
     }
+
     /// If -tsa http://example.tsa.url appears on the command line when signing a JAR file
     /// then a time stamp is generated for the signature. The URL, http://example.tsa.url,
     /// identifies the location of the Time Stamping Authority (TSA) and overrides any URL
@@ -228,6 +241,7 @@ impl Jarsigner {
         self.tsa = Some(tsa.to_owned());
         self
     }
+
     /// When -tsacert alias appears on the command line when signing a JAR file, a time
     /// stamp is generated for the signature. The alias identifies the TSA public key
     /// certificate in the keystore that is in effect. The entry's certificate is examined
@@ -240,69 +254,82 @@ impl Jarsigner {
         self.tsacert = Some(tsacert);
         self
     }
+
     /// TSAPolicyID for Timestamping Authority
     pub fn tsapolicyid(&mut self, tsapolicyid: String) -> &mut Self {
         self.tsapolicyid = Some(tsapolicyid);
         self
     }
+
     /// algorithm of digest data in timestamping request
     pub fn tsadigestalg(&mut self, tsadigestalg: String) -> &mut Self {
         self.tsadigestalg = Some(tsadigestalg);
         self
     }
+
     /// class name of an alternative signing mechanism (This option is deprecated and will
     /// be removed in a future release.)
     pub fn altsigner(&mut self, altsigner: &Path) -> &mut Self {
         self.altsigner = Some(altsigner.to_owned());
         self
     }
+
     /// location of an alternative signing mechanism (This option is deprecated and will
     /// be removed in a future release.)
     pub fn altsignerpath(&mut self, altsignerpath: &[PathBuf]) -> &mut Self {
         self.altsignerpath = Some(altsignerpath.to_owned());
         self
     }
+
     /// include the .SF file inside the signature block
     pub fn internalsf(&mut self, internalsf: bool) -> &mut Self {
         self.internalsf = internalsf;
         self
     }
+
     /// don't compute hash of entire manifest
     pub fn sectionsonly(&mut self, sectionsonly: bool) -> &mut Self {
         self.sectionsonly = sectionsonly;
         self
     }
+
     /// keystore has protected authentication path
     pub fn protected(&mut self, protected: bool) -> &mut Self {
         self.protected = protected;
         self
     }
+
     /// provider name
     pub fn provider_name(&mut self, provider_name: String) -> &mut Self {
         self.provider_name = Some(provider_name);
         self
     }
-    /// dd security provider by name (e.g. SunPKCS11)
+
+    /// Add security provider by name (e.g. SunPKCS11)
     /// add security provider by fully-qualified class name
     pub fn addprovider(&mut self, addprovider: String) -> &mut Self {
         self.addprovider = Some(addprovider);
         self
     }
+
     /// configure argument for -addprovider
     pub fn provider_class(&mut self, provider_class: String) -> &mut Self {
         self.provider_class = Some(provider_class);
         self
     }
+
     /// configure argument for -providerClass
     pub fn provider_arg(&mut self, provider_arg: &Path) -> &mut Self {
         self.provider_arg = Some(provider_arg.to_owned());
         self
     }
+
     /// treat warnings as errors
     pub fn strict(&mut self, strict: bool) -> &mut Self {
         self.strict = strict;
         self
     }
+
     /// specify a pre-configured options file
     pub fn conf(&mut self, conf: &Path) -> &mut Self {
         self.conf = Some(conf.to_owned());
@@ -320,11 +347,13 @@ impl Jarsigner {
         self.verify = verify;
         self
     }
+
     /// Print this help message
     pub fn h(&mut self, h: bool) -> &mut Self {
         self.h = h;
         self
     }
+
     /// Print this help message
     pub fn help(&mut self, help: bool) -> &mut Self {
         self.help = help;
@@ -454,10 +483,10 @@ fn jarsigner_tool() -> Result<Command> {
 mod tests {
 
     use super::Jarsigner;
-    use crate::bundletool::{android_dir, gen_key, AabKey};
+    use crate::java_tools::{android_dir, gen_key, AabKey};
 
     #[test]
-    fn test_signing_application_with_jarsigner() {
+    fn test_sign_application_with_jarsigner() {
         // Creates a temporary directory
         let tempdir = tempfile::tempdir().unwrap();
         let aab_build_dir = tempdir.path();
