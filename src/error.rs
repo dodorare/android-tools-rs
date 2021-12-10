@@ -54,7 +54,7 @@ pub enum Error {
 /// Extension trait for [`Command`] that helps
 /// to wrap output and print logs from command execution.
 ///
-/// [`Command`]: std::process::Command
+/// [`Command`](std::process::Command)
 pub trait CommandExt {
     /// Executes the command as a child process, then captures an output and return it.
     /// If command termination wasn't successful wraps an output into error and return it.

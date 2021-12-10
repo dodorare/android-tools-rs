@@ -25,7 +25,7 @@ pub struct InstallApks {
 }
 
 impl InstallApks {
-    /// Specifies path to set of apks
+    /// Specifies path to set of apks to install it on your device or emulator
     pub fn new(apks: &Path) -> Self {
         Self {
             apks: apks.to_owned(),
@@ -48,6 +48,7 @@ impl InstallApks {
         self
     }
 
+    /// Runs `bundletool` commands to install apks on your device or emulator   
     pub fn run(&self) -> Result<()> {
         let mut install_apks = Command::new("java");
         install_apks.arg("-jar");

@@ -1,6 +1,7 @@
 use crate::error::*;
 use std::{path::PathBuf, process::Command};
 
+/// Prints the differences in resources of two apks.
 pub struct Aapt2Diff {
     input_apks: Vec<PathBuf>,
     help: bool,

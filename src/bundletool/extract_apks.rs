@@ -8,11 +8,11 @@ use std::process::Command;
 /// that target a specific device configuration, you can use the `extract-apk` command
 /// and specify a device specification JSON, as follows:
 ///
-/// ```xml
-/// bundletool extract-apks
+/// ```sh
+/// `bundletool extract-apks
 /// --apks=/MyApp/my_existing_APK_set.apks
 /// --output-dir=/MyApp/my_pixel2_APK_set.apks
-/// --device-spec=/MyApp/bundletool/pixel2.json
+/// --device-spec=/MyApp/bundletool/pixel2.json`
 /// ```
 pub struct ExtractApks {
     apks: PathBuf,

@@ -6,15 +6,15 @@ use std::process::Command;
 /// To build your app bundle, you use the `bundletool build-bundle` command, as shown
 /// below:
 ///
-/// ```xml
-/// bundletool build-bundle --modules=base.zip --output=mybundle.aab
+/// ```sh
+/// `bundletool build-bundle --modules=base.zip --output=mybundle.aab`
 /// ```
 ///
 /// ## Note
 /// If you plan to publish the app bundle, you need to sign it using [`jarsigner`]. You
 /// can not use apksigner to sign your app bundle.
 ///
-/// [`jarsigner`]::https://docs.oracle.com/javase/8/docs/technotes/tools/windows/jarsigner.html
+/// [`jarsigner`](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/jarsigner.html)
 #[derive(Debug, PartialEq, PartialOrd)]
 pub struct BuildBundle {
     modules: Vec<PathBuf>,
@@ -27,7 +27,7 @@ impl BuildBundle {
     /// Specifies the list of module ZIP files `bundletool` should use to build your app
     /// bundle.
     ///
-    /// Specifies the path and filename for the output `*.aab` file.
+    /// Specifies the path and filename for the output `.aab` file.
     pub fn new(modules: &[PathBuf], output: &Path) -> Self {
         Self {
             modules: modules.to_vec(),
@@ -38,10 +38,8 @@ impl BuildBundle {
     }
 
     /// Specifies the path to an optional configuration file you can use to customize the
-    /// build process. To learn more, see the section about [`customizing downstream APK
-    /// generation`].
-    ///
-    /// [`customizing downstream APK generation`]::https://developer.android.com/studio/build/building-cmdline#bundleconfig
+    /// build process. To learn more, see the section about
+    /// [`customizing downstream APK generation`](https://developer.android.com/studio/build/building-cmdline#bundleconfig)
     pub fn config(&mut self, config: &Path) -> &mut Self {
         self.config = Some(config.to_owned());
         self
@@ -60,6 +58,7 @@ impl BuildBundle {
         self
     }
 
+    /// Runs `bundletool` commands to build AAB  
     pub fn run(&self) -> Result<()> {
         let mut build_bundle = Command::new("java");
         build_bundle.arg("-jar");

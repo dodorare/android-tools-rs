@@ -26,5 +26,6 @@ zip-extensions = "0.6"
 default = ["aapt2", "bundletool"]
 aapt2 = []
 bundletool = []
+java_tools = []
 
 

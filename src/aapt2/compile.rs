@@ -23,20 +23,20 @@ use std::process::Command;
 /// The general syntax for using compile is as follows:
 ///
 /// ```sh
-/// aapt2 compile path-to-input-files [options] -o output-directory/
+/// `aapt2 compile path-to-input-files [options] -o output-directory/`
 /// ```
 /// ### Note
 /// For resource files, the path to input files must match the following structure:
 /// ```sh
-/// path/resource-type[-config]/file
+/// `path/resource-type[-config]/file`
 /// ```
 ///
 /// In the following example, `AAPT2` compiles resource files named `values.xml` and
 /// `myImage.png` individually:
 ///
 /// ```sh
-/// aapt2 compile project_root/module_root/src/main/res/values-en/strings.xml -o compiled/
-/// aapt2 compile project_root/module_root/src/main/res/drawable/myImage.png -o compiled/
+/// `aapt2 compile project_root/module_root/src/main/res/values-en/strings.xml -o compiled/`
+/// `aapt2 compile project_root/module_root/src/main/res/drawable/myImage.png -o compiled/`
 /// ```
 ///
 /// As shown in the table above, the name of the output file depends on the input file

@@ -2,6 +2,7 @@ use crate::error::*;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+/// Signs and verifies Java Archive (JAR) files
 #[derive(Clone, Default)]
 pub struct Jarsigner {
     verify: bool,
@@ -46,7 +47,7 @@ impl Jarsigner {
     /// severe warnings, the message, "jar signed, with signer errors" is displayed.
     ///
     /// ## Alias
-    /// The aliases are defined in the keystore specified by -keystore or the default
+    /// The aliases are defined in the keystore specified by `-keystore` or the default
     /// keystore.
     pub fn new(jar_file: &Path, alias: &str) -> Self {
         Self {
@@ -57,31 +58,37 @@ impl Jarsigner {
     }
 
     /// Specifies the URL that tells the keystore location. This defaults to the file
-    /// .keystore in the user's home directory, as determined by the user.home system
+    /// `.keystore` in the user's home directory, as determined by the `user.home` system
     /// property. A keystore is required when signing. You must explicitly specify a
     /// keystore when the default keystore does not exist or if you want to use one other
     /// than the default. A keystore is not required when verifying, but if one is
-    /// specified or the default exists and the -verbose option was also specified, then
+    /// specified or the default exists and the `-verbose` option was also specified, then
     /// additional information is output regarding whether or not any of the certificates
-    /// used to verify the JAR file are contained in that keystore. The -keystore argument
+    /// used to verify the JAR file are contained in that keystore. The `-keystore` argument
     /// can be a file name and path specification rather than a URL, in which case it is
     /// treated the same as a file: URL, for example, the following are equivalent:
     ///
+    /// ```sh
     /// * `-keystore filePathAndName`
     /// * `-keystore file:filePathAndName`
+    /// ```
     ///
     /// If the Sun PKCS #11 provider was configured in the java.security security
-    /// properties file (located in the JRE's $JAVA_HOME/lib/security directory), then the
+    /// properties file (located in the JRE's `$JAVA_HOME/lib/security directory`), then the
     /// keytool and jarsigner tools can operate on the PKCS #11 token by specifying these
     /// options:
     ///
+    /// ```sh
     /// * `-keystore NONE`
     /// * `-storetype PKCS11`
+    /// ```
     ///
     /// For example, the following command lists the contents of the configured PKCS#11
     /// token:
     ///
+    /// ```sh
     /// * `keytool -keystore NONE -storetype PKCS11 -list`
+    /// ```
     pub fn keystore(&mut self, keystore: &Path) -> &mut Self {
         self.keystore = Some(keystore.to_owned());
         self
@@ -137,20 +144,19 @@ impl Jarsigner {
     /// Specifies the certificate chain to be used when the certificate chain associated
     /// with the private key of the keystore entry that is addressed by the alias
     /// specified on the command line is not complete. This can happen when the keystore
-    ///  is located on a hardware token where there is not enough capacity to hold  a
+    /// is located on a hardware token where there is not enough capacity to hold  a
     /// complete certificate chain. The file can be a sequence of concatenated X.509
     /// certificates, or a single PKCS#7 formatted data block, either in binary encoding
     /// format or in printable encoding format (also known as Base64 encoding) as defined
-    ///  by the Internet RFC 1421 standard. See Internet RFC 1421 Certificate Encoding
-    /// Standard and http://tools.ietf.org/html/rfc1421
+    /// by the Internet RFC 1421 standard
     pub fn certchain(&mut self, certchain: &Path) -> &mut Self {
         self.certchain = Some(certchain.to_owned());
         self
     }
 
-    /// Specifies the base file name to be used for the generated .SF and .DSA files. For
+    /// Specifies the base file name to be used for the generated `.SF` and `.DSA` files. For
     /// example, if file is DUKESIGN, then the generated .SF and .DSA files are named
-    /// DUKESIGN.SF and DUKESIGN.DSA, and placed in the META-INF directory of the signed
+    /// `DUKESIGN.SF` and `DUKESIGN.DSA`, and placed in the META-INF directory of the signed
     /// JAR file
     ///
     /// The characters in the file must come from the set a-zA-Z0-9_-. Only
@@ -158,7 +164,7 @@ impl Jarsigner {
     /// characters are converted to uppercase for the .SF and .DSA file names
     ///
     /// If no -sigfile option appears on the command line, then the base file name for the
-    /// .SF and .DSA files is the first 8 characters of the alias name specified on
+    /// `.SF` and `.DSA` files is the first 8 characters of the alias name specified on
     /// the command line, all converted to upper case. If the alias name has fewer
     /// than 8 characters, then the full alias name is used. If the alias name
     /// contains any characters that are not valid in a signature file name, then each
@@ -169,13 +175,13 @@ impl Jarsigner {
         self
     }
 
-    /// name of signed JAR file
+    /// Name of signed JAR file
     pub fn signedjar(&mut self, signedjar: &Path) -> &mut Self {
         self.signedjar = Some(signedjar.to_owned());
         self
     }
 
-    /// name of digest algorithm
+    /// Name of digest algorithm
     pub fn digestalg(&mut self, digestalg: String) -> &mut Self {
         self.digestalg = Some(digestalg);
         self
@@ -188,16 +194,16 @@ impl Jarsigner {
     ///
     /// This algorithm must be compatible with the private key used to sign the JAR file.
     /// If this option is not specified, then `SHA1withDSA`, `SHA256withRSA`, or
-    /// SHA256withECDSA are used depending on the type of private key. There must either
+    /// `SHA256withECDSA` are used depending on the type of private key. There must either
     /// be a statically installed provider supplying an implementation of the specified
-    /// algorithm or the user must specify one with the -providerClass option; otherwise,
+    /// algorithm or the user must specify one with the `-providerClass` option; otherwise,
     /// the command will not succeed
     pub fn sigalg(&mut self, sigalg: String) -> &mut Self {
         self.sigalg = Some(sigalg);
         self
     }
 
-    /// When the -verbose option appears on the command line, it indicates verbose mode,
+    /// When the `-verbose` option appears on the command line, it indicates verbose mode,
     /// which causes jarsigner to output extra information about the progress of the JAR
     /// signing or verification
     pub fn verbose(&mut self, verbose: bool) -> &mut Self {
@@ -205,11 +211,11 @@ impl Jarsigner {
         self
     }
 
-    /// If the -certs option appears on the command line with the -verify and -verbose
+    /// If the `-certs` option appears on the command line with the `-verify` and `-verbose`
     /// options, then the output includes certificate information for each signer of the
     /// JAR file. This information includes the name of the type of certificate (stored in
-    /// the .DSA file) that certifies the signer's public key, and if the certificate is
-    /// an X.509 certificate (an instance of the java.security.cert.X509Certificate), then
+    /// the `.DSA` file) that certifies the signer's public key, and if the certificate is
+    /// an X.509 certificate (an instance of the `java.security.cert.X509Certificate`), then
     /// the distinguished name of the signer
     ///
     /// The keystore is also examined. If no keystore value is specified on the command
@@ -227,10 +233,10 @@ impl Jarsigner {
         self
     }
 
-    /// If -tsa http://example.tsa.url appears on the command line when signing a JAR file
-    /// then a time stamp is generated for the signature. The URL, http://example.tsa.url,
+    /// If [-tsa](http://example.tsa.url) appears on the command line when signing a JAR file
+    /// then a time stamp is generated for the signature. The URL,
     /// identifies the location of the Time Stamping Authority (TSA) and overrides any URL
-    /// found with the -tsacert option. The -tsa option does not require the TSA public
+    /// found with the -tsacert option. The `-tsa` option does not require the TSA public
     /// key certificate to be present in the keystore
     ///
     /// To generate the time stamp, jarsigner communicates with the TSA with the
@@ -242,14 +248,14 @@ impl Jarsigner {
         self
     }
 
-    /// When -tsacert alias appears on the command line when signing a JAR file, a time
+    /// When `-tsacert` alias appears on the command line when signing a JAR file, a time
     /// stamp is generated for the signature. The alias identifies the TSA public key
     /// certificate in the keystore that is in effect. The entry's certificate is examined
     /// for a Subject Information Access extension that contains a URL identifying the
     /// location of the TSA
     ///
     /// The TSA public key certificate must be present in the keystore when using the
-    /// -tsacert option
+    /// `-tsacert` option
     pub fn tsacert(&mut self, tsacert: String) -> &mut Self {
         self.tsacert = Some(tsacert);
         self
@@ -261,45 +267,45 @@ impl Jarsigner {
         self
     }
 
-    /// algorithm of digest data in timestamping request
+    /// Algorithm of digest data in timestamping request
     pub fn tsadigestalg(&mut self, tsadigestalg: String) -> &mut Self {
         self.tsadigestalg = Some(tsadigestalg);
         self
     }
 
-    /// class name of an alternative signing mechanism (This option is deprecated and will
+    /// Class name of an alternative signing mechanism (This option is deprecated and will
     /// be removed in a future release.)
     pub fn altsigner(&mut self, altsigner: &Path) -> &mut Self {
         self.altsigner = Some(altsigner.to_owned());
         self
     }
 
-    /// location of an alternative signing mechanism (This option is deprecated and will
+    /// Location of an alternative signing mechanism (This option is deprecated and will
     /// be removed in a future release.)
     pub fn altsignerpath(&mut self, altsignerpath: &[PathBuf]) -> &mut Self {
         self.altsignerpath = Some(altsignerpath.to_owned());
         self
     }
 
-    /// include the .SF file inside the signature block
+    /// Include the `.SF` file inside the signature block
     pub fn internalsf(&mut self, internalsf: bool) -> &mut Self {
         self.internalsf = internalsf;
         self
     }
 
-    /// don't compute hash of entire manifest
+    /// Don't compute hash of entire manifest
     pub fn sectionsonly(&mut self, sectionsonly: bool) -> &mut Self {
         self.sectionsonly = sectionsonly;
         self
     }
 
-    /// keystore has protected authentication path
+    /// Keystore has protected authentication path
     pub fn protected(&mut self, protected: bool) -> &mut Self {
         self.protected = protected;
         self
     }
 
-    /// provider name
+    /// Provider name
     pub fn provider_name(&mut self, provider_name: String) -> &mut Self {
         self.provider_name = Some(provider_name);
         self
@@ -312,36 +318,37 @@ impl Jarsigner {
         self
     }
 
-    /// configure argument for -addprovider
+    /// Configure argument for -addprovider
     pub fn provider_class(&mut self, provider_class: String) -> &mut Self {
         self.provider_class = Some(provider_class);
         self
     }
 
-    /// configure argument for -providerClass
+    /// Configure argument for `-providerClass`
     pub fn provider_arg(&mut self, provider_arg: &Path) -> &mut Self {
         self.provider_arg = Some(provider_arg.to_owned());
         self
     }
 
-    /// treat warnings as errors
+    /// Treat warnings as errors
     pub fn strict(&mut self, strict: bool) -> &mut Self {
         self.strict = strict;
         self
     }
 
-    /// specify a pre-configured options file
+    /// Specify a pre-configured options file
     pub fn conf(&mut self, conf: &Path) -> &mut Self {
         self.conf = Some(conf.to_owned());
         self
     }
-    /// The -verify option can take zero or more keystore alias names after the JAR file
-    /// name. When the -verify option is specified, the jarsigner command checks that the
+
+    /// The `-verify` option can take zero or more keystore alias names after the JAR file
+    /// name. When the `-verify` option is specified, the jarsigner command checks that the
     /// certificate used to verify each signed entry in the JAR file matches one of the
-    /// keystore aliases. The aliases are defined in the keystore specified by -keystore
+    /// keystore aliases. The aliases are defined in the keystore specified by `-keystore`
     /// or the default keystore.
     ///
-    /// If you also specified the -strict option, and the jarsigner command detected
+    /// If you also specified the `-strict` option, and the jarsigner command detected
     /// severe warnings, the message, "jar verified, with signer errors" is displayed
     pub fn verify(&mut self, verify: bool) -> &mut Self {
         self.verify = verify;
@@ -360,6 +367,7 @@ impl Jarsigner {
         self
     }
 
+    /// Runs jarsigner commands and signa JAR file with arguments
     pub fn run(&self) -> Result<PathBuf> {
         let mut jarsigner = jarsigner_tool()?;
         if self.verify {
