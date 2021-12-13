@@ -505,7 +505,7 @@ mod tests {
             .join("example_for_testing")
             .join("android_app_bundle")
             .join("minimal_unsigned.aab");
-        let cloned_aab = aab_build_dir.join("minimal_unsigned.aab").to_path_buf();
+        let cloned_aab = aab_build_dir.join("minimal_unsigned.aab");
         if aab_path.exists() {
             std::fs::copy(&aab_path, &cloned_aab).unwrap();
         }

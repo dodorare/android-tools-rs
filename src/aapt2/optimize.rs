@@ -68,7 +68,7 @@ impl Aapt2Optimize {
     }
 
     /// Split resources matching a set of configs out to a Split APK.
-    /// Syntax: 
+    /// Syntax:
     /// ```sh
     /// `path/to/output.apk;<config>[,<config>[...]].`
     /// ```

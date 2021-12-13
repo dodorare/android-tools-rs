@@ -28,10 +28,10 @@ pub use version::*;
 use self::{daemon::Aapt2Daemon, diff::Aapt2Diff, version::Aapt2Version};
 use std::path::{Path, PathBuf};
 
-/// [`AAPT2`](https://developer.android.com/studio/command-line/aapt2) 
-/// (Android Asset Packaging Tool) is a build tool that Android Studio 
-/// and Android Gradle Plugin use to compile and package your app’s resources. 
-/// [`AAPT2`] parses, indexes, and compiles the resources into a binary format 
+/// [`AAPT2`](https://developer.android.com/studio/command-line/aapt2)
+/// (Android Asset Packaging Tool) is a build tool that Android Studio
+/// and Android Gradle Plugin use to compile and package your app’s resources.
+/// [`AAPT2`] parses, indexes, and compiles the resources into a binary format
 /// that is optimized for the Android platform
 #[derive(Clone, Copy)]
 pub struct Aapt2;

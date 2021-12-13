@@ -248,6 +248,10 @@ mod tests {
     use crate::aapt2::Aapt2;
 
     #[test]
+    /// Testing [`AAPT2`] compile. This tool needed to compile resources.
+    /// [`AAPT2`] supports compilation of all Android resource types, such as drawables and XML files.
+    /// [`AAPT2`](https://developer.android.com/studio/command-line/aapt2) then parses the file and
+    /// generates an intermediate binary file with a `.flat` extension.
     fn test_compile_resources_with_aapt2() {
         // Creates a temporary directory and specify resources.
         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));

@@ -97,7 +97,7 @@ mod tests {
             .join("macroquad-3d")
             .join("android_app_bundle")
             .join("minimal_unsigned.aab");
-        let cloned_aab = aab_build_dir.join("minimal_unsigned.aab").to_path_buf();
+        let cloned_aab = aab_build_dir.join("minimal_unsigned.aab");
         if aab_path.exists() {
             std::fs::copy(&aab_path, &cloned_aab).unwrap();
         }
@@ -113,6 +113,6 @@ mod tests {
 
         // Creates new keystore from keytool
         let key = AabKey::default();
-        gen_key(key.clone()).unwrap();
+        gen_key(key).unwrap();
     }
 }

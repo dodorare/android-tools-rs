@@ -840,6 +840,10 @@ mod tests {
     use crate::aapt2::Aapt2;
 
     #[test]
+    /// [`AAPT2`] merges all the intermediate files generated from the compilation phase
+    /// such as resource tables, binary XML files, and processed PNG files and packages them into a single APK
+    ///
+    /// [`AAPT2`](https://developer.android.com/studio/command-line/aapt2)
     fn test_link_files_with_aapt2_to_generate_apk() {
         // Creates a temporary directory and specify resources
         let tempfile = tempfile::tempdir().unwrap();
@@ -860,7 +864,7 @@ mod tests {
         }
         let aapt2_compile = Aapt2.compile_incremental(
             dunce::simplified(&res_path),
-            &dunce::simplified(&compiled_res_path),
+            dunce::simplified(&compiled_res_path),
         );
         let compiled_res = aapt2_compile.run().unwrap();
 
