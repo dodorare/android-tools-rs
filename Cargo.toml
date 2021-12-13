@@ -21,9 +21,8 @@ zip = "0.5.13"
 fs_extra = "1.2"
 zip-extensions = "0.6"
 
-
 [features]
-default = ["aapt2", "bundletool"]
+default = ["aapt2", "bundletool", "java_tools"]
 aapt2 = []
 bundletool = []
 java_tools = []

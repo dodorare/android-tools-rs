@@ -300,8 +300,7 @@ mod tests {
         // Specifies path to minimal unsigned aab
         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let aab_path = user_dirs
-            .join("examples")
-            .join("macroquad-3d")
+            .join("example_for_testing")
             .join("android_app_bundle")
             .join("minimal_unsigned.aab");
 

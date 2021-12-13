@@ -252,7 +252,7 @@ mod tests {
         // Creates a temporary directory and specify resources.
         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let res_path = user_dirs
-            .join("examples")
+            .join("example_for_testing")
             .join("res")
             .join("android")
             .join("mipmap-hdpi");

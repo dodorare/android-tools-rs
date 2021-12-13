@@ -502,9 +502,7 @@ mod tests {
         // Generates minimal unsigned aab
         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let aab_path = user_dirs
-            .join("src")
-            .join("examples")
-            .join("macroquad-3d")
+            .join("example_for_testing")
             .join("android_app_bundle")
             .join("minimal_unsigned.aab");
         let cloned_aab = aab_build_dir.join("minimal_unsigned.aab").to_path_buf();

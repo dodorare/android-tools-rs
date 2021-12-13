@@ -848,8 +848,7 @@ mod tests {
         // Specifies path to needed resources
         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         let res_path = user_dirs
-            .join("examples")
-            .join("macroquad-3d")
+            .join("example_for_testing")
             .join("res")
             .join("android")
             .join("mipmap-hdpi");
@@ -867,8 +866,7 @@ mod tests {
 
         // Defines path to android manifest
         let manifest_path = user_dirs
-            .join("examples")
-            .join("macroquad-3d")
+            .join("example_for_testing")
             .join("manifest")
             .join("AndroidManifest.xml");
         assert!(manifest_path.exists());
