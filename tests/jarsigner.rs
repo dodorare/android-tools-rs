@@ -1,12 +1,23 @@
 use android_tools::java_tools::{android_dir, gen_key, AabKey, Jarsigner};
 
 #[test]
+/// The [`jarsigner`] tool has two purposes:
+/// * To sign Java Archive (JAR) files.
+/// * To verify the signatures and integrity of signed JAR files.
+///
+/// The JAR feature enables the packaging of class files, images, sounds, and other digital data
+/// in a single file for faster and easier distribution. A tool named jar enables developers to
+/// produce JAR files. (Technically, any zip file can also be considered a JAR file, although when
+/// created by the jar command or processed by the jarsigner command, JAR files also contain a
+/// META-INF/MANIFEST.MF file.)
+///
+/// [jarsigner]: https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jarsigner.html
 fn test_sign_application_with_jarsigner() {
-    // Creates a temporary directory
+    // Creates a temporary directory that will be dropped after test finished
     let tempdir = tempfile::tempdir().unwrap();
     let aab_build_dir = tempdir.path();
 
-    // Generates minimal unsigned aab
+    // Generates minimal unsigned AAB that will be signed later 
     let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let aab_path = user_dirs
         .join("tests")
@@ -31,7 +42,7 @@ fn test_sign_application_with_jarsigner() {
     let key = AabKey::default();
     gen_key(key.clone()).unwrap();
 
-    // Signs aab with key
+    // Signs AAB with key
     let signed_aab = Jarsigner::new(&cloned_aab, &key.key_alias)
         .verbose(true)
         .sigalg("SHA256withRSA".to_string())

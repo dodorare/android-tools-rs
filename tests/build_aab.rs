@@ -3,12 +3,17 @@ use zip::ZipWriter;
 use zip_extensions::write::ZipWriterExtensions;
 
 #[test]
+/// To build your app bundle, you use the [`bundletool`] build-bundle command.
+/// If you plan to publish the app bundle, you need to sign it using [`jarsigner`]
+///
+/// [bundletool]: https://developer.android.com/studio/build/building-cmdline#build_your_app_bundle_using_bundletool
+/// [jarsigner]: https://docs.oracle.com/javase/8/docs/technotes/tools/windows/jarsigner.html
 fn test_build_android_app_bundle() {
-    // Creates a temporary directory and specify resources
+    // Creates a temporary directory that will be dropped after test finished
     let tempfile = tempfile::tempdir().unwrap();
     let build_dir = tempfile.path().to_path_buf();
 
-    // Specifies path to needed resources
+    // Specifies path to resources
     let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let res_path = user_dirs
         .join("tests")
@@ -17,7 +22,7 @@ fn test_build_android_app_bundle() {
         .join("android")
         .join("mipmap-hdpi");
 
-    // Compiles resources for aapt2 link
+    // Compiles resources
     let aapt2_compile =
         Aapt2.compile_incremental(dunce::simplified(&res_path), dunce::simplified(&build_dir));
     let compiled_res = aapt2_compile.run().unwrap();
@@ -25,7 +30,7 @@ fn test_build_android_app_bundle() {
 
     println!("compiled_res {:?}", compiled_res);
 
-    // Defines path to android manifest
+    // Defines path to AndroidManifest.xml
     let manifest_example = user_dirs
         .join("tests")
         .join("resources")
@@ -40,7 +45,7 @@ fn test_build_android_app_bundle() {
     let target_sdk_version = 30;
     let apk_path = build_dir.join("test.apk");
 
-    // Defines path to  Android SDk and android.jar
+    // Defines path to Android SDK tools
     let sdk_path = {
         let sdk_path = std::env::var("ANDROID_SDK_ROOT")
             .ok()
@@ -58,7 +63,7 @@ fn test_build_android_app_bundle() {
         panic!("Android.jar not found");
     }
 
-    // Links compiled res with specified manifest file and generates an APK
+    // Links compiled resources with specified manifest file and generates an APK
     let gen_apk = Aapt2
         .link_compiled_res(Some(compiled_res), &apk_path, &manifest_path)
         .android_jar(android_jar)
@@ -68,7 +73,7 @@ fn test_build_android_app_bundle() {
         .run()
         .unwrap();
 
-    // Defines apk path from build directory
+    // Defines APK path in build directory
     let output_dir = build_dir.join("extracted_files");
     if !output_dir.exists() {
         std::fs::create_dir_all(&output_dir).unwrap();
@@ -88,7 +93,7 @@ fn test_build_android_app_bundle() {
     options.overwrite = true;
     fs_extra::file::move_file(&path, &manifest_path.join("AndroidManifest.xml"), &options).unwrap();
 
-    // Generates zip archive from extracted files
+    // Generates ZIP archive from extracted files
     let zip_path = build_dir.join("extracted_files.zip");
     let file = std::fs::File::create(&zip_path).unwrap();
     let mut zip = ZipWriter::new(file);
@@ -98,6 +103,6 @@ fn test_build_android_app_bundle() {
     println!("zip_path {:?}", zip_path);
     let aab = build_dir.join(format!("{}_unsigned.aab", package_name));
 
-    // Builds app bundle
+    // Builds AAB
     BuildBundle::new(&[zip_path], &aab).run().unwrap();
 }
