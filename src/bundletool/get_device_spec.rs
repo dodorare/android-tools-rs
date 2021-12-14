@@ -47,23 +47,3 @@ impl GetDeviceSpec {
         Ok(())
     }
 }
-
-#[cfg(test)]
-mod tests {
-
-    use super::*;
-
-    #[test]
-    #[should_panic]
-    fn test_get_connected_device_or_emulator_spec() {
-        // Creates a temporary directory
-        let tempfile = tempfile::tempdir().unwrap();
-        let build_dir = tempfile.path().to_path_buf();
-        let package_name = "test";
-
-        // Connect your device or emulator to generate device spec in `.json` format
-        GetDeviceSpec::new(&build_dir.join(format!("{}.json", package_name)))
-            .run()
-            .unwrap();
-    }
-}
