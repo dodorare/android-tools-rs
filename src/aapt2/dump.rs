@@ -57,7 +57,7 @@ impl Aapt2Dump {
         self
     }
 
-    /// Displays this help menu
+    /// Displays help menu
     pub fn help(&mut self, help: bool) -> &mut Self {
         self.help = help;
         self

@@ -7,8 +7,8 @@ use std::process::Command;
 /// To measure the estimated download sizes of APKs in an APK set as they would be served
 /// compressed over-the-wire, use the `get-size total` command:
 ///
-/// ```xml
-/// bundletool get-size total --apks=/MyApp/my_app.apks
+/// ```sh
+/// `bundletool get-size total --apks=/MyApp/my_app.apks`
 /// ```
 ///
 /// You can modify the behavior of the `get-size total` command using the following flags:
@@ -65,6 +65,7 @@ impl GetSizeTotal {
         self
     }
 
+    /// Runs `bundletool` commands to measure the estimated download sizes of APKs in an APK set
     pub fn run(&self) -> Result<()> {
         let mut get_size_total = Command::new("java");
         get_size_total.arg("-jar");

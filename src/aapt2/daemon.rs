@@ -4,6 +4,8 @@ use std::{
     process::Command,
 };
 
+/// Runs aapt in daemon mode. Each subsequent line is a single parameter to the
+/// command. The end of an invocation is signaled by providing an empty line.
 pub struct Aapt2Daemon {
     trace_folder: PathBuf,
     help: bool,

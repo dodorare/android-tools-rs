@@ -2,6 +2,7 @@ use crate::error::*;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+/// Preforms resource optimizations on an APK
 #[derive(Clone, Default)]
 pub struct Aapt2Optimize {
     output_apk: PathBuf,
@@ -67,7 +68,10 @@ impl Aapt2Optimize {
     }
 
     /// Split resources matching a set of configs out to a Split APK.
-    /// ```Syntax: path/to/output.apk;<config>[,<config>[...]].```
+    /// Syntax:
+    /// ```sh
+    /// `path/to/output.apk;<config>[,<config>[...]].`
+    /// ```
     /// On Windows, use a semicolon `;` separator instead
     pub fn split(&mut self, split: &Path) -> &mut Self {
         self.split = Some(split.to_owned());

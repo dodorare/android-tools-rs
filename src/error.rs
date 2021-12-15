@@ -1,13 +1,46 @@
 //! Contains `Error` type and `CommandExt` impl used by `android-tools-rs`.
 
 use displaydoc::Display;
-use std::process::Command;
+use std::{path::PathBuf, process::Command};
 use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
+/// Android specific error type
+#[derive(Display, Debug, Error)]
+pub enum AndroidError {
+    /// Android SDK is not found
+    AndroidSdkNotFound,
+    /// Android NDK is not found
+    AndroidNdkNotFound,
+    /// Android SDK has no build tools
+    BuildToolsNotFound,
+    /// Android SDK has no platforms installed
+    NoPlatformsFound,
+    /// Failed to create directory
+    DirectoryWasNotCreated,
+    /// Platform {0} is not installed
+    PlatformNotFound(u32),
+    /// Target is not supported
+    UnsupportedTarget,
+    /// Host {0} is not supported
+    UnsupportedHost(String),
+    /// Invalid semver
+    InvalidSemver,
+    /// Unsupported or invalid target: {0}
+    InvalidBuildTarget(String),
+    /// Failed to find AndroidManifest.xml in path: {0}
+    FailedToFindAndroidManifest(String),
+    /// Unable to find NDK file
+    UnableToFindNDKFile,
+}
+
 #[derive(Display, Debug, Error)]
 pub enum Error {
+    /// Path {0:?} doesn't exist
+    PathNotFound(PathBuf),
+    /// Command {0} not found
+    CmdNotFound(String),
     /// Command had a non-zero exit code. Stdout: {0} Stderr: {1}
     CmdFailed(String, String),
     /// Bundletool is not found
@@ -21,7 +54,7 @@ pub enum Error {
 /// Extension trait for [`Command`] that helps
 /// to wrap output and print logs from command execution.
 ///
-/// [`Command`]: std::process::Command
+/// [`Command`](std::process::Command)
 pub trait CommandExt {
     /// Executes the command as a child process, then captures an output and return it.
     /// If command termination wasn't successful wraps an output into error and return it.

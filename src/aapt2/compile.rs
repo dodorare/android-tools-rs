@@ -23,20 +23,20 @@ use std::process::Command;
 /// The general syntax for using compile is as follows:
 ///
 /// ```sh
-/// aapt2 compile path-to-input-files [options] -o output-directory/
+/// `aapt2 compile path-to-input-files [options] -o output-directory/`
 /// ```
 /// ### Note
 /// For resource files, the path to input files must match the following structure:
 /// ```sh
-/// path/resource-type[-config]/file
+/// `path/resource-type[-config]/file`
 /// ```
 ///
 /// In the following example, `AAPT2` compiles resource files named `values.xml` and
 /// `myImage.png` individually:
 ///
 /// ```sh
-/// aapt2 compile project_root/module_root/src/main/res/values-en/strings.xml -o compiled/
-/// aapt2 compile project_root/module_root/src/main/res/drawable/myImage.png -o compiled/
+/// `aapt2 compile project_root/module_root/src/main/res/values-en/strings.xml -o compiled/`
+/// `aapt2 compile project_root/module_root/src/main/res/drawable/myImage.png -o compiled/`
 /// ```
 ///
 /// As shown in the table above, the name of the output file depends on the input file
@@ -241,63 +241,3 @@ impl Aapt2Compile {
         Ok(self.compiled_res.clone())
     }
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use crate::tools::AndroidSdk;
-
-//     #[test]
-//     fn aapt2_compile_new_test() {
-//         // Creates a temporary directory and specify resources
-//         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-//         let dir = user_dirs.parent().unwrap().parent().unwrap().to_path_buf();
-//         let res_path = dir
-//             .join("examples")
-//             .join("bevy-2d")
-//             .join("res")
-//             .join("android")
-//             .join("mipmap-hdpi")
-//             .join("ic_launcher.png");
-//         res_path.canonicalize().unwrap();
-//         let sdk = AndroidSdk::from_env().unwrap();
-//         let tempfile = tempfile::tempdir().unwrap();
-//         let compiled_res_dir = tempfile.path().to_path_buf();
-//         assert!(compiled_res_dir.exists());
-
-//         // Compiles resources
-//         let compiled_res = sdk
-//             .aapt2()
-//             .unwrap()
-//             .compile_incremental(&res_path, &compiled_res_dir)
-//             .run()
-//             .unwrap();
-//         assert!(compiled_res.exists());
-//     }
-
-//     #[test]
-//     fn aapt2_compile_new_from_res_dir() {
-//         // Creates a temporary directory and specify resources
-//         let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-//         let dir = user_dirs.parent().unwrap().parent().unwrap().to_path_buf();
-//         let res_path = dir
-//             .join("examples")
-//             .join("bevy-3d")
-//             .join("assets")
-//             .join("models")
-//             .join("helmet");
-//         res_path.canonicalize().unwrap();
-//         let sdk = AndroidSdk::from_env().unwrap();
-//         let tempfile = tempfile::tempdir().unwrap();
-//         let compiled_res_dir = tempfile.path().to_path_buf();
-//         assert!(compiled_res_dir.exists());
-
-//         // Compiles resources
-//         let compiled_res = sdk
-//             .aapt2()
-//             .unwrap()
-//             .compile_dir(&res_path, &compiled_res_dir)
-//             .run()
-//             .unwrap();
-//         assert!(compiled_res.exists());
-//     }
-// }

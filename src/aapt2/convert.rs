@@ -4,6 +4,7 @@ use std::{
     process::Command,
 };
 
+/// Converts an apk between binary and proto formats.
 #[derive(Default)]
 pub struct Aapt2Convert {
     output_path: PathBuf,

@@ -6,8 +6,9 @@ Android-related tools for building and developing applications:
 
 | Name | Description | Status |
 | -----: | ----------- | ------------- |
-| [aap2](https://developer.android.com/studio/command-line/aapt2) | Android Asset Packaging Tool | ✅ |
+| [aapt2](https://developer.android.com/studio/command-line/aapt2) | Android Asset Packaging Tool | ✅ |
 | [bundletool](https://developer.android.com/studio/command-line/bundletool) | Tool to build an Android App Bundles | ✅ |
+| [java_tools](https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jarsigner.html) | Allows to create keystore and sign JAR files | ✅ |
 
 ## License
 

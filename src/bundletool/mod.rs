@@ -17,7 +17,7 @@ use std::path::{Path, PathBuf};
 /// ## Bundletool
 /// `bundletool` is the underlying tool that Android Studio, the Android Gradle plugin,
 /// and Google Play use to build an Android App Bundle, and convert an app bundle into
-/// the various APKs that are deployed to devices. bundletool is also available to you
+/// the various APKs that are deployed to devices. `Bundletool` is also available to you
 /// as a command line tool, so you can build app bundles yourself and recreate
 /// Google Play's server-side build of your app's APKs.
 ///
@@ -27,10 +27,10 @@ use std::path::{Path, PathBuf};
 ///
 ///
 /// ## Install bundletool
-/// In variable environments needs to create new variable BUNDLETOOL_PATH and add
-/// path to the bundletool
+/// In variable environments needs to create new variable `BUNDLETOOL_PATH` and add
+/// path to the `bundletool`
 ///
-/// [`GitHub repository`]::https://github.com/google/bundletool/releases
+/// [`GitHub repository`](https://github.com/google/bundletool/releases)
 #[derive(Clone, Copy)]
 pub struct Bundletool;
 
@@ -41,6 +41,8 @@ impl Bundletool {
         BuildApks::new(bundle, output)
     }
 
+    /// Generate AAB file from generated zip modules to specified path.
+    /// Notice, that zip module must contents files in protobuf format
     pub fn build_bundle(self, modules: &[PathBuf], output: &Path) -> BuildBundle {
         BuildBundle::new(modules, output)
     }

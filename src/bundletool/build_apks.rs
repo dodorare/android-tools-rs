@@ -17,12 +17,12 @@ use std::process::Command;
 /// signing information, as shown in the command below. If you do not specify signing
 /// information, `bundletool` attempts to sign your APKs with a debug key for you.
 ///
-/// ```xml
-/// bundletool build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks
-/// --ks=/MyApp/keystore.jks
-/// --ks-pass=file:/MyApp/keystore.pwd
-/// --ks-key-alias=MyKeyAlias
-/// --key-pass=file:/MyApp/key.pwd
+/// ```sh
+/// `bundletool build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks`
+/// `--ks=/MyApp/keystore.jks`
+/// `--ks-pass=file:/MyApp/keystore.pwd`
+/// `--ks-key-alias=MyKeyAlias`
+/// `--key-pass=file:/MyApp/key.pwd`
 /// ```
 ///
 /// The table below describes the various flags and options you can set when using the
@@ -59,17 +59,16 @@ pub enum KeyPass {
     KeyPassFile,
 }
 
-/// (`Required`) Specifies the path to the app bundle you built using Android Studio.
-/// To learn more, read [`Build your project`].
-///
-/// [`Build your project`]::https://developer.android.com/studio/run#reference
-///
-/// (Required) Specifies the name of the output `.apks` file, which contains all the
-/// APK artifacts for your app. To test the artifacts in this file on a device, go to
-/// the section about how to [`deploy APKs to a connected device`].
-///
-/// [`deploy APKs to a connected device`]::https://developer.android.com/studio/command-line/bundletool#deploy_with_bundletool
 impl BuildApks {
+    /// (`Required`) Specifies the path to the app bundle you built using Android Studio.
+    /// To learn more, read [`Build your project`].
+    ///
+    /// [`Build your project`](https://developer.android.com/studio/run#reference)
+    ///
+    /// (Required) Specifies the name of the output `.apks` file, which contains all the
+    /// APK artifacts for your app. To test the artifacts in this file on a device, go to
+    /// the section about how to
+    /// [`deploy APKs to a connected device`](https://developer.android.com/studio/command-line/bundletool#deploy_with_bundletool)
     pub fn new(bundle: &Path, output: &Path) -> Self {
         Self {
             bundle: bundle.to_owned(),
@@ -139,7 +138,7 @@ impl BuildApks {
         self
     }
 
-    ///Specifies the password for the signing key. If you're specifying a password in
+    /// Specifies the password for the signing key. If you're specifying a password in
     /// plain text, qualify it with pass:. If you're passing the path to a file that
     /// contains the password, qualify it with file:.
     ///
@@ -150,7 +149,7 @@ impl BuildApks {
         self
     }
 
-    ///Specifies the password for the signing key. If you're specifying a password in
+    /// Specifies the password for the signing key. If you're specifying a password in
     /// plain text, qualify it with pass:. If you're passing the path to a file that
     /// contains the password, qualify it with file:.
     ///
@@ -178,9 +177,7 @@ impl BuildApks {
 
     /// Use this flag to provide a path to a `.json` file that specifies the device
     /// configuration you want to target. To learn more, go to the section about how to
-    /// [`Create and use device specification JSON files`].
-    ///
-    /// [`Create and use device specification JSON files`]::https://developer.android.com/studio/command-line/bundletool#create_use_json
+    /// [`Create and use device specification JSON files`](https://developer.android.com/studio/command-line/bundletool#create_use_json)
     pub fn device_spec(&mut self, device_spec: &Path) -> &mut Self {
         self.device_spec = Some(device_spec.to_owned());
         self
@@ -199,7 +196,7 @@ impl BuildApks {
     /// configuration. However, they're easier to share with internal testers who, for
     /// example, want to test your app on multiple device configurations.
     ///
-    /// [`feature module manifest`]::https://developer.android.com/guide/playcore/feature-delivery#dynamic_feature_manifest
+    /// [`feature module manifest`](https://developer.android.com/guide/playcore/feature-delivery#dynamic_feature_manifest)
     pub fn mode_universal(&mut self, mode_universal: bool) -> &mut Self {
         self.mode_universal = mode_universal;
         self
@@ -210,14 +207,14 @@ impl BuildApks {
     /// servers.
     ///
     /// For an example of how to test module installation using the `--local-testing`
-    /// flag, see [`Locally test module installs`].
-    ///
-    /// [`Locally test module installs`]::https://developer.android.com/guide/app-bundle/test/testing-fakesplitinstallmanager
+    /// flag, see
+    /// [`Locally test module installs`](https://developer.android.com/guide/app-bundle/test/testing-fakesplitinstallmanager)
     pub fn local_testing(&mut self, local_testing: bool) -> &mut Self {
         self.local_testing = local_testing;
         self
     }
 
+    /// Runs `bundletool` commands to build apks
     pub fn run(&self) -> Result<PathBuf> {
         let mut build_apks = Command::new("java");
         build_apks.arg("-jar");
@@ -284,51 +281,3 @@ impl BuildApks {
         Ok(self.output.clone())
     }
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use crate::{
-//         commands::android::{
-//             android_dir, gen_aab_key, gen_minimal_unsigned_aab, jarsigner, remove, AabKey,
-//         },
-//         tools::{AndroidSdk, BuildApks, GetSizeTotal},
-//     };
-
-//     #[test]
-//     fn build_apks_test() {
-//         // Creates a temporary directory
-//         let tempfile = tempfile::tempdir().unwrap();
-//         let build_dir = tempfile.path().to_path_buf();
-
-//         // Assigns configuratin to generate aab
-//         let sdk = AndroidSdk::from_env().unwrap();
-//         let package_name = "test";
-//         let target_sdk_version = 30;
-//         assert!(build_dir.exists());
-
-//         // Generates mininmal unsigned aab
-//         let aab_path =
-//             gen_minimal_unsigned_aab(sdk, "unsigned", target_sdk_version, &build_dir).unwrap();
-
-//         // Removes old keystore if it exists
-//         let android_dir = android_dir().unwrap();
-//         let target = vec![android_dir.join("aab.keystore")];
-//         remove(target).unwrap();
-
-//         // Creates new keystore to sign aab
-//         let aab_key = AabKey::default();
-//         let key_path = gen_aab_key(aab_key).unwrap();
-
-//         // Signs aab with key
-//         jarsigner(&aab_path, &key_path).unwrap();
-
-//         // Replace unsigned aab with signed aab
-//         let signed_aab = build_dir.join(format!("{}_signed.aab", package_name));
-//         std::fs::rename(&aab_path, &signed_aab).unwrap();
-
-//         // Test build_apks
-//         let apks_path = build_dir.join(format!("{}.apks", package_name));
-//         let apks = BuildApks::new(&signed_aab, &apks_path).run().unwrap();
-//         GetSizeTotal::new(&apks).run().unwrap();
-//     }
-// }

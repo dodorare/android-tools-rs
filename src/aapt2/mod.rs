@@ -28,6 +28,11 @@ pub use version::*;
 use self::{daemon::Aapt2Daemon, diff::Aapt2Diff, version::Aapt2Version};
 use std::path::{Path, PathBuf};
 
+/// [`AAPT2`](https://developer.android.com/studio/command-line/aapt2)
+/// (Android Asset Packaging Tool) is a build tool that Android Studio
+/// and Android Gradle Plugin use to compile and package your app’s resources.
+/// [`AAPT2`] parses, indexes, and compiles the resources into a binary format
+/// that is optimized for the Android platform
 #[derive(Clone, Copy)]
 pub struct Aapt2;
 
@@ -47,12 +52,12 @@ impl Aapt2 {
         Aapt2Compile::new_from_res_zip(res_zip, compiled_res)
     }
 
-    /// Links given list of resources into an apk
+    /// Links given list of resources into an APK
     pub fn link_inputs(self, inputs: &[PathBuf], output_apk: &Path, manifest: &Path) -> Aapt2Link {
         Aapt2Link::new(inputs, output_apk, manifest)
     }
 
-    /// Links resources from given /compiled_res folder into an apk
+    /// Links resources from given /compiled_res folder into an APK
     pub fn link_compiled_res(
         self,
         compiled_res: Option<PathBuf>,
@@ -67,13 +72,12 @@ impl Aapt2 {
         Aapt2Dump::new(subcommand, filename_apk)
     }
 
-    /// Prints the differences in resources of two apks.
-    /// https://gerrit.pixelexperience.org/plugins/gitiles/frameworks_base/+/refs/tags/android-10.0.0_r2/tools/aapt2/cmd/Diff.cpp
+    /// Prints the differences in resources of two APKs
     pub fn diff(self, file: &[PathBuf]) -> Aapt2Diff {
         Aapt2Diff::new(file)
     }
 
-    /// Preforms resource optimizations on an apk
+    /// Preforms resource optimizations on an APK
     pub fn optimize(self, output_apk: &Path, output_dir: &Path) -> Aapt2Optimize {
         Aapt2Optimize::new(output_apk, output_dir)
     }

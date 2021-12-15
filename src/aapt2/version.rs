@@ -1,6 +1,7 @@
 use crate::error::*;
 use std::process::Command;
 
+/// Prints the version of aapt.
 pub struct Aapt2Version {
     version: String,
     help: bool,
