@@ -1,8 +1,6 @@
 use crate::error::{CommandExt, Error, Result};
-use std::{
-    path::{Path, PathBuf},
-    process::Command,
-};
+use std::path::{Path, PathBuf};
+use super::aapt2_tool;
 
 /// ## Link
 /// In the link phase, `AAPT2` merges all the intermediate files generated from the
@@ -603,7 +601,7 @@ impl Aapt2Link {
 
     /// Executes aapt2 link with arguments
     pub fn run(&self) -> Result<PathBuf> {
-        let mut aapt2 = Command::new("aapt2");
+        let mut aapt2 = aapt2_tool()?;
         aapt2.arg("link");
         if !self.inputs.is_empty() {
             self.inputs.iter().for_each(|input| {

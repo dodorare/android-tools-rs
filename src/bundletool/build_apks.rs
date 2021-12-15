@@ -1,24 +1,24 @@
+use super::{build_apks, bundletool};
 use crate::error::*;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 /// ## Generate a set of APKs from your app bundle
 ///
-/// When `bundletool` generates APKs from your app bundle,it includes them in a container
+/// When `build_apks` generates APKs from your app bundle,it includes them in a container
 /// called an APK set archive, which uses the `.apks` file extension. To generate an APK
 /// set for all device configurations your app supports from your app bundle, use the
-/// `bundletool build-apks` command, as shown below.
+/// `build_apks build-apks` command, as shown below.
 ///
 /// ```xml
-/// bundletool build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks
+/// build_apks build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks
 /// ```
 ///
 /// If you want to deploy the APKs to a device, you need to also include your app's
 /// signing information, as shown in the command below. If you do not specify signing
-/// information, `bundletool` attempts to sign your APKs with a debug key for you.
+/// information, `build_apks` attempts to sign your APKs with a debug key for you.
 ///
 /// ```sh
-/// `bundletool build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks`
+/// `build_apks build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks`
 /// `--ks=/MyApp/keystore.jks`
 /// `--ks-pass=file:/MyApp/keystore.pwd`
 /// `--ks-key-alias=MyKeyAlias`
@@ -26,7 +26,7 @@ use std::process::Command;
 /// ```
 ///
 /// The table below describes the various flags and options you can set when using the
-/// `bundletool build-apks` command in greater detail. Only `--bundle` and `--output` are
+/// `build_apks build-apks` command in greater detail. Only `--bundle` and `--output` are
 /// required—all other flags are optional.
 #[derive(Debug, PartialEq)]
 pub struct BuildApks {
@@ -68,7 +68,7 @@ impl BuildApks {
     /// (Required) Specifies the name of the output `.apks` file, which contains all the
     /// APK artifacts for your app. To test the artifacts in this file on a device, go to
     /// the section about how to
-    /// [`deploy APKs to a connected device`](https://developer.android.com/studio/command-line/bundletool#deploy_with_bundletool)
+    /// [`deploy APKs to a connected device`](https://developer.android.com/studio/command-line/build_apks#deploy_with_build_apks)
     pub fn new(bundle: &Path, output: &Path) -> Self {
         Self {
             bundle: bundle.to_owned(),
@@ -97,7 +97,7 @@ impl BuildApks {
         self
     }
 
-    /// Specifies a custom path to AAPT2. By default, `bundletool` includes its own
+    /// Specifies a custom path to AAPT2. By default, `build_apks` includes its own
     /// version of AAPT2.
     pub fn aapt2(&mut self, aapt2: &Path) -> &mut Self {
         self.aapt2 = Some(aapt2.to_owned());
@@ -105,7 +105,7 @@ impl BuildApks {
     }
 
     /// Specifies the path to the deployment keystore used to sign the APKs. This flag is
-    /// optional. If you don't include it, `bundletool` attempts to sign your APKs with a
+    /// optional. If you don't include it, `build_apks` attempts to sign your APKs with a
     /// debug signing key.
     pub fn ks(&mut self, ks: &Path) -> &mut Self {
         self.ks = Some(ks.to_owned());
@@ -115,7 +115,7 @@ impl BuildApks {
     /// Specifies your keystore's password. If you're specifying a password in plain text,
     /// qualify it with pass:. If you're passing the path to a file that contains the
     /// password, qualify it with file:. If you specify a keystore using the `--ks` flag
-    /// without specifying `--ks-pass`, `bundletool` prompts you for a password from the
+    /// without specifying `--ks-pass`, `build_apks` prompts you for a password from the
     /// command line.
     pub fn ks_pass_pass(&mut self, ks_pass_pass: String) -> &mut Self {
         self.ks_pass_pass = Some(ks_pass_pass);
@@ -125,7 +125,7 @@ impl BuildApks {
     /// Specifies your keystore's password. If you're specifying a password in plain text,
     /// qualify it with pass:. If you're passing the path to a file that contains the
     /// password, qualify it with file:. If you specify a keystore using the `--ks` flag
-    /// without specifying `--ks-pass`, `bundletool` prompts you for a password from the
+    /// without specifying `--ks-pass`, `build_apks` prompts you for a password from the
     /// command line.
     pub fn ks_pass_file(&mut self, ks_pass_file: &Path) -> &mut Self {
         self.ks_pass_file = Some(ks_pass_file.to_owned());
@@ -160,8 +160,8 @@ impl BuildApks {
         self
     }
 
-    /// Instructs `bundletool` to build APKs that target the configuration of a connected
-    /// device. If you don't include this flag, `bundletool` generates APKs for all device
+    /// Instructs `build_apks` to build APKs that target the configuration of a connected
+    /// device. If you don't include this flag, `build_apks` generates APKs for all device
     /// configurations your app supports.
     pub fn connected_device(&mut self, connected_device: bool) -> &mut Self {
         self.connected_device = connected_device;
@@ -177,18 +177,18 @@ impl BuildApks {
 
     /// Use this flag to provide a path to a `.json` file that specifies the device
     /// configuration you want to target. To learn more, go to the section about how to
-    /// [`Create and use device specification JSON files`](https://developer.android.com/studio/command-line/bundletool#create_use_json)
+    /// [`Create and use device specification JSON files`](https://developer.android.com/studio/command-line/build_apks#create_use_json)
     pub fn device_spec(&mut self, device_spec: &Path) -> &mut Self {
         self.device_spec = Some(device_spec.to_owned());
         self
     }
 
-    /// Set the mode to universal if you want `bundletool` to build only a single APK that
+    /// Set the mode to universal if you want `build_apks` to build only a single APK that
     /// includes all of your app's code and resources such that the APK is compatible with
     /// all device configurations your app supports.
     ///
     /// ## Note
-    /// `bundletool` includes only feature modules that specify `<dist:fusing
+    /// `build_apks` includes only feature modules that specify `<dist:fusing
     /// dist:include="true"/>` in their manifest in a universal APK. To learn more, read
     /// about the [`feature module manifest`].
     ///
@@ -214,15 +214,9 @@ impl BuildApks {
         self
     }
 
-    /// Runs `bundletool` commands to build apks
+    /// Runs `build_apks` commands to build apks
     pub fn run(&self) -> Result<PathBuf> {
-        let mut build_apks = Command::new("java");
-        build_apks.arg("-jar");
-        if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
-            build_apks.arg(bundletool_path);
-        } else {
-            return Err(Error::BundletoolNotFound);
-        }
+        let mut build_apks = bundletool()?;
         build_apks.arg("build-apks");
         build_apks.arg("--bundle").arg(&self.bundle);
         build_apks.arg("--output").arg(&self.output);

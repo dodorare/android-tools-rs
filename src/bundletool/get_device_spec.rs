@@ -1,6 +1,6 @@
 use crate::error::*;
 use std::path::{Path, PathBuf};
-use std::process::Command;
+use super::bundletool;
 
 /// ## Generate and use device specification JSON files
 ///
@@ -34,13 +34,7 @@ impl GetDeviceSpec {
 
     /// Runs `bundletool` commands to get device specification
     pub fn run(&self) -> Result<()> {
-        let mut get_device_spec = Command::new("java");
-        get_device_spec.arg("-jar");
-        if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
-            get_device_spec.arg(bundletool_path);
-        } else {
-            return Err(Error::BundletoolNotFound);
-        }
+        let mut get_device_spec = bundletool()?;
         get_device_spec.arg("get-device-spec");
         get_device_spec.arg("--output").arg(&self.output);
         get_device_spec.output_err(true)?;

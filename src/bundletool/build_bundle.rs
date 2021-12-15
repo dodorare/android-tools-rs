@@ -1,6 +1,6 @@
+use super::bundletool;
 use crate::error::*;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 /// ## Build your app bundle using bundletool
 /// To build your app bundle, you use the `bundletool build-bundle` command, as shown
@@ -60,13 +60,7 @@ impl BuildBundle {
 
     /// Runs `bundletool` commands to build AAB
     pub fn run(&self) -> Result<()> {
-        let mut build_bundle = Command::new("java");
-        build_bundle.arg("-jar");
-        if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
-            build_bundle.arg(bundletool_path);
-        } else {
-            return Err(Error::BundletoolNotFound);
-        }
+        let mut build_bundle = bundletool()?;
         build_bundle.arg("build-bundle");
         build_bundle.arg("--modules");
         build_bundle.arg(

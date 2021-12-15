@@ -2,6 +2,8 @@ use crate::error::*;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+use super::bundletool;
+
 /// ## Measure the estimated download sizes of APKs in an APK set
 ///
 /// To measure the estimated download sizes of APKs in an APK set as they would be served
@@ -67,13 +69,7 @@ impl GetSizeTotal {
 
     /// Runs `bundletool` commands to measure the estimated download sizes of APKs in an APK set
     pub fn run(&self) -> Result<()> {
-        let mut get_size_total = Command::new("java");
-        get_size_total.arg("-jar");
-        if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
-            get_size_total.arg(bundletool_path);
-        } else {
-            return Err(Error::BundletoolNotFound);
-        }
+        let mut get_size_total = bundletool()?;
         get_size_total.arg("get-size");
         get_size_total.arg("total");
         get_size_total.arg("--apks");

@@ -26,7 +26,11 @@ pub use optimize::*;
 pub use version::*;
 
 use self::{daemon::Aapt2Daemon, diff::Aapt2Diff, version::Aapt2Version};
-use std::path::{Path, PathBuf};
+use crate::error::*;
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 /// [`AAPT2`](https://developer.android.com/studio/command-line/aapt2)
 /// (Android Asset Packaging Tool) is a build tool that Android Studio
@@ -97,4 +101,13 @@ impl Aapt2 {
     pub fn daemon(self, trace_folder: &Path) -> Aapt2Daemon {
         Aapt2Daemon::new(trace_folder)
     }
+}
+
+pub fn aapt2_tool() -> Result<Command> {
+    if let Ok(aapt2) = which::which(bin!("aapt2")) {
+        return Ok(Command::new(aapt2));
+    } else if let Ok(aapt2) = std::env::var("ANDROID_SDK_ROOT") {
+        return Ok(Command::new(aapt2));
+    }
+    Err(Error::CmdNotFound("aapt2".to_string()))
 }
