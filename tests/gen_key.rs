@@ -1,11 +1,11 @@
 use android_tools::java_tools::{android_dir, gen_key, AabKey};
 
 #[test]
-/// The [`keytool`] command is a key and certificate management utility. It enables users to administer 
-/// their own public/private key pairs and associated certificates for use in self-authentication 
-/// (where the user authenticates himself or herself to other users and services) or data integrity 
+/// The [`keytool`] command is a key and certificate management utility. It enables users to administer
+/// their own public/private key pairs and associated certificates for use in self-authentication
+/// (where the user authenticates himself or herself to other users and services) or data integrity
 /// and authentication services, using digital signatures.
-/// 
+///
 /// [keytool]: https://docs.oracle.com/javase/9/tools/keytool.htm#JSWOR-GUID-5990A2E4-78E3-47B7-AE75-6D1826259549
 fn test_create_keystore_with_keytool() {
     // Creates a temporary directory that will be dropped after test finished

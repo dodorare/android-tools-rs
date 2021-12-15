@@ -58,7 +58,7 @@ impl BuildBundle {
         self
     }
 
-    /// Runs `bundletool` commands to build AAB  
+    /// Runs `bundletool` commands to build AAB
     pub fn run(&self) -> Result<()> {
         let mut build_bundle = Command::new("java");
         build_bundle.arg("-jar");

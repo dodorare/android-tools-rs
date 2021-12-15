@@ -48,7 +48,7 @@ impl InstallApks {
         self
     }
 
-    /// Runs `bundletool` commands to install apks on your device or emulator   
+    /// Runs `bundletool` commands to install apks on your device or emulator
     pub fn run(&self) -> Result<()> {
         let mut install_apks = Command::new("java");
         install_apks.arg("-jar");

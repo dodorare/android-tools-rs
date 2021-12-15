@@ -6,7 +6,7 @@ use android_tools::aapt2::Aapt2;
 ///
 /// [AAPT2]: https://developer.android.com/studio/command-line/aapt2
 fn test_link_files_with_aapt2_to_generate_apk() {
-    // Creates a temporary directory that will be dropped after test finished 
+    // Creates a temporary directory that will be dropped after test finished
     let tempfile = tempfile::tempdir().unwrap();
     let tempdir = tempfile.path().to_path_buf();
 
@@ -19,7 +19,7 @@ fn test_link_files_with_aapt2_to_generate_apk() {
         .join("android")
         .join("mipmap-hdpi");
 
-    // Compiles resources 
+    // Compiles resources
     let compiled_res_path = tempdir.join("compiled_res");
     if !compiled_res_path.exists() {
         std::fs::create_dir_all(&compiled_res_path).unwrap();
@@ -30,7 +30,7 @@ fn test_link_files_with_aapt2_to_generate_apk() {
     );
     let compiled_res = aapt2_compile.run().unwrap();
 
-    // Defines path to android manifest needed to aapt2 link 
+    // Defines path to android manifest needed to aapt2 link
     let manifest_path = user_dirs
         .join("tests")
         .join("resources")
@@ -42,7 +42,7 @@ fn test_link_files_with_aapt2_to_generate_apk() {
     let target_sdk_version = 30;
     let apk_path = tempdir.join("test.apk");
 
-    // Defines path to Android SDK tools 
+    // Defines path to Android SDK tools
     let sdk_path = {
         let sdk_path = std::env::var("ANDROID_SDK_ROOT")
             .ok()

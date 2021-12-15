@@ -15,5 +15,5 @@ pub mod error;
 pub mod aapt2;
 #[cfg(feature = "bundletool")]
 pub mod bundletool;
-#[cfg(feature = "bundletool")]
+#[cfg(feature = "java-tools")]
 pub mod java_tools;

@@ -17,7 +17,7 @@ fn test_sign_application_with_jarsigner() {
     let tempdir = tempfile::tempdir().unwrap();
     let aab_build_dir = tempdir.path();
 
-    // Generates minimal unsigned AAB that will be signed later 
+    // Generates minimal unsigned AAB that will be signed later
     let user_dirs = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     let aab_path = user_dirs
         .join("tests")

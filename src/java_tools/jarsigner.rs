@@ -115,7 +115,7 @@ impl Jarsigner {
     /// and `jarsigner` commands prompt for the token PIN. If the token has a protected
     /// authentication path (such as a dedicated PIN-pad or a biometric reader), then
     /// the `-protected` option must be specified and no password options can be
-    /// specified   
+    /// specified
     pub fn storetype(&mut self, storetype: String) -> &mut Self {
         self.storetype = Some(storetype);
         self

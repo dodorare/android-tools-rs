@@ -1,11 +1,11 @@
 use android_tools::bundletool::{BuildApks, GetSizeTotal};
 
 #[test]
-/// When `bundletool` generates APKs from your app bundle, it includes them in a container 
-/// called an APK set archive, which uses the `.apks` file extension. To generate an APK 
-/// set for all device configurations your app supports from your app bundle, use the bundletool 
+/// When `bundletool` generates APKs from your app bundle, it includes them in a container
+/// called an APK set archive, which uses the `.apks` file extension. To generate an APK
+/// set for all device configurations your app supports from your app bundle, use the bundletool
 /// [`build-apks`] command
-/// 
+///
 /// [build-apks]: https://developer.android.com/studio/command-line/bundletool#generate_apks
 fn test_build_apks_from_aab() {
     // Creates a temporary directory that will be dropped after test finished
