@@ -214,7 +214,7 @@ impl BuildApks {
         self
     }
 
-    /// Runs `bundletool` commands to build apks  
+    /// Runs `bundletool` commands to build apks
     pub fn run(&self) -> Result<PathBuf> {
         let mut build_apks = Command::new("java");
         build_apks.arg("-jar");
