@@ -1,8 +1,6 @@
+use super::aapt2_tool;
 use crate::error::*;
-use std::{
-    path::{Path, PathBuf},
-    process::Command,
-};
+use std::path::{Path, PathBuf};
 
 /// Runs aapt in daemon mode. Each subsequent line is a single parameter to the
 /// command. The end of an invocation is signaled by providing an empty line.
@@ -28,7 +26,7 @@ impl Aapt2Daemon {
 
     /// Executes aapt2 daemon with arguments
     pub fn run(&self) -> Result<()> {
-        let mut aapt2 = Command::new("aapt2");
+        let mut aapt2 = aapt2_tool()?;
         aapt2.arg("daemon");
         aapt2.arg(&self.trace_folder);
         if self.help {

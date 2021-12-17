@@ -33,9 +33,9 @@ use super::aapt2_tool;
 ///     compiled/res/drawable_Image.flat --manifest /path/to/AndroidManifest.xml -v`
 /// ```
 ///
-/// [`d8`]: https://developer.android.com/studio/command-line/d8
-/// [`apksigner`]: https://developer.android.com/studio/command-line/apksigner
-/// [`build your app from the command line`]: https://developer.android.com/studio/build/building-cmdline
+/// [d8]: https://developer.android.com/studio/command-line/d8
+/// [apksigner]: https://developer.android.com/studio/command-line/apksigner
+/// [build your app from the command line]: https://developer.android.com/studio/build/building-cmdline
 #[derive(Debug, Default)]
 pub struct Aapt2Link {
     inputs: Vec<PathBuf>,

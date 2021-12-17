@@ -1,5 +1,5 @@
+use super::aapt2_tool;
 use crate::error::*;
-use std::process::Command;
 
 /// Prints the version of aapt.
 pub struct Aapt2Version {
@@ -24,7 +24,7 @@ impl Aapt2Version {
 
     /// Executes aapt2 version with arguments
     pub fn run(&self) -> Result<()> {
-        let mut aapt2 = Command::new("aapt2");
+        let mut aapt2 = aapt2_tool()?;
         aapt2.arg("version");
         aapt2.arg(&self.version);
         if self.help {

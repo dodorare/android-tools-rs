@@ -1,5 +1,6 @@
+use super::aapt2_tool;
 use crate::error::*;
-use std::{path::PathBuf, process::Command};
+use std::path::PathBuf;
 
 /// Prints the differences in resources of two apks.
 pub struct Aapt2Diff {
@@ -24,7 +25,7 @@ impl Aapt2Diff {
 
     /// Executes aapt2 diff with arguments
     pub fn run(&self) -> Result<()> {
-        let mut aapt2 = Command::new("aapt2");
+        let mut aapt2 = aapt2_tool()?;
         aapt2.arg("diff");
         self.input_apks.iter().for_each(|input_apks| {
             aapt2.arg(input_apks);

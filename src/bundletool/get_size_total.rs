@@ -12,6 +12,7 @@ use std::path::{Path, PathBuf};
 /// ```
 ///
 /// You can modify the behavior of the `get-size total` command using the following flags:
+#[derive(Default)]
 pub struct GetSizeTotal {
     apks: PathBuf,
     device_spec: Option<PathBuf>,
@@ -22,20 +23,17 @@ pub struct GetSizeTotal {
 
 impl GetSizeTotal {
     /// (Required) Specifies the path to the existing APK set file whose download size is
-    /// measured.
+    /// measured
     pub fn new(apks: &Path) -> Self {
         Self {
             apks: apks.to_owned(),
-            device_spec: None,
-            dimensions: None,
-            instant: false,
-            modules: None,
+            ..Default::default()
         }
     }
 
     /// Specifies the path to the device spec file (from get-device-spec or constructed
     /// manually) to use for matching. You can specify a partial path to evaluate a set of
-    /// configurations.
+    /// configurations
     pub fn device_spec(&mut self, device_spec: &Path) -> &mut Self {
         self.device_spec = Some(device_spec.to_owned());
         self
@@ -43,7 +41,7 @@ impl GetSizeTotal {
 
     /// Specifies the dimensions used when computing the size estimates.
     /// Accepts a comma-separated list of: `SDK`, `ABI`, `SCREEN_DENSITY`, and `LANGUAGE`.
-    /// To measure across all dimensions, specify `ALL`.
+    /// To measure across all dimensions, specify `ALL`
     pub fn dimensions(&mut self, dimensions: String) -> &mut Self {
         self.dimensions = Some(dimensions);
         self
@@ -59,7 +57,7 @@ impl GetSizeTotal {
     /// Specifies a comma-separated list of modules in the APK set to consider in the
     /// measurement. The `bundletool` command automatically includes any dependent modules
     /// for the specified set. By default, the command measures the download size of
-    /// all modules installed during the first download.
+    /// all modules installed during the first download
     pub fn modules(&mut self, modules: String) -> &mut Self {
         self.modules = Some(modules);
         self

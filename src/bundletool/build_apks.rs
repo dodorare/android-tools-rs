@@ -28,7 +28,7 @@ use std::path::{Path, PathBuf};
 /// The table below describes the various flags and options you can set when using the
 /// `bundletool build-apks` command in greater detail. Only `--bundle` and `--output` are
 /// required—all other flags are optional.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Default)]
 pub struct BuildApks {
     bundle: PathBuf,
     output: PathBuf,
@@ -63,29 +63,17 @@ impl BuildApks {
     /// (`Required`) Specifies the path to the app bundle you built using Android Studio.
     /// To learn more, read [`Build your project`].
     ///
-    /// [`Build your project`](https://developer.android.com/studio/run#reference)
-    ///
     /// (Required) Specifies the name of the output `.apks` file, which contains all the
     /// APK artifacts for your app. To test the artifacts in this file on a device, go to
     /// the section about how to
-    /// [`deploy APKs to a connected device`](https://developer.android.com/studio/command-line/build_apks#deploy_with_build_apks)
+    /// [`deploy APKs to a connected device`](https://developer.android.com/studio/command-line/bundletool#deploy_with_bundletool)
+    ///
+    /// [Build your project]: (https://developer.android.com/studio/run#reference)
     pub fn new(bundle: &Path, output: &Path) -> Self {
         Self {
             bundle: bundle.to_owned(),
             output: output.to_owned(),
-            overwrite: false,
-            aapt2: None,
-            ks: None,
-            ks_pass_pass: None,
-            ks_pass_file: None,
-            ks_key_alias: None,
-            key_pass_pass: None,
-            key_pass_file: None,
-            connected_device: false,
-            device_id: None,
-            device_spec: None,
-            mode_universal: false,
-            local_testing: false,
+            ..Default::default()
         }
     }
 
@@ -177,7 +165,7 @@ impl BuildApks {
 
     /// Use this flag to provide a path to a `.json` file that specifies the device
     /// configuration you want to target. To learn more, go to the section about how to
-    /// [`Create and use device specification JSON files`](https://developer.android.com/studio/command-line/build_apks#create_use_json)
+    /// [`Create and use device specification JSON files`](https://developer.android.com/studio/command-line/bundletool#create_use_json)
     pub fn device_spec(&mut self, device_spec: &Path) -> &mut Self {
         self.device_spec = Some(device_spec.to_owned());
         self
@@ -196,7 +184,7 @@ impl BuildApks {
     /// configuration. However, they're easier to share with internal testers who, for
     /// example, want to test your app on multiple device configurations.
     ///
-    /// [`feature module manifest`](https://developer.android.com/guide/playcore/feature-delivery#dynamic_feature_manifest)
+    /// [feature module manifest]: https://developer.android.com/guide/playcore/feature-delivery#dynamic_feature_manifest
     pub fn mode_universal(&mut self, mode_universal: bool) -> &mut Self {
         self.mode_universal = mode_universal;
         self

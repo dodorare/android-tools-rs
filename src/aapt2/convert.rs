@@ -1,8 +1,6 @@
+use super::aapt2_tool;
 use crate::error::{CommandExt, Result};
-use std::{
-    path::{Path, PathBuf},
-    process::Command,
-};
+use std::path::{Path, PathBuf};
 
 /// Converts an apk between binary and proto formats.
 #[derive(Default)]
@@ -58,7 +56,7 @@ impl Aapt2Convert {
 
     /// Executes aapt2 convert with arguments
     pub fn run(&self) -> Result<()> {
-        let mut aapt2 = Command::new("aapt2");
+        let mut aapt2 = aapt2_tool()?;
         aapt2.arg("convert");
         aapt2.arg("-o").arg(&self.output_path);
         if let Some(output_format) = &self.output_format {

@@ -1,6 +1,6 @@
+use super::aapt2_tool;
 use crate::error::*;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 /// # Dump
 /// Dump is used for printing information about the APK you generated using the link
@@ -17,6 +17,7 @@ use std::process::Command;
 /// ```sh
 /// `aapt2 dump sub-command filename.apk [options]`
 /// ```
+#[derive(Default)]
 pub struct Aapt2Dump {
     subcommand: SubCommand,
     filename_apk: PathBuf,
@@ -32,10 +33,7 @@ impl Aapt2Dump {
         Self {
             subcommand,
             filename_apk: filename_apk.to_owned(),
-            no_values: false,
-            dumped_file: None,
-            verbose: false,
-            help: false,
+            ..Default::default()
         }
     }
 
@@ -65,7 +63,7 @@ impl Aapt2Dump {
 
     /// Executes aapt2 dump with arguments
     pub fn run(&self) -> Result<()> {
-        let mut aapt2 = Command::new("aapt2");
+        let mut aapt2 = aapt2_tool()?;
         aapt2.arg("dump");
         aapt2.arg(self.subcommand.to_string());
         aapt2.arg(&self.filename_apk);
@@ -123,5 +121,11 @@ impl std::fmt::Display for SubCommand {
             Self::Xmlstrings => write!(f, "xmlstrings"),
             Self::Xmltree => write!(f, "xmltree"),
         }
+    }
+}
+
+impl Default for SubCommand {
+    fn default() -> Self {
+        Self::Apc
     }
 }
