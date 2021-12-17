@@ -1,8 +1,6 @@
+use super::bundletool;
 use crate::error::*;
 use std::path::{Path, PathBuf};
-use std::process::Command;
-
-use super::bundletool;
 
 /// ## Measure the estimated download sizes of APKs in an APK set
 ///

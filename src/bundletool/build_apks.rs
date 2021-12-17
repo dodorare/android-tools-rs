@@ -1,24 +1,24 @@
-use super::{build_apks, bundletool};
+use super::bundletool;
 use crate::error::*;
 use std::path::{Path, PathBuf};
 
 /// ## Generate a set of APKs from your app bundle
 ///
-/// When `build_apks` generates APKs from your app bundle,it includes them in a container
+/// When `bundletool` generates APKs from your app bundle,it includes them in a container
 /// called an APK set archive, which uses the `.apks` file extension. To generate an APK
 /// set for all device configurations your app supports from your app bundle, use the
-/// `build_apks build-apks` command, as shown below.
+/// `bundletool build-apks` command, as shown below.
 ///
 /// ```xml
-/// build_apks build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks
+/// bundletool build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks
 /// ```
 ///
 /// If you want to deploy the APKs to a device, you need to also include your app's
 /// signing information, as shown in the command below. If you do not specify signing
-/// information, `build_apks` attempts to sign your APKs with a debug key for you.
+/// information, `bundletool` attempts to sign your APKs with a debug key for you.
 ///
 /// ```sh
-/// `build_apks build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks`
+/// `bundletool build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks`
 /// `--ks=/MyApp/keystore.jks`
 /// `--ks-pass=file:/MyApp/keystore.pwd`
 /// `--ks-key-alias=MyKeyAlias`
@@ -26,7 +26,7 @@ use std::path::{Path, PathBuf};
 /// ```
 ///
 /// The table below describes the various flags and options you can set when using the
-/// `build_apks build-apks` command in greater detail. Only `--bundle` and `--output` are
+/// `bundletool build-apks` command in greater detail. Only `--bundle` and `--output` are
 /// required—all other flags are optional.
 #[derive(Debug, PartialEq)]
 pub struct BuildApks {
@@ -97,7 +97,7 @@ impl BuildApks {
         self
     }
 
-    /// Specifies a custom path to AAPT2. By default, `build_apks` includes its own
+    /// Specifies a custom path to AAPT2. By default, `bundletool` includes its own
     /// version of AAPT2.
     pub fn aapt2(&mut self, aapt2: &Path) -> &mut Self {
         self.aapt2 = Some(aapt2.to_owned());
@@ -105,7 +105,7 @@ impl BuildApks {
     }
 
     /// Specifies the path to the deployment keystore used to sign the APKs. This flag is
-    /// optional. If you don't include it, `build_apks` attempts to sign your APKs with a
+    /// optional. If you don't include it, `bundletool` attempts to sign your APKs with a
     /// debug signing key.
     pub fn ks(&mut self, ks: &Path) -> &mut Self {
         self.ks = Some(ks.to_owned());
