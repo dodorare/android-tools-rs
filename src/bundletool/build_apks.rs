@@ -27,7 +27,7 @@ use std::path::{Path, PathBuf};
 ///
 /// The table below describes the various flags and options you can set when using the
 /// `bundletool build-apks` command in greater detail. Only `--bundle` and `--output` are
-/// required—all other flags are optional.
+/// required—all other flags are optional
 #[derive(Debug, PartialEq, Default)]
 pub struct BuildApks {
     bundle: PathBuf,
@@ -79,14 +79,14 @@ impl BuildApks {
 
     /// Include this flag if you want to overwrite any existing output file with the same
     /// path you specify using the `--output` option. If you don't include this flag and
-    /// the output file already exists, you get a build error.
+    /// the output file already exists, you get a build error
     pub fn overwrite(&mut self, overwrite: bool) -> &mut Self {
         self.overwrite = overwrite;
         self
     }
 
     /// Specifies a custom path to AAPT2. By default, `bundletool` includes its own
-    /// version of AAPT2.
+    /// version of AAPT2
     pub fn aapt2(&mut self, aapt2: &Path) -> &mut Self {
         self.aapt2 = Some(aapt2.to_owned());
         self
@@ -94,7 +94,7 @@ impl BuildApks {
 
     /// Specifies the path to the deployment keystore used to sign the APKs. This flag is
     /// optional. If you don't include it, `bundletool` attempts to sign your APKs with a
-    /// debug signing key.
+    /// debug signing key
     pub fn ks(&mut self, ks: &Path) -> &mut Self {
         self.ks = Some(ks.to_owned());
         self
@@ -104,7 +104,7 @@ impl BuildApks {
     /// qualify it with pass:. If you're passing the path to a file that contains the
     /// password, qualify it with file:. If you specify a keystore using the `--ks` flag
     /// without specifying `--ks-pass`, `build_apks` prompts you for a password from the
-    /// command line.
+    /// command line
     pub fn ks_pass_pass(&mut self, ks_pass_pass: String) -> &mut Self {
         self.ks_pass_pass = Some(ks_pass_pass);
         self
@@ -114,13 +114,13 @@ impl BuildApks {
     /// qualify it with pass:. If you're passing the path to a file that contains the
     /// password, qualify it with file:. If you specify a keystore using the `--ks` flag
     /// without specifying `--ks-pass`, `build_apks` prompts you for a password from the
-    /// command line.
+    /// command line
     pub fn ks_pass_file(&mut self, ks_pass_file: &Path) -> &mut Self {
         self.ks_pass_file = Some(ks_pass_file.to_owned());
         self
     }
 
-    /// Specifies the alias of the signing key you want to use.
+    /// Specifies the alias of the signing key you want to use
     pub fn ks_key_alias(&mut self, ks_key_alias: String) -> &mut Self {
         self.ks_key_alias = Some(ks_key_alias);
         self
@@ -131,7 +131,7 @@ impl BuildApks {
     /// contains the password, qualify it with file:.
     ///
     /// If this password is identical to the one for the keystore itself, you can omit
-    /// this flag.
+    /// this flag
     pub fn key_pass_pass(&mut self, key_pass_pass: String) -> &mut Self {
         self.key_pass_pass = Some(key_pass_pass);
         self
@@ -142,7 +142,7 @@ impl BuildApks {
     /// contains the password, qualify it with file:.
     ///
     /// If this password is identical to the one for the keystore itself, you can omit
-    /// this flag.
+    /// this flag
     pub fn key_pass_file(&mut self, key_pass_file: &Path) -> &mut Self {
         self.key_pass_file = Some(key_pass_file.to_owned());
         self
@@ -150,14 +150,14 @@ impl BuildApks {
 
     /// Instructs `build_apks` to build APKs that target the configuration of a connected
     /// device. If you don't include this flag, `build_apks` generates APKs for all device
-    /// configurations your app supports.
+    /// configurations your app supports
     pub fn connected_device(&mut self, connected_device: bool) -> &mut Self {
         self.connected_device = connected_device;
         self
     }
 
     /// If you have more than one connected device, use this flag to specify the serial ID
-    /// of the device to which you want to deploy your app.
+    /// of the device to which you want to deploy your app
     pub fn device_id(&mut self, device_id: String) -> &mut Self {
         self.device_id = Some(device_id);
         self

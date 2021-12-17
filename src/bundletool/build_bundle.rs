@@ -27,7 +27,7 @@ impl BuildBundle {
     /// Specifies the list of module ZIP files `bundletool` should use to build your app
     /// bundle.
     ///
-    /// Specifies the path and filename for the output `.aab` file.
+    /// Specifies the path and filename for the output `.aab` file
     pub fn new(modules: &[PathBuf], output: &Path) -> Self {
         Self {
             modules: modules.to_vec(),
@@ -52,7 +52,7 @@ impl BuildBundle {
     ///
     /// `target-bundle-path` specifies a path relative to the root of the app bundle where
     /// you would like the metadata file to be packaged, and `local-file-path` specifies
-    /// the path to the local metadata file itself.
+    /// the path to the local metadata file itself
     pub fn metadata_file(&mut self, metadata_file: &Path) -> &mut Self {
         self.metadata_file = Some(metadata_file.to_owned());
         self

@@ -22,7 +22,7 @@ pub struct ExtractApks {
 
 impl ExtractApks {
     /// Specifies the path to the device spec file (from get-device-spec or constructed
-    /// manually) to use for matching.
+    /// manually) to use for matching
     pub fn new(apks: &Path, device_spec: &Path, output_dir: &Path) -> Self {
         Self {
             apks: apks.to_owned(),

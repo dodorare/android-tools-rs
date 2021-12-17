@@ -1,6 +1,6 @@
+use super::aapt2_tool;
 use crate::error::*;
 use std::path::{Path, PathBuf};
-use super::aapt2_tool;
 
 /// # Compile
 /// `AAPT2` supports compilation of all Android resource types, such as drawables and XML
