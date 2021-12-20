@@ -62,17 +62,17 @@ impl Keytool {
         self
     }
 
-    pub fn alias(&mut self, alias: &String) -> &mut Self {
+    pub fn alias(&mut self, alias: &str) -> &mut Self {
         self.alias = Some(alias.to_string());
         self
     }
 
-    pub fn keypass(&mut self, keypass: &String) -> &mut Self {
+    pub fn keypass(&mut self, keypass: &str) -> &mut Self {
         self.keypass = Some(keypass.to_string());
         self
     }
 
-    pub fn storepass(&mut self, storepass: &String) -> &mut Self {
+    pub fn storepass(&mut self, storepass: &str) -> &mut Self {
         self.storepass = Some(storepass.to_string());
         self
     }

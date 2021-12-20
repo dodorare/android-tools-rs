@@ -12,7 +12,7 @@ pub use get_device_spec::*;
 pub use get_size_total::*;
 pub use install_apks::*;
 
-use crate::error::*;
+use crate::{bundletool, error::*};
 use std::{
     path::{Path, PathBuf},
     process::Command,
@@ -85,8 +85,18 @@ pub fn bundletool() -> Result<Command> {
     bundletool.arg("-jar");
     if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
         bundletool.arg(bundletool_path);
+        println!("{:?}", bundletool);
     } else {
         return Err(Error::BundletoolNotFound);
     }
-    Err(Error::CmdNotFound("bundletool".to_string()))
+    Ok(bundletool)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn new() {
+        bundletool().unwrap();
+    }
 }
