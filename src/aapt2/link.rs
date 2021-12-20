@@ -1,6 +1,6 @@
+use super::aapt2_tool;
 use crate::error::{CommandExt, Error, Result};
 use std::path::{Path, PathBuf};
-use super::aapt2_tool;
 
 /// ## Link
 /// In the link phase, `AAPT2` merges all the intermediate files generated from the
