@@ -12,7 +12,7 @@ pub struct Keytool {
     keypass: Option<String>,
     storepass: Option<String>,
     dname: Option<Vec<String>>,
-    storetype: Option<Storetype>,
+    storetype: Option<StoreType>,
     providername: Option<String>,
     providerclass: Option<String>,
     providerarg: Option<PathBuf>,
@@ -37,7 +37,7 @@ pub struct Keytool {
     delete: bool,
     changealias: bool,
     help: bool,
-    keyalg: Option<Keyalg>,
+    keyalg: Option<KeyAlgorithm>,
 }
 
 impl Keytool {
@@ -77,7 +77,7 @@ impl Keytool {
         self
     }
 
-    pub fn keyalg(&mut self, keyalg: Keyalg) -> &mut Self {
+    pub fn keyalg(&mut self, keyalg: KeyAlgorithm) -> &mut Self {
         self.keyalg = Some(keyalg);
         self
     }
@@ -87,7 +87,7 @@ impl Keytool {
         self
     }
 
-    pub fn storetype(&mut self, storetype: Storetype) -> &mut Self {
+    pub fn storetype(&mut self, storetype: StoreType) -> &mut Self {
         self.storetype = Some(storetype);
         self
     }
@@ -344,7 +344,7 @@ pub fn keytool() -> Result<Command> {
 }
 
 #[derive(Clone)]
-pub enum Storetype {
+pub enum StoreType {
     JKS,
     /// This keystore implementation employs a much stronger protection of private
     /// keys (using password-based encryption with Triple DES) than JKS. You can
@@ -368,7 +368,7 @@ pub enum Storetype {
 }
 
 #[derive(Clone)]
-pub enum Keyalg {
+pub enum KeyAlgorithm {
     RSA,
     /// This keystore implementation employs a much stronger protection of private
     /// keys (using password-based encryption with Triple DES) than JKS. You can
@@ -391,7 +391,7 @@ pub enum Keyalg {
     DESede,
 }
 
-impl std::fmt::Display for Storetype {
+impl std::fmt::Display for StoreType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match *self {
             Self::JKS => write!(f, "JKS"),
@@ -403,7 +403,7 @@ impl std::fmt::Display for Storetype {
     }
 }
 
-impl std::fmt::Display for Keyalg {
+impl std::fmt::Display for KeyAlgorithm {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match *self {
             Self::RSA => write!(f, "RSA"),

@@ -49,6 +49,8 @@ pub enum Error {
     CompiledResourcesNotFound,
     /// IO error
     Io(#[from] std::io::Error),
+    /// IO error
+    AndroidError(#[from] AndroidError),
 }
 
 /// Extension trait for [`Command`] that helps

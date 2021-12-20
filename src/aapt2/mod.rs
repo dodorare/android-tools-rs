@@ -116,9 +116,7 @@ pub fn aapt2_tool() -> Result<Command> {
             .filter_map(|path| path.file_name().into_string().ok())
             .filter(|name| name.chars().next().unwrap().is_digit(10))
             .max()
-            // TODO: Fix '?' error
-            .ok_or(AndroidError::BuildToolsNotFound)
-            .unwrap();
+            .ok_or(AndroidError::BuildToolsNotFound)?;
         let aapt2_exe = build_tools.join(target_sdk_version).join(bin!("aapt2"));
         return Ok(Command::new(aapt2_exe));
     }

@@ -4,7 +4,7 @@ use std::process::Command;
 
 /// Signs and verifies Java Archive (JAR) files
 #[derive(Clone, Default)]
-pub struct Jarsigner {
+pub struct JarSigner {
     verify: bool,
     jar_file: PathBuf,
     alias: String,
@@ -39,7 +39,7 @@ pub struct Jarsigner {
     help: bool,
 }
 
-impl Jarsigner {
+impl JarSigner {
     /// ## JarFile
     /// The JAR file to be signed.
     ///

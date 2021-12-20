@@ -12,8 +12,8 @@ pub struct JavaTools;
 
 impl JavaTools {
     /// Invocates jarsigner to sign JAR file. You can use it to sign APK and AAB files too
-    pub fn jarsigner(self, jar_file: &Path, alias: &str) -> Jarsigner {
-        Jarsigner::new(jar_file, alias)
+    pub fn jarsigner(self, jar_file: &Path, alias: &str) -> JarSigner {
+        JarSigner::new(jar_file, alias)
     }
 
     /// Invocates keytool options to create and manage keystore
