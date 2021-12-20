@@ -12,7 +12,11 @@ pub use get_device_spec::*;
 pub use get_size_total::*;
 pub use install_apks::*;
 
-use std::path::{Path, PathBuf};
+use crate::{bundletool, error::*};
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 /// ## Bundletool
 /// `bundletool` is the underlying tool that Android Studio, the Android Gradle plugin,
@@ -73,5 +77,26 @@ impl Bundletool {
     /// device, run the command
     pub fn get_device_spec(self, output: &Path) -> GetDeviceSpec {
         GetDeviceSpec::new(output)
+    }
+}
+
+pub fn bundletool() -> Result<Command> {
+    let mut bundletool = Command::new("java");
+    bundletool.arg("-jar");
+    if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
+        bundletool.arg(bundletool_path);
+        println!("{:?}", bundletool);
+    } else {
+        return Err(Error::BundletoolNotFound);
+    }
+    Ok(bundletool)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn new() {
+        bundletool().unwrap();
     }
 }

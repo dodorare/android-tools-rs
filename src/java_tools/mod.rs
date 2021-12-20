@@ -15,4 +15,9 @@ impl JavaTools {
     pub fn jarsigner(self, jar_file: &Path, alias: &str) -> Jarsigner {
         Jarsigner::new(jar_file, alias)
     }
+
+    /// Invocates keytool options to create and manage keystore
+    pub fn keytool(self) -> Keytool {
+        Keytool::new()
+    }
 }

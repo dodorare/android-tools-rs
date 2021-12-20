@@ -1,6 +1,6 @@
+use super::bundletool;
 use crate::error::*;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 /// ## Deploy APKs to a connected device
 ///
@@ -50,13 +50,7 @@ impl InstallApks {
 
     /// Runs `bundletool` commands to install apks on your device or emulator
     pub fn run(&self) -> Result<()> {
-        let mut install_apks = Command::new("java");
-        install_apks.arg("-jar");
-        if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
-            install_apks.arg(bundletool_path);
-        } else {
-            return Err(Error::BundletoolNotFound);
-        }
+        let mut install_apks = bundletool()?;
         install_apks.arg("install-apks");
         install_apks.arg("--apks");
         install_apks.arg(&self.apks);

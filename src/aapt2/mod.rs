@@ -26,7 +26,11 @@ pub use optimize::*;
 pub use version::*;
 
 use self::{daemon::Aapt2Daemon, diff::Aapt2Diff, version::Aapt2Version};
-use std::path::{Path, PathBuf};
+use crate::error::*;
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 /// [`AAPT2`](https://developer.android.com/studio/command-line/aapt2)
 /// (Android Asset Packaging Tool) is a build tool that Android Studio
@@ -97,4 +101,26 @@ impl Aapt2 {
     pub fn daemon(self, trace_folder: &Path) -> Aapt2Daemon {
         Aapt2Daemon::new(trace_folder)
     }
+}
+
+pub fn aapt2_tool() -> Result<Command> {
+    if let Ok(aapt2) = which::which(bin!("aapt2")) {
+        return Ok(Command::new(aapt2));
+    } else if let Ok(aapt2) = std::env::var("ANDROID_SDK_ROOT") {
+        let aapt2 = PathBuf::from(aapt2);
+        let build_tools = aapt2.join("build-tools");
+        let target_sdk_version = std::fs::read_dir(&build_tools)
+            .map_err(|_| Error::PathNotFound(build_tools.clone()))?
+            .filter_map(|path| path.ok())
+            .filter(|path| path.path().is_dir())
+            .filter_map(|path| path.file_name().into_string().ok())
+            .filter(|name| name.chars().next().unwrap().is_digit(10))
+            .max()
+            // TODO: Fix '?' error
+            .ok_or(AndroidError::BuildToolsNotFound)
+            .unwrap();
+        let aapt2_exe = build_tools.join(target_sdk_version).join(bin!("aapt2"));
+        return Ok(Command::new(aapt2_exe));
+    }
+    Err(Error::CmdNotFound("aapt2".to_string()))
 }

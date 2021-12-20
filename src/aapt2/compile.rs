@@ -1,6 +1,6 @@
+use super::aapt2_tool;
 use crate::error::*;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 /// # Compile
 /// `AAPT2` supports compilation of all Android resource types, such as drawables and XML
@@ -189,7 +189,7 @@ impl Aapt2Compile {
 
     /// Executes aapt2 compile with arguments
     pub fn run(&self) -> Result<PathBuf> {
-        let mut aapt2 = Command::new("aapt2");
+        let mut aapt2 = aapt2_tool()?;
         aapt2.arg("compile");
         if let Some(res_path) = &self.res_path {
             walkdir::WalkDir::new(res_path)

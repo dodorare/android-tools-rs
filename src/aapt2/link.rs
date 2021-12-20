@@ -1,8 +1,6 @@
+use super::aapt2_tool;
 use crate::error::{CommandExt, Error, Result};
-use std::{
-    path::{Path, PathBuf},
-    process::Command,
-};
+use std::path::{Path, PathBuf};
 
 /// ## Link
 /// In the link phase, `AAPT2` merges all the intermediate files generated from the
@@ -35,9 +33,9 @@ use std::{
 ///     compiled/res/drawable_Image.flat --manifest /path/to/AndroidManifest.xml -v`
 /// ```
 ///
-/// [`d8`]: https://developer.android.com/studio/command-line/d8
-/// [`apksigner`]: https://developer.android.com/studio/command-line/apksigner
-/// [`build your app from the command line`]: https://developer.android.com/studio/build/building-cmdline
+/// [d8]: https://developer.android.com/studio/command-line/d8
+/// [apksigner]: https://developer.android.com/studio/command-line/apksigner
+/// [build your app from the command line]: https://developer.android.com/studio/build/building-cmdline
 #[derive(Debug, Default)]
 pub struct Aapt2Link {
     inputs: Vec<PathBuf>,
@@ -603,7 +601,7 @@ impl Aapt2Link {
 
     /// Executes aapt2 link with arguments
     pub fn run(&self) -> Result<PathBuf> {
-        let mut aapt2 = Command::new("aapt2");
+        let mut aapt2 = aapt2_tool()?;
         aapt2.arg("link");
         if !self.inputs.is_empty() {
             self.inputs.iter().for_each(|input| {

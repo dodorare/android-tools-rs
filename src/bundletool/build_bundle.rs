@@ -1,6 +1,6 @@
+use super::bundletool;
 use crate::error::*;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 /// ## Build your app bundle using bundletool
 /// To build your app bundle, you use the `bundletool build-bundle` command, as shown
@@ -14,7 +14,7 @@ use std::process::Command;
 /// If you plan to publish the app bundle, you need to sign it using [`jarsigner`]. You
 /// can not use apksigner to sign your app bundle.
 ///
-/// [`jarsigner`](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/jarsigner.html)
+/// [jarsigner]: https://docs.oracle.com/javase/8/docs/technotes/tools/windows/jarsigner.html
 #[derive(Debug, PartialEq, PartialOrd)]
 pub struct BuildBundle {
     modules: Vec<PathBuf>,
@@ -27,7 +27,7 @@ impl BuildBundle {
     /// Specifies the list of module ZIP files `bundletool` should use to build your app
     /// bundle.
     ///
-    /// Specifies the path and filename for the output `.aab` file.
+    /// Specifies the path and filename for the output `.aab` file
     pub fn new(modules: &[PathBuf], output: &Path) -> Self {
         Self {
             modules: modules.to_vec(),
@@ -52,7 +52,7 @@ impl BuildBundle {
     ///
     /// `target-bundle-path` specifies a path relative to the root of the app bundle where
     /// you would like the metadata file to be packaged, and `local-file-path` specifies
-    /// the path to the local metadata file itself.
+    /// the path to the local metadata file itself
     pub fn metadata_file(&mut self, metadata_file: &Path) -> &mut Self {
         self.metadata_file = Some(metadata_file.to_owned());
         self
@@ -60,13 +60,7 @@ impl BuildBundle {
 
     /// Runs `bundletool` commands to build AAB
     pub fn run(&self) -> Result<()> {
-        let mut build_bundle = Command::new("java");
-        build_bundle.arg("-jar");
-        if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
-            build_bundle.arg(bundletool_path);
-        } else {
-            return Err(Error::BundletoolNotFound);
-        }
+        let mut build_bundle = bundletool()?;
         build_bundle.arg("build-bundle");
         build_bundle.arg("--modules");
         build_bundle.arg(

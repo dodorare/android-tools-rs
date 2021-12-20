@@ -57,7 +57,7 @@ pub enum Error {
 /// [`Command`](std::process::Command)
 pub trait CommandExt {
     /// Executes the command as a child process, then captures an output and return it.
-    /// If command termination wasn't successful wraps an output into error and return it.
+    /// If command termination wasn't successful wraps an output into error and return it
     fn output_err(self, print_logs: bool) -> Result<std::process::Output>;
 }
 

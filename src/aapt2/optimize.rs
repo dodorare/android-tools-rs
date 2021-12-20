@@ -1,6 +1,6 @@
+use super::aapt2_tool;
 use crate::error::*;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 /// Preforms resource optimizations on an APK
 #[derive(Clone, Default)]
@@ -129,7 +129,7 @@ impl Aapt2Optimize {
 
     /// Executes aapt2 optimize with arguments
     pub fn run(self) -> Result<()> {
-        let mut aapt2 = Command::new("aapt2");
+        let mut aapt2 = aapt2_tool()?;
         aapt2.arg("optimize");
         aapt2.arg("-o").arg(&self.output_apk);
         aapt2.arg("-d").arg(&self.output_dir);

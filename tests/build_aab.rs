@@ -105,4 +105,15 @@ fn test_build_android_app_bundle() {
 
     // Builds AAB
     BuildBundle::new(&[zip_path], &aab).run().unwrap();
+
+    // Removes unnecessary content
+    for remove_file in std::fs::read_dir(build_dir).unwrap() {
+        let path = remove_file.unwrap().path();
+        if path.ends_with("extracted_files") {
+            std::fs::remove_dir_all(&path).unwrap()
+        }
+        if path.ends_with("extracted_files.zip") {
+            std::fs::remove_file(&path).unwrap()
+        }
+    }
 }

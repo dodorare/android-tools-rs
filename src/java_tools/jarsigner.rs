@@ -48,7 +48,7 @@ impl Jarsigner {
     ///
     /// ## Alias
     /// The aliases are defined in the keystore specified by `-keystore` or the default
-    /// keystore.
+    /// keystore
     pub fn new(jar_file: &Path, alias: &str) -> Self {
         Self {
             jar_file: jar_file.to_owned(),
