@@ -2,7 +2,7 @@ use crate::error::*;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-/// Signs and verifies Java Archive (JAR) files
+/// Contents options that can help to manage keystore of cryptographic keys
 #[derive(Clone, Default)]
 pub struct Keytool {
     genkey: bool,
@@ -35,9 +35,9 @@ pub struct Keytool {
     storepasswd: bool,
     keypasswd: bool,
     delete: bool,
-    changealias:bool,
+    changealias: bool,
     help: bool,
-    keyalg: Option<Keyalg>
+    keyalg: Option<Keyalg>,
 }
 
 impl Keytool {
@@ -62,18 +62,18 @@ impl Keytool {
         self
     }
 
-    pub fn alias(&mut self, alias: String) -> &mut Self {
-        self.alias = Some(alias);
+    pub fn alias(&mut self, alias: &String) -> &mut Self {
+        self.alias = Some(alias.to_string());
         self
     }
 
-    pub fn keypass(&mut self, keypass: String) -> &mut Self {
-        self.keypass = Some(keypass);
+    pub fn keypass(&mut self, keypass: &String) -> &mut Self {
+        self.keypass = Some(keypass.to_string());
         self
     }
 
-    pub fn storepass(&mut self, storepass: String) -> &mut Self {
-        self.storepass = Some(storepass);
+    pub fn storepass(&mut self, storepass: &String) -> &mut Self {
+        self.storepass = Some(storepass.to_string());
         self
     }
 
@@ -212,8 +212,8 @@ impl Keytool {
     }
 
     /// Runs keytool commands
-    pub fn run(&self) -> Result<()>{
-        let mut keytool =  keytool()?;
+    pub fn run(&self) -> Result<()> {
+        let mut keytool = keytool()?;
         if self.genkey {
             keytool.arg("-genkey");
         }
@@ -321,7 +321,7 @@ impl Keytool {
         }
         keytool.output_err(true)?;
         Ok(())
-}
+    }
 }
 
 /// The `keytool` command is a key and certificate management utility. It enables users to
@@ -342,7 +342,6 @@ pub fn keytool() -> Result<Command> {
     }
     Err(Error::CmdNotFound("keytool".to_string()))
 }
-
 
 #[derive(Clone)]
 pub enum Storetype {
