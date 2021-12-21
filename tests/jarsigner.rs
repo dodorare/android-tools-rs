@@ -39,7 +39,7 @@ fn test_sign_application_with_jarsigner() {
     });
 
     // Creates new keystore to sign aab
-    let key = AabKey::default();
+    let key = AabKey::new_default().unwrap();
     Keytool::new()
         .genkeypair(true)
         .v(true)

@@ -540,7 +540,7 @@ impl Keytool {
     /// * {-providerclass class [-providerarg arg]}: Add security provider by fully qualified
     /// * class name with an optional configure argument.
     /// * {-providerpath list}: Provider classpath
-    /// * {-v }: Verbose output
+    /// * {-v}: Verbose output
     /// * {-protected}: Password provided through a protected mechanism
     ///
     /// Reads from the keystore the certificate associated with alias and stores it in the
@@ -785,19 +785,29 @@ impl Keytool {
     }
 
     /// Runs keytool commands
-    pub fn run(&self) -> Result<()> {
+    pub fn run(&self) -> Result<Option<AabKey>> {
+        let mut key = Some(AabKey::new_default()?);
         let mut keytool = keytool()?;
         if self.v {
             keytool.arg("-v");
         }
         if let Some(keystore) = &self.keystore {
             keytool.arg("-keystore").arg(keystore);
+            if let Some(key) = &mut key {
+                key.key_path = keystore.to_owned();
+            }
         }
         if let Some(alias) = &self.alias {
             keytool.arg("-alias").arg(alias);
+            if let Some(key) = &mut key {
+                key.key_alias = alias.to_owned();
+            }
         }
         if let Some(keypass) = &self.keypass {
             keytool.arg("-keypass").arg(keypass);
+            if let Some(key) = &mut key {
+                key.key_pass = keypass.to_owned();
+            }
         }
         if let Some(storepass) = &self.storepass {
             keytool.arg("-storepass").arg(storepass);
@@ -888,6 +898,7 @@ impl Keytool {
         }
         if self.help {
             keytool.arg("-help");
+            key = None;
         }
         if let Some(file) = &self.file {
             keytool.arg("-file").arg(file);
@@ -917,7 +928,7 @@ impl Keytool {
             );
         }
         keytool.output_err(true)?;
-        Ok(())
+        Ok(key)
     }
 }
 
@@ -1019,20 +1030,20 @@ pub struct AabKey {
     pub key_alias: String,
 }
 
-impl Default for AabKey {
-    fn default() -> Self {
-        let key_path = android_dir().unwrap().join("aab.keystore");
+impl AabKey {
+    pub fn new_default() -> Result<Self> {
+        let key_path = android_dir()?.join("aab.keystore");
         let key_pass = "android".to_string();
         let key_alias = "androidaabkey".to_string();
-        Self {
+        Ok(Self {
             key_path,
             key_pass,
             key_alias,
-        }
+        })
     }
 }
 
-/// Returns the path to `android` directory created in the user's home directory
+/// Returns or crates it if needed the path to `.android` in the user's home directory.
 pub fn android_dir() -> Result<PathBuf> {
     let android_dir = dirs::home_dir()
         .ok_or_else(|| Error::PathNotFound(PathBuf::from("$HOME")))?

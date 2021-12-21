@@ -34,7 +34,7 @@ fn test_create_keystore_with_keytool() {
     });
 
     // Creates new keystore from keytool
-    let key = AabKey::default();
+    let key = AabKey::new_default().unwrap();
     Keytool::new()
         .genkeypair(true)
         .v(true)
