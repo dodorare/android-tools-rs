@@ -1,6 +1,6 @@
 [package]
 name = "android-tools"
-version = "0.2.0"
+version = "0.2.2"
 edition = "2021"
 authors = ["DodoRare Team <support@dodorare.com>"]
 description = "Android-related tools for building and developing applications 🛠"
