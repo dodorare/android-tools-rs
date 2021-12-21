@@ -1,6 +1,6 @@
+use super::bundletool;
 use crate::error::*;
 use std::path::{Path, PathBuf};
-use super::bundletool;
 
 /// ## Generate and use device specification JSON files
 ///

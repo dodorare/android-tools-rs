@@ -4,7 +4,7 @@ use std::process::Command;
 
 /// Signs and verifies Java Archive (JAR) files
 #[derive(Clone, Default)]
-pub struct Jarsigner {
+pub struct JarSigner {
     verify: bool,
     jar_file: PathBuf,
     alias: String,
@@ -14,7 +14,7 @@ pub struct Jarsigner {
     keypass: Option<String>,
     certchain: Option<PathBuf>,
     sigfile: Option<PathBuf>,
-    signedjar: Option<PathBuf>,
+    signedjar: Option<String>,
     digestalg: Option<String>,
     sigalg: Option<String>,
     verbose: bool,
@@ -24,7 +24,7 @@ pub struct Jarsigner {
     tsacert: Option<String>,
     tsapolicyid: Option<String>,
     tsadigestalg: Option<String>,
-    altsigner: Option<PathBuf>,
+    altsigner: Option<String>,
     altsignerpath: Option<Vec<PathBuf>>,
     internalsf: bool,
     sectionsonly: bool,
@@ -39,7 +39,7 @@ pub struct Jarsigner {
     help: bool,
 }
 
-impl Jarsigner {
+impl JarSigner {
     /// ## JarFile
     /// The JAR file to be signed.
     ///
@@ -176,8 +176,8 @@ impl Jarsigner {
     }
 
     /// Name of signed JAR file
-    pub fn signedjar(&mut self, signedjar: &Path) -> &mut Self {
-        self.signedjar = Some(signedjar.to_owned());
+    pub fn signedjar(&mut self, signedjar: String) -> &mut Self {
+        self.signedjar = Some(signedjar);
         self
     }
 
@@ -275,8 +275,8 @@ impl Jarsigner {
 
     /// Class name of an alternative signing mechanism (This option is deprecated and will
     /// be removed in a future release.)
-    pub fn altsigner(&mut self, altsigner: &Path) -> &mut Self {
-        self.altsigner = Some(altsigner.to_owned());
+    pub fn altsigner(&mut self, altsigner: String) -> &mut Self {
+        self.altsigner = Some(altsigner);
         self
     }
 

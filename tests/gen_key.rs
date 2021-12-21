@@ -1,4 +1,4 @@
-use android_tools::java_tools::{android_dir, AabKey, Keyalg, Keytool};
+use android_tools::java_tools::{android_dir, AabKey, KeyAlgorithm, Keytool};
 
 #[test]
 /// The [`keytool`] command is a key and certificate management utility. It enables users to administer
@@ -36,14 +36,14 @@ fn test_create_keystore_with_keytool() {
     // Creates new keystore from keytool
     let key = AabKey::default();
     Keytool::new()
-        .genkey(true)
+        .genkeypair(true)
         .v(true)
         .keystore(&key.key_path)
         .alias(&key.key_alias)
         .keypass(&key.key_pass)
         .storepass(&key.key_pass)
         .dname(&["CN=Android Debug,O=Android,C=US".to_owned()])
-        .keyalg(Keyalg::RSA)
+        .keyalg(KeyAlgorithm::RSA)
         .keysize(2048)
         .validity(10000)
         .run()

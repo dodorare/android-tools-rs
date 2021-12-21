@@ -1,4 +1,4 @@
-use android_tools::java_tools::{android_dir, AabKey, Jarsigner, Keyalg, Keytool};
+use android_tools::java_tools::{android_dir, AabKey, JarSigner, KeyAlgorithm, Keytool};
 
 #[test]
 /// The [`jarsigner`] tool has two purposes:
@@ -41,21 +41,21 @@ fn test_sign_application_with_jarsigner() {
     // Creates new keystore to sign aab
     let key = AabKey::default();
     Keytool::new()
-        .genkey(true)
+        .genkeypair(true)
         .v(true)
         .keystore(&key.key_path)
         .alias(&key.key_alias)
         .keypass(&key.key_pass)
         .storepass(&key.key_pass)
         .dname(&["CN=Android Debug,O=Android,C=US".to_owned()])
-        .keyalg(Keyalg::RSA)
+        .keyalg(KeyAlgorithm::RSA)
         .keysize(2048)
         .validity(10000)
         .run()
         .unwrap();
 
     // Signs AAB with key
-    let signed_aab = Jarsigner::new(&cloned_aab, &key.key_alias)
+    let signed_aab = JarSigner::new(&cloned_aab, &key.key_alias)
         .verbose(true)
         .sigalg("SHA256withRSA".to_string())
         .digestalg("SHA-256".to_string())
