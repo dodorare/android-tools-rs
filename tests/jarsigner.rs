@@ -41,7 +41,7 @@ fn test_sign_application_with_jarsigner() {
     // Creates new keystore to sign aab
     let key = AabKey::default();
     Keytool::new()
-        .genkey(true)
+        .genkeypair(true)
         .v(true)
         .keystore(&key.key_path)
         .alias(&key.key_alias)
