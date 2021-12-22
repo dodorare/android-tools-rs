@@ -106,19 +106,23 @@ impl Aapt2 {
 pub fn aapt2_tool() -> Result<Command> {
     if let Ok(aapt2) = which::which(bin!("aapt2")) {
         return Ok(Command::new(aapt2));
-    } else if let Ok(aapt2) = std::env::var("ANDROID_SDK_ROOT") {
-        let aapt2 = PathBuf::from(aapt2);
-        let build_tools = aapt2.join("build-tools");
-        let target_sdk_version = std::fs::read_dir(&build_tools)
-            .map_err(|_| Error::PathNotFound(build_tools.clone()))?
-            .filter_map(|path| path.ok())
-            .filter(|path| path.path().is_dir())
-            .filter_map(|path| path.file_name().into_string().ok())
-            .filter(|name| name.chars().next().unwrap().is_digit(10))
-            .max()
-            .ok_or(AndroidError::BuildToolsNotFound)?;
-        let aapt2_exe = build_tools.join(target_sdk_version).join(bin!("aapt2"));
-        return Ok(Command::new(aapt2_exe));
     }
-    Err(Error::CmdNotFound("aapt2".to_string()))
+    let sdk_path = {
+        let sdk_path = std::env::var("ANDROID_SDK_ROOT")
+            .ok()
+            .or_else(|| std::env::var("ANDROID_SDK_PATH").ok())
+            .or_else(|| std::env::var("ANDROID_HOME").ok());
+        PathBuf::from(sdk_path.ok_or(AndroidError::AndroidSdkNotFound)?)
+    };
+    let build_tools = sdk_path.join("build-tools");
+    let target_sdk_version = std::fs::read_dir(&build_tools)
+        .map_err(|_| Error::PathNotFound(build_tools.clone()))?
+        .filter_map(|path| path.ok())
+        .filter(|path| path.path().is_dir())
+        .filter_map(|path| path.file_name().into_string().ok())
+        .filter(|name| name.chars().next().unwrap().is_digit(10))
+        .max()
+        .ok_or(AndroidError::BuildToolsNotFound)?;
+    let aapt2_exe = build_tools.join(target_sdk_version).join(bin!("aapt2"));
+    return Ok(Command::new(aapt2_exe));
 }
