@@ -85,18 +85,8 @@ pub fn bundletool() -> Result<Command> {
     bundletool.arg("-jar");
     if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
         bundletool.arg(bundletool_path);
-        println!("{:?}", bundletool);
     } else {
         return Err(Error::BundletoolNotFound);
     }
     Ok(bundletool)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn new() {
-        bundletool().unwrap();
-    }
 }
