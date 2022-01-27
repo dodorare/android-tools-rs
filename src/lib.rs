@@ -17,3 +17,4 @@ pub mod aapt2;
 pub mod bundletool;
 #[cfg(feature = "java-tools")]
 pub mod java_tools;
+pub mod emulator;
