@@ -15,6 +15,7 @@ pub mod error;
 pub mod aapt2;
 #[cfg(feature = "bundletool")]
 pub mod bundletool;
+#[cfg(feature = "emulator")]
+pub mod emulator;
 #[cfg(feature = "java-tools")]
 pub mod java_tools;
-pub mod emulator;

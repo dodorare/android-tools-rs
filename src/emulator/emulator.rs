@@ -1,5 +1,10 @@
-use std::{path::{Path, PathBuf}, process::Command};
+use crate::emulator::*;
 use crate::error::*;
+use std::fmt::Debug;
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 #[derive(Clone, Default)]
 pub struct EmulatorTools {
@@ -137,7 +142,7 @@ pub struct EmulatorTools {
     grpc_tls_ca: Option<PathBuf>,
     grpc_use_token: bool,
     idle_grpc_timeout: Option<u32>,
-    waterfall:  Option<String>,
+    waterfall: Option<String>,
     multidisplay: Option<String>,
     google_maps_key: Option<String>,
     no_location_ui: bool,
@@ -152,7 +157,8 @@ pub struct EmulatorTools {
     guest_angle: bool,
     qemu: bool,
     verbose: bool,
-    debug: bool,
+    debug: Option<DebugTags>,
+    debug_no: Option<DebugTags>,
     help: bool,
     help_disk_images: bool,
     help_debug_tags: bool,
@@ -163,7 +169,6 @@ pub struct EmulatorTools {
     help_build_images: bool,
     help_all: bool,
 }
-
 
 impl EmulatorTools {
     pub fn new() -> Self {
@@ -1073,8 +1078,13 @@ impl EmulatorTools {
     }
 
     /// Enable/disable debug messages
-    pub fn debug(&mut self, debug: bool) -> &mut Self {
-        self.debug = debug;
+    pub fn debug(&mut self, debug: DebugTags) -> &mut Self {
+        self.debug = Some(debug);
+        self
+    }
+
+    pub fn debug_no(&mut self, debug_no: DebugTags) -> &mut Self {
+        self.debug_no = Some(debug_no);
         self
     }
 
@@ -1134,7 +1144,7 @@ impl EmulatorTools {
 
     pub fn run(&self) -> Result<()> {
         let mut emulator = Command::new("emulator");
-        if self.list_avds{
+        if self.list_avds {
             emulator.arg("-list-avds");
         }
         if let Some(sysdir) = &self.sysdir {
@@ -1146,10 +1156,10 @@ impl EmulatorTools {
         if let Some(vendor) = &self.vendor {
             emulator.arg("-vendor").arg(vendor);
         }
-        if self.writable_system{
+        if self.writable_system {
             emulator.arg("-writable-system");
         }
-        if self.delay_adb{
+        if self.delay_adb {
             emulator.arg("-delay-adb");
         }
         if let Some(datadir) = &self.datadir {
@@ -1177,7 +1187,9 @@ impl EmulatorTools {
             emulator.arg("-logcat-output").arg(logcat_output);
         }
         if let Some(partition_size) = &self.partition_size {
-            emulator.arg("-partition-size").arg(partition_size.to_string());
+            emulator
+                .arg("-partition-size")
+                .arg(partition_size.to_string());
         }
         if let Some(cache) = &self.cache {
             emulator.arg("-cache").arg(cache);
@@ -1185,22 +1197,24 @@ impl EmulatorTools {
         if let Some(cache_size) = &self.cache_size {
             emulator.arg("-cache-size").arg(cache_size.to_string());
         }
-        if self.no_cache{
+        if self.no_cache {
             emulator.arg("-no-cache");
         }
-        if self.nocache{
+        if self.nocache {
             emulator.arg("-nocache");
         }
         if let Some(sdcard) = &self.sdcard {
             emulator.arg("-sdcard").arg(sdcard);
         }
         if let Some(quit_after_boot) = &self.quit_after_boot {
-            emulator.arg("-quit-after-boot").arg(quit_after_boot.to_string());
+            emulator
+                .arg("-quit-after-boot")
+                .arg(quit_after_boot.to_string());
         }
         if let Some(qemu_top_dir) = &self.qemu_top_dir {
             emulator.arg("-qemu-top-dir").arg(qemu_top_dir);
         }
-        if self.monitor_adb{
+        if self.monitor_adb {
             emulator.arg("-monitor-adb");
         }
         if let Some(snapstorage) = &self.snapstorage {
@@ -1318,9 +1332,13 @@ impl EmulatorTools {
             emulator.arg("-port").arg(port);
         }
         if let Some(ports) = &self.ports {
-            emulator.arg("-ports").arg(ports.iter()
-            .map(|v| v.to_string()).collect::<Vec<String>>().join(","),
-    );
+            emulator.arg("-ports").arg(
+                ports
+                    .iter()
+                    .map(|v| v.to_string())
+                    .collect::<Vec<String>>()
+                    .join(","),
+            );
         }
         if let Some(onion) = &self.onion {
             emulator.arg("-onion").arg(onion);
@@ -1368,7 +1386,9 @@ impl EmulatorTools {
             emulator.arg("-net-tap-script-up").arg(net_tap_script_up);
         }
         if let Some(net_tap_script_down) = &self.net_tap_script_down {
-            emulator.arg("-net-tap-script-down").arg(net_tap_script_down);
+            emulator
+                .arg("-net-tap-script-down")
+                .arg(net_tap_script_down);
         }
         if let Some(cpu_delay) = &self.cpu_delay {
             emulator.arg("-cpu-delay").arg(cpu_delay);
@@ -1452,7 +1472,9 @@ impl EmulatorTools {
             emulator.arg("-webcam-list");
         }
         if let Some(virtualscene_poster) = &self.virtualscene_poster {
-            emulator.arg("-virtualscene-poster").arg(virtualscene_poster);
+            emulator
+                .arg("-virtualscene-poster")
+                .arg(virtualscene_poster);
         }
         if let Some(screen) = &self.screen {
             emulator.arg("-screen").arg(screen.to_string());
@@ -1494,7 +1516,9 @@ impl EmulatorTools {
             emulator.arg("-icc-profile").arg(icc_profile);
         }
         if let Some(sim_access_rules_file) = &self.sim_access_rules_file {
-            emulator.arg("-sim-access-rules-file").arg(sim_access_rules_file);
+            emulator
+                .arg("-sim-access-rules-file")
+                .arg(sim_access_rules_file);
         }
         if let Some(phone_number) = &self.phone_number {
             emulator.arg("-phone-number").arg(phone_number);
@@ -1536,7 +1560,9 @@ impl EmulatorTools {
             emulator.arg("-grpc-use-token");
         }
         if let Some(idle_grpc_timeout) = &self.idle_grpc_timeout {
-            emulator.arg("-idle-grpc-timeout").arg(idle_grpc_timeout.to_string());
+            emulator
+                .arg("-idle-grpc-timeout")
+                .arg(idle_grpc_timeout.to_string());
         }
         if let Some(waterfall) = &self.waterfall {
             emulator.arg("-waterfall").arg(waterfall);
@@ -1566,7 +1592,9 @@ impl EmulatorTools {
             emulator.arg("-no-direct-adb");
         }
         if let Some(check_snapshot_loadable) = &self.check_snapshot_loadable {
-            emulator.arg("-check-snapshot-loadable").arg(check_snapshot_loadable);
+            emulator
+                .arg("-check-snapshot-loadable")
+                .arg(check_snapshot_loadable);
         }
         if self.no_hidpi_scaling {
             emulator.arg("-no-hidpi-scaling");
@@ -1583,8 +1611,11 @@ impl EmulatorTools {
         if self.verbose {
             emulator.arg("-verbose");
         }
-        if self.debug {
-            emulator.arg("-debug");
+        if let Some(debug) = &self.debug {
+            emulator.arg("-debug").arg(debug.to_string());
+        }
+        if let Some(debug_no) = &self.debug_no {
+            emulator.arg(format!("-debug-no-{}", debug_no));
         }
         if self.help {
             emulator.arg("-help");
@@ -1618,128 +1649,5 @@ impl EmulatorTools {
         }
         emulator.output_err(true)?;
         Ok(())
-    }
-}
-
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SELinux {
-    Disabled,
-    Permissive,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Engine{
-    Auto,
-    Classic,
-    Qemu2,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Netspeed{
-    Gsm,
-    Hscsd,
-    Gprs,
-    Wdge,
-    Umts,
-    Hsdpa,
-    Lte,
-    Evdo,
-    Full,
-    Num,
-    Up,
-    Down,
-}
-
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum CameraMode{
-    Emulated,
-    None,
-    Webcam,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ScreenMode{
-    Touch,
-    MultiTouch,
-    NoTouch,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum AccelMode{
-    Auto,
-    Off,
-    On,
-}
-
-
-impl std::fmt::Display for SELinux {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match *self {
-            Self::Disabled => write!(f, "disabled"),
-            Self::Permissive => write!(f, "permissive"),
-        }
-    }
-}
-
-
-impl std::fmt::Display for Engine {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match *self {
-            Self::Auto => write!(f, "auto"),
-            Self::Classic => write!(f, "classic"),
-            Self::Qemu2 => write!(f, "qemu2"),
-        }
-    }
-}
-
-impl std::fmt::Display for Netspeed {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match *self {
-            Self::Gsm => write!(f, "gsm"),
-            Self::Hscsd => write!(f, "hscsd"),
-            Self::Gprs => write!(f, "gprs"),
-            Self::Wdge => write!(f, "wdge"),
-            Self::Umts => write!(f, "umts"),
-            Self::Hsdpa => write!(f, "hsdpa"),
-            Self::Lte => write!(f, "lte"),
-            Self::Evdo => write!(f, "evdo"),
-            Self::Full => write!(f, "full"),
-            Self::Num => write!(f, "num"),
-            Self::Up => write!(f, "up"),
-            Self::Down => write!(f, "down"),
-        }
-    }
-}
-
-
-impl std::fmt::Display for CameraMode {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match *self {
-            Self::Emulated => write!(f, "emulated"),
-            Self::None => write!(f, "none"),
-            Self::Webcam => write!(f, "webcam"),
-        }
-    }
-}
-
-impl std::fmt::Display for ScreenMode {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match *self {
-            Self::Touch => write!(f, "touch"),
-            Self::MultiTouch => write!(f, "multi-touch"),
-            Self::NoTouch => write!(f, "no-touch"),
-        }
-    }
-}
-
-impl std::fmt::Display for AccelMode {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match *self {
-            Self::Auto => write!(f, "auto"),
-            Self::Off => write!(f, "off"),
-            Self::On => write!(f, "on"),
-        }
     }
 }
