@@ -1,6 +1,5 @@
 use crate::emulator::*;
 use crate::error::*;
-use std::fmt::Debug;
 use std::{
     path::{Path, PathBuf},
     process::Command,
