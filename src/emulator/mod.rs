@@ -28,14 +28,6 @@ pub fn emulator_tool() -> Result<Command> {
         PathBuf::from(sdk_path.ok_or(AndroidError::AndroidSdkNotFound)?)
     };
     let build_tools = sdk_path.join("emulator");
-    let target_sdk_version = std::fs::read_dir(&build_tools)
-        .map_err(|_| Error::PathNotFound(build_tools.clone()))?
-        .filter_map(|path| path.ok())
-        .filter(|path| path.path().is_dir())
-        .filter_map(|path| path.file_name().into_string().ok())
-        .filter(|name| name.chars().next().unwrap().is_digit(10))
-        .max()
-        .ok_or(AndroidError::BuildToolsNotFound)?;
-    let emulator = build_tools.join(target_sdk_version).join(bin!("emulator"));
+    let emulator = build_tools.join(bin!("emulator"));
     Ok(Command::new(emulator))
 }
