@@ -124,5 +124,5 @@ pub fn aapt2_tool() -> Result<Command> {
         .max()
         .ok_or(AndroidError::BuildToolsNotFound)?;
     let aapt2_exe = build_tools.join(target_sdk_version).join(bin!("aapt2"));
-    return Ok(Command::new(aapt2_exe));
+    Ok(Command::new(aapt2_exe))
 }
