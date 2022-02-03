@@ -1,8 +1,6 @@
 use crate::emulator::*;
 use crate::error::*;
-use std::{
-    path::{Path, PathBuf},
-};
+use std::path::{Path, PathBuf};
 
 #[derive(Clone, Default)]
 pub struct EmulatorTools {

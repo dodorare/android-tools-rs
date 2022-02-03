@@ -2,7 +2,7 @@ mod emulator_enum;
 mod emulator_tools;
 
 use crate::error::*;
-use std::{process::Command, path::PathBuf};
+use std::{path::PathBuf, process::Command};
 
 pub use emulator_enum::*;
 pub use emulator_tools::*;
