@@ -2,7 +2,6 @@ use crate::emulator::*;
 use crate::error::*;
 use std::{
     path::{Path, PathBuf},
-    process::Command,
 };
 
 #[derive(Clone, Default)]
@@ -1142,7 +1141,7 @@ impl EmulatorTools {
     }
 
     pub fn run(&self) -> Result<()> {
-        let mut emulator = Command::new("emulator");
+        let mut emulator = emulator_tool()?;
         if self.list_avds {
             emulator.arg("-list-avds");
         }
