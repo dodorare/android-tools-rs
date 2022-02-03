@@ -35,6 +35,10 @@ jobs:
       - name: Run tests
         run: |
           export BUNDLETOOL_PATH="$HOME/bundletool.jar"
+          set --export ANDROID_HOME $HOME/Android/Sdk
+          set -gx PATH $ANDROID_HOME/emulator $PATH;
+          set -gx PATH $ANDROID_HOME/tools $PATH;
+          set -gx PATH $ANDROID_HOME/tools/bin $PATH;
           cargo test --no-fail-fast
       - name: Check for deadlinks
         run: |
