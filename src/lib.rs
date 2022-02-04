@@ -22,6 +22,7 @@ pub mod emulator;
 #[cfg(feature = "java-tools")]
 pub mod java_tools;
 
+/// Return SDK path from found environment variable
 pub fn sdk_path_from_env() -> crate::error::Result<PathBuf> {
     let sdk_path = {
         let sdk_path = std::env::var("ANDROID_SDK_ROOT")

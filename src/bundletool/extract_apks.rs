@@ -31,6 +31,7 @@ impl ExtractApks {
         }
     }
 
+    /// Runs `bundletool` commands to extract apks on your device or emulator
     pub fn run(&self) -> Result<()> {
         let mut extract_apks = bundletool()?;
         extract_apks.arg("--apks");

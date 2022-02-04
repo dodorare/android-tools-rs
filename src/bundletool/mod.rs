@@ -82,15 +82,17 @@ impl Bundletool {
     }
 }
 
+/// Find `bundletool` jar file in home directory then set environment variable and initialize it
 pub fn bundletool() -> Result<Command> {
-    let mut bundletool_init = Command::new("java");
-    bundletool_init.arg("-jar");
     let bundletool = format!("bundletool-all-{}.jar", BUNDLETOOL_VERSION);
     let env_value = dirs::home_dir()
         .ok_or_else(|| Error::PathNotFound(PathBuf::from("$HOME")))
         .unwrap()
         .join(bundletool);
     std::env::set_var("BUNDLETOOL_PATH", env_value);
+
+    let mut bundletool_init = Command::new("java");
+    bundletool_init.arg("-jar");
     if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
         bundletool_init.arg(bundletool_path);
     } else {

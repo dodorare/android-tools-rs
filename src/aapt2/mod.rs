@@ -103,6 +103,7 @@ impl Aapt2 {
     }
 }
 
+/// Find aapt2 executable binary file in SDK and initialize it
 pub fn aapt2_tool() -> Result<Command> {
     if let Ok(aapt2) = which::which(bin!("aapt2")) {
         return Ok(Command::new(aapt2));

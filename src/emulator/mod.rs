@@ -16,6 +16,7 @@ impl Emulator {
     }
 }
 
+/// Find `emulator` executable binary file in SDK and initialize it
 pub fn emulator_tool() -> Result<Command> {
     if let Ok(emulator_tools) = which::which(bin!("emulator")) {
         return Ok(Command::new(emulator_tools));
