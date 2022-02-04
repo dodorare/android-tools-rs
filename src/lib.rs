@@ -1,3 +1,4 @@
+use error::AndroidError;
 use std::path::PathBuf;
 
 /// On Windows adds `.exe` to given string.
@@ -29,7 +30,7 @@ pub fn sdk_path_from_env() -> crate::error::Result<PathBuf> {
             .ok()
             .or_else(|| std::env::var("ANDROID_SDK_PATH").ok())
             .or_else(|| std::env::var("ANDROID_HOME").ok());
-        std::path::PathBuf::from(sdk_path.expect("Android SDK was not found"))
+        std::path::PathBuf::from(sdk_path.ok_or(AndroidError::AndroidSdkNotFound)?)
     };
     Ok(sdk_path)
 }
