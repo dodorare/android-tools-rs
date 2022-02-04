@@ -18,7 +18,7 @@ use std::{
     process::Command,
 };
 
-const BUNDLETOOL_VERSION: &'static str = "1.8.2";
+const BUNDLETOOL_VERSION: &str = "1.8.2";
 
 /// ## Bundletool
 /// `bundletool` is the underlying tool that Android Studio, the Android Gradle plugin,
