@@ -86,8 +86,7 @@ impl Bundletool {
 pub fn bundletool() -> Result<Command> {
     let bundletool = format!("bundletool-all-{}.jar", BUNDLETOOL_VERSION);
     let env_value = dirs::home_dir()
-        .ok_or_else(|| Error::PathNotFound(PathBuf::from("$HOME")))
-        .unwrap()
+        .ok_or_else(|| Error::PathNotFound(PathBuf::from("$HOME")))?
         .join(bundletool);
     std::env::set_var("BUNDLETOOL_PATH", env_value);
 
