@@ -21,7 +21,7 @@ pub fn emulator_tool() -> Result<Command> {
     if let Ok(emulator_tools) = which::which(bin!("emulator")) {
         return Ok(Command::new(emulator_tools));
     }
-    let sdk_path = sdk_path_from_env().unwrap();
+    let sdk_path = sdk_path_from_env()?;
     let build_tools = sdk_path.join("emulator");
     let emulator = build_tools.join(bin!("emulator"));
     Ok(Command::new(emulator))

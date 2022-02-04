@@ -108,7 +108,7 @@ pub fn aapt2_tool() -> Result<Command> {
     if let Ok(aapt2) = which::which(bin!("aapt2")) {
         return Ok(Command::new(aapt2));
     }
-    let sdk_path = sdk_path_from_env().unwrap();
+    let sdk_path = sdk_path_from_env()?;
     let build_tools = sdk_path.join("build-tools");
     let target_sdk_version = std::fs::read_dir(&build_tools)
         .map_err(|_| Error::PathNotFound(build_tools.clone()))?
