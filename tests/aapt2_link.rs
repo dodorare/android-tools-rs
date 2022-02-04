@@ -1,4 +1,4 @@
-use android_tools::aapt2::Aapt2;
+use android_tools::{aapt2::Aapt2, sdk_path_from_env};
 
 #[test]
 /// [`AAPT2`] merges all the intermediate files generated from the compilation phase
@@ -43,13 +43,7 @@ fn test_link_files_with_aapt2_to_generate_apk() {
     let apk_path = tempdir.join("test.apk");
 
     // Defines path to Android SDK tools
-    let sdk_path = {
-        let sdk_path = std::env::var("ANDROID_SDK_ROOT")
-            .ok()
-            .or_else(|| std::env::var("ANDROID_SDK_PATH").ok())
-            .or_else(|| std::env::var("ANDROID_HOME").ok());
-        std::path::PathBuf::from(sdk_path.expect("Android SDK was not found"))
-    };
+    let sdk_path = sdk_path_from_env().unwrap();
     let platforms_path = sdk_path.join("platforms");
     let platform_dir = platforms_path.join(format!("android-{}", target_sdk_version));
     if !platform_dir.exists() {

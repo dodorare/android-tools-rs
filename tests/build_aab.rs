@@ -1,4 +1,4 @@
-use android_tools::{aapt2::Aapt2, bundletool::BuildBundle};
+use android_tools::{aapt2::Aapt2, bundletool::BuildBundle, sdk_path_from_env};
 use zip::ZipWriter;
 use zip_extensions::write::ZipWriterExtensions;
 
@@ -46,13 +46,7 @@ fn test_build_android_app_bundle() {
     let apk_path = build_dir.join("test.apk");
 
     // Defines path to Android SDK tools
-    let sdk_path = {
-        let sdk_path = std::env::var("ANDROID_SDK_ROOT")
-            .ok()
-            .or_else(|| std::env::var("ANDROID_SDK_PATH").ok())
-            .or_else(|| std::env::var("ANDROID_HOME").ok());
-        std::path::PathBuf::from(sdk_path.expect("Android SDK was not found"))
-    };
+    let sdk_path = sdk_path_from_env().unwrap();
     let platforms_path = sdk_path.join("platforms");
     let platform_dir = platforms_path.join(format!("android-{}", target_sdk_version));
     if !platform_dir.exists() {
