@@ -1138,6 +1138,7 @@ impl EmulatorTools {
         self
     }
 
+    /// Runs `emulator` commands and initialize emulator
     pub fn run(&self) -> Result<()> {
         let mut emulator = emulator_tool()?;
         if self.list_avds {

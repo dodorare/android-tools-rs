@@ -18,6 +18,8 @@ use std::{
     process::Command,
 };
 
+const BUNDLETOOL_VERSION: &str = "1.8.2";
+
 /// ## Bundletool
 /// `bundletool` is the underlying tool that Android Studio, the Android Gradle plugin,
 /// and Google Play use to build an Android App Bundle, and convert an app bundle into
@@ -80,13 +82,24 @@ impl Bundletool {
     }
 }
 
+/// Find `bundletool` jar file in home directory then set environment variable and initialize it
 pub fn bundletool() -> Result<Command> {
-    let mut bundletool = Command::new("java");
-    bundletool.arg("-jar");
+    let mut bundletool_init = Command::new("java");
+    bundletool_init.arg("-jar");
     if let Ok(bundletool_path) = std::env::var("BUNDLETOOL_PATH") {
-        bundletool.arg(bundletool_path);
+        bundletool_init.arg(bundletool_path);
     } else {
-        return Err(Error::BundletoolNotFound);
+        let env_version =
+            std::env::var("BUNDLETOOL_VERSION").unwrap_or_else(|_| BUNDLETOOL_VERSION.to_string());
+        let bundletool_file = format!("bundletool-all-{}.jar", env_version);
+        let bundletool_file_path = dirs::home_dir()
+            .ok_or_else(|| Error::PathNotFound(PathBuf::from("$HOME")))?
+            .join(bundletool_file);
+        if bundletool_file_path.exists() {
+            bundletool_init.arg(bundletool_file_path);
+        } else {
+            return Err(Error::BundletoolNotFound);
+        }
     }
-    Ok(bundletool)
+    Ok(bundletool_init)
 }

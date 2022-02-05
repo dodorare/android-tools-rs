@@ -26,7 +26,7 @@ pub use optimize::*;
 pub use version::*;
 
 use self::{daemon::Aapt2Daemon, diff::Aapt2Diff, version::Aapt2Version};
-use crate::error::*;
+use crate::{error::*, sdk_path_from_env};
 use std::{
     path::{Path, PathBuf},
     process::Command,
@@ -103,17 +103,12 @@ impl Aapt2 {
     }
 }
 
+/// Find aapt2 executable binary file in SDK and initialize it
 pub fn aapt2_tool() -> Result<Command> {
     if let Ok(aapt2) = which::which(bin!("aapt2")) {
         return Ok(Command::new(aapt2));
     }
-    let sdk_path = {
-        let sdk_path = std::env::var("ANDROID_SDK_ROOT")
-            .ok()
-            .or_else(|| std::env::var("ANDROID_SDK_PATH").ok())
-            .or_else(|| std::env::var("ANDROID_HOME").ok());
-        PathBuf::from(sdk_path.ok_or(AndroidError::AndroidSdkNotFound)?)
-    };
+    let sdk_path = sdk_path_from_env()?;
     let build_tools = sdk_path.join("build-tools");
     let target_sdk_version = std::fs::read_dir(&build_tools)
         .map_err(|_| Error::PathNotFound(build_tools.clone()))?
