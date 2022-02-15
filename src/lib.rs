@@ -22,6 +22,7 @@ pub mod bundletool;
 pub mod emulator;
 #[cfg(feature = "java-tools")]
 pub mod java_tools;
+pub mod adb;
 
 /// Return SDK path from found environment variable
 pub fn sdk_path_from_env() -> crate::error::Result<PathBuf> {
