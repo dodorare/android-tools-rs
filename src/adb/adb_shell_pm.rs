@@ -1,7 +1,10 @@
-use std::path::{PathBuf, Path};
+use std::{path::{PathBuf, Path}, process::Command};
+use crate::error::*;
+
+use super::InstallLocation;
 
 #[derive(Clone, Default)]
- pub struct Pm {
+ pub struct AdbShellPm {
     list_packages: Option<String>,
     list_permission_groups: Option<String>,
     list_permission: bool,
@@ -18,16 +21,31 @@ use std::path::{PathBuf, Path};
     disable_user: Option<PathBuf>,
     grant: Option<String>,
     revoke: Option<String>,
-    set_install_location: Option<PathBuf>,
-    get_install_location: Option<PathBuf>,
+    set_install_location: Option<InstallLocation>,
+    get_install_location: Option<InstallLocation>,
+    install_location: Option<InstallLocation>,
     set_permission_enforced: bool,
-    trim_caches: bool,
+    trim_caches: Option<PathBuf>,
     create_user: Option<String>,
     remove_user: Option<String>,
     get_max_users: bool,
+    f: bool,
+    d: bool,
+    e: bool,
+    s: bool,
+    third_party: bool,
+    i: bool,
+    u: bool,
+    g: bool,
+    r: bool,
+    t: bool,
+    k: bool,
+    fastdeploy: bool,
+    no_incremental: bool,
+    user: Option<String>,
 }
 
-impl Pm {
+impl AdbShellPm {
     pub fn new() -> Self {
         Self {
             ..Default::default()
@@ -194,11 +212,6 @@ impl Pm {
         self
     }
 
-    pub fn get_install_location(&mut self, get_install_location: &Path) -> &mut Self {
-        self.get_install_location = Some(get_install_location.to_owned());
-        self
-    }
-
     /// Changes the default install location. Location values:
     /// * `0`: Auto: Let system decide the best location.
     /// * `1`: Internal: install on internal device storage.
@@ -207,13 +220,241 @@ impl Pm {
     /// ## Note
     /// This is only intended for debugging; using this can cause apps to break and
     /// other undesireable behavior.
-    pub fn get_install_location(&mut self, get_install_location: &Path) -> &mut Self {
+    pub fn set_install_location(&mut self, set_install_location: &InstallLocation) -> &mut Self {
+        self.set_install_location = Some(set_install_location.to_owned());
+        self
+    }
+
+    /// Returns the current install location. Return values:
+    /// * `0`: Auto: Let system decide the best location.
+    /// * `1`: Internal: install on internal device storage.
+    /// * `2`: External: on external media.
+    pub fn get_install_location(&mut self, get_install_location: &InstallLocation) -> &mut Self {
         self.get_install_location = Some(get_install_location.to_owned());
         self
     }
 
-    pub fn get_install_location(&mut self, get_install_location: bool) -> &mut Self {
-        self.get_install_location = get_install_location;
+    /// Specifies whether the given permission should be enforced.
+    pub fn set_permission_enforced(&mut self, set_permission_enforced: bool) -> &mut Self {
+        self.set_permission_enforced = set_permission_enforced;
         self
+    }
+
+    /// Trim cache files to reach the given free space.
+    pub fn trim_caches(&mut self, trim_caches: &Path) -> &mut Self {
+        self.trim_caches = Some(trim_caches.to_owned());
+        self
+    }
+
+    /// Create a new user with the given user_name, printing the new user identifier
+    /// of the user.
+    pub fn create_user(&mut self, create_user: String) -> &mut Self {
+        self.create_user = Some(create_user.to_owned());
+        self
+    }
+
+    /// Remove the user with the given user_id, deleting all data associated with
+    /// that user
+    pub fn remove_user(&mut self, remove_user: String) -> &mut Self {
+        self.remove_user = Some(remove_user.to_owned());
+        self
+    }
+
+    /// Prints the maximum number of users supported by the device.
+    pub fn get_max_users(&mut self, get_max_users: bool) -> &mut Self {
+        self.get_max_users = get_max_users;
+        self
+    }
+
+    pub fn f(&mut self, f: bool) -> &mut Self {
+        self.f = f;
+        self
+    }
+
+    pub fn d(&mut self, d: bool) -> &mut Self {
+        self.d = d;
+        self
+    }
+
+    pub fn e(&mut self, e: bool) -> &mut Self {
+        self.e = e;
+        self
+    }
+
+    pub fn s(&mut self, s: bool) -> &mut Self {
+        self.s = s;
+        self
+    }
+
+    pub fn third_party(&mut self, third_party: bool) -> &mut Self {
+        self.third_party = third_party;
+        self
+    }
+
+    pub fn i(&mut self, i: bool) -> &mut Self {
+        self.i = i;
+        self
+    }
+
+    pub fn u(&mut self, u: bool) -> &mut Self {
+        self.u = u;
+        self
+    }
+
+    pub fn g(&mut self, g: bool) -> &mut Self {
+        self.g = g;
+        self
+    }
+
+    pub fn r(&mut self, r: bool) -> &mut Self {
+        self.r = r;
+        self
+    }
+
+    pub fn t(&mut self, t: bool) -> &mut Self {
+        self.t = t;
+        self
+    }
+
+    pub fn k(&mut self, k: bool) -> &mut Self {
+        self.k = k;
+        self
+    }
+
+    pub fn fastdeploy(&mut self, fastdeploy: bool) -> &mut Self {
+        self.fastdeploy = fastdeploy;
+        self
+    }
+
+    pub fn no_incremental(&mut self, no_incremental: bool) -> &mut Self {
+        self.no_incremental = no_incremental;
+        self
+    }
+
+    pub fn user(&mut self, user: String) -> &mut Self {
+        self.user = Some(user.to_owned());
+        self
+    }
+
+    pub fn run(&self) -> Result<()> {
+        let mut pm = Command::new("adb");
+        pm.arg("shell");
+        pm.arg("pm");
+        if let Some(list_packages) = &self.list_packages {
+            pm.arg("list packages").arg(list_packages);
+        }
+        if let Some(list_permission_groups) = &self.list_permission_groups {
+            pm.arg("list permission groups").arg(list_permission_groups);
+        }
+        if self.list_permission {
+            pm.arg("list permissions");
+        }
+        if self.list_instrumentation {
+            pm.arg("list instrumentation");
+        }
+        if self.list_features {
+            pm.arg("list features");
+        }
+        if self.list_libraries {
+            pm.arg("list libraries");
+        }
+        if self.list_users {
+            pm.arg("list users");
+        }
+        if let Some(path_package) = &self.path_package {
+            pm.arg("path").arg(path_package);
+        }
+        if let Some(install_path) = &self.install_path {
+            pm.arg("install").arg(install_path);
+        }
+        if let Some(uninstall) = &self.uninstall {
+            pm.arg("uninstall").arg(uninstall);
+        }
+        if let Some(clear) = &self.clear {
+            pm.arg("clear").arg(clear);
+        }
+        if let Some(enable) = &self.enable {
+            pm.arg("enable").arg(enable);
+        }
+        if let Some(disable) = &self.disable {
+            pm.arg("disable").arg(disable);
+        }
+        if let Some(disable_user) = &self.disable_user {
+            pm.arg("disable-user").arg(disable_user);
+        }
+        if let Some(grant) = &self.grant {
+            pm.arg("grant").arg(grant);
+        }
+        if let Some(revoke) = &self.revoke {
+            pm.arg("revoke").arg(revoke);
+        }
+        if let Some(set_install_location) = &self.set_install_location {
+            pm.arg("set-install-location").arg(set_install_location.to_string());
+        }
+        if let Some(get_install_location) = &self.get_install_location {
+            pm.arg("get-install-location").arg(get_install_location.to_string());
+        }
+        if let Some(install_location) = &self.install_location {
+            pm.arg("--install-location").arg(install_location.to_string());
+        }
+        if self.set_permission_enforced {
+            pm.arg("set-permission-enforced");
+        }
+        if let Some(trim_caches) = &self.trim_caches {
+            pm.arg("trim-caches").arg(trim_caches);
+        }
+        if let Some(create_user) = &self.create_user {
+            pm.arg("create-user").arg(create_user);
+        }
+        if let Some(remove_user) = &self.remove_user {
+            pm.arg("remove-user").arg(remove_user);
+        }
+        if self.get_max_users {
+            pm.arg("get-max-users");
+        }
+        if self.f {
+            pm.arg("-f");
+        }
+        if self.d {
+            pm.arg("-d");
+        }
+        if self.e {
+            pm.arg("-e");
+        }
+        if self.s {
+            pm.arg("-s");
+        }
+        if self.third_party {
+            pm.arg("-3");
+        }
+        if self.i {
+            pm.arg("-i");
+        }
+        if self.u {
+            pm.arg("-u");
+        }
+        if self.g {
+            pm.arg("-g");
+        }
+        if self.r{
+            pm.arg("-r");
+        }
+        if self.t{
+            pm.arg("-t");
+        }
+        if self.k{
+            pm.arg("-k");
+        }
+        if self.fastdeploy{
+            pm.arg("--fastdeploy");
+        }
+        if self.no_incremental{
+            pm.arg("--no-incremental");
+        }
+        if let Some(user) = &self.user {
+            pm.arg("--user").arg(user);
+        }
+        pm.output_err(true)?;
+        Ok(())
     }
 }

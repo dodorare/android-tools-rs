@@ -1,5 +1,8 @@
+use std::process::Command;
+use crate::error::*;
+
 #[derive(Clone, Default)]
- pub struct Dpm {
+ pub struct AdbShellDpm {
     name: Option<String>,
     user_id: Option<String>,
     set_active_admin: bool,
@@ -11,11 +14,21 @@
     force_security_logs: bool,
 }
 
-impl Dpm {
+impl AdbShellDpm {
     pub fn new() -> Self {
         Self {
             ..Default::default()
         }
+    }
+
+    pub fn name(&mut self, name: String) -> &mut Self {
+        self.name = Some(name.to_owned());
+        self
+    }
+
+    pub fn user_id(&mut self, user_id: String) -> &mut Self {
+        self.user_id = Some(user_id.to_owned());
+        self
     }
 
     /// Sets component as active admin.
@@ -92,5 +105,40 @@ impl Dpm {
     pub fn force_security_logs(&mut self, force_security_logs: bool) -> &mut Self {
         self.force_security_logs = force_security_logs;
         self
+    }
+
+    pub fn run(&self) -> Result<()> {
+        let mut dpm = Command::new("adb");
+        dpm.arg("shell");
+        dpm.arg("dpm");
+        if let Some(name) = &self.name {
+            dpm.arg("-name").arg(name);
+        }
+        if let Some(user_id) = &self.user_id {
+            dpm.arg("-user").arg(user_id);
+        }
+        if self.set_active_admin {
+            dpm.arg("set-active-admin");
+        }
+        if self.set_profile_owner {
+            dpm.arg("set-profile-owner");
+        }
+        if self.set_device_owner {
+            dpm.arg("set-device-owner");
+        }
+        if self.remove_active_admin {
+            dpm.arg("remove-active-admin");
+        }
+        if self.clear_freeze_period_record {
+            dpm.arg("clear-freeze-period-record");
+        }
+        if self.force_network_logs {
+            dpm.arg("force-network-logs");
+        }
+        if self.force_security_logs {
+            dpm.arg("force-security-logs");
+        }
+        dpm.output_err(true)?;
+        Ok(())
     }
 }
