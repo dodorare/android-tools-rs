@@ -1,10 +1,13 @@
-use std::{path::{PathBuf, Path}, process::Command};
 use crate::error::*;
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 use super::InstallLocation;
 
 #[derive(Clone, Default)]
- pub struct AdbShellPm {
+pub struct AdbShellPm {
     list_packages: Option<String>,
     list_permission_groups: Option<String>,
     list_permission: bool,
@@ -389,13 +392,16 @@ impl AdbShellPm {
             pm.arg("revoke").arg(revoke);
         }
         if let Some(set_install_location) = &self.set_install_location {
-            pm.arg("set-install-location").arg(set_install_location.to_string());
+            pm.arg("set-install-location")
+                .arg(set_install_location.to_string());
         }
         if let Some(get_install_location) = &self.get_install_location {
-            pm.arg("get-install-location").arg(get_install_location.to_string());
+            pm.arg("get-install-location")
+                .arg(get_install_location.to_string());
         }
         if let Some(install_location) = &self.install_location {
-            pm.arg("--install-location").arg(install_location.to_string());
+            pm.arg("--install-location")
+                .arg(install_location.to_string());
         }
         if self.set_permission_enforced {
             pm.arg("set-permission-enforced");
@@ -436,19 +442,19 @@ impl AdbShellPm {
         if self.g {
             pm.arg("-g");
         }
-        if self.r{
+        if self.r {
             pm.arg("-r");
         }
-        if self.t{
+        if self.t {
             pm.arg("-t");
         }
-        if self.k{
+        if self.k {
             pm.arg("-k");
         }
-        if self.fastdeploy{
+        if self.fastdeploy {
             pm.arg("--fastdeploy");
         }
-        if self.no_incremental{
+        if self.no_incremental {
             pm.arg("--no-incremental");
         }
         if let Some(user) = &self.user {

@@ -1,5 +1,5 @@
-use std::{process::Command};
 use crate::error::*;
+use std::process::Command;
 
 #[derive(Clone, Default)]
 pub struct AdbPull {

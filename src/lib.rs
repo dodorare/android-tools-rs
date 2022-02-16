@@ -16,13 +16,13 @@ pub mod error;
 
 #[cfg(feature = "aapt2")]
 pub mod aapt2;
+pub mod adb;
 #[cfg(feature = "bundletool")]
 pub mod bundletool;
 #[cfg(feature = "emulator")]
 pub mod emulator;
 #[cfg(feature = "java-tools")]
 pub mod java_tools;
-pub mod adb;
 
 /// Return SDK path from found environment variable
 pub fn sdk_path_from_env() -> crate::error::Result<PathBuf> {

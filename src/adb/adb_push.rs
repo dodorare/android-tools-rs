@@ -1,5 +1,8 @@
-use std::{path::{Path, PathBuf}, process::Command};
 use crate::error::*;
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 #[derive(Clone, Default)]
 pub struct AdbPush {

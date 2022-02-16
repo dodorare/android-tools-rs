@@ -1,8 +1,8 @@
-use std::process::Command;
 use crate::error::*;
+use std::process::Command;
 
 #[derive(Clone, Default)]
- pub struct AdbShellDpm {
+pub struct AdbShellDpm {
     name: Option<String>,
     user_id: Option<String>,
     set_active_admin: bool,

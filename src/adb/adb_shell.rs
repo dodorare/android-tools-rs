@@ -1,8 +1,11 @@
-use std::{path::{PathBuf, Path}, process::Command};
 use crate::error::*;
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 #[derive(Clone, Default)]
- pub struct Shell {
+pub struct Shell {
     pwd: bool,
     netstat: bool,
     service_list: bool,
@@ -10,7 +13,7 @@ use crate::error::*;
     wm_size: Option<String>,
     ls: bool,
     ls_s: bool,
-    ls_R: bool,
+    ls_r: bool,
     install: Option<PathBuf>,
     install_r: Option<PathBuf>,
     uninstall: Option<String>,
@@ -19,7 +22,6 @@ use crate::error::*;
     dump: Option<String>,
     path: Option<PathBuf>,
 }
-
 
 impl Shell {
     pub fn new() -> Self {
@@ -136,7 +138,7 @@ impl Shell {
         if self.ls_s {
             shell.arg("ls -s");
         }
-        if self.ls_R {
+        if self.ls_r {
             shell.arg("ls -R");
         }
         if let Some(install) = &self.install {

@@ -1,10 +1,13 @@
-use std::{path::{PathBuf, Path}, process::Command};
 use crate::error::*;
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 use super::ScreenCompatibilityMode;
 
 #[derive(Clone, Default)]
- pub struct AdbShellAm {
+pub struct AdbShellAm {
     d: bool,
     w: bool,
     p: Option<PathBuf>,
@@ -15,7 +18,7 @@ use super::ScreenCompatibilityMode;
     opengl_trace: bool,
     start_profiler: Option<PathBuf>,
     start: bool,
-    startservice : bool,
+    startservice: bool,
     force_stop: Option<PathBuf>,
     kill: Option<PathBuf>,
     kill_all: bool,
@@ -43,7 +46,6 @@ impl AdbShellAm {
             ..Default::default()
         }
     }
-
 
     pub fn d(&mut self, d: bool) -> &mut Self {
         self.d = d;

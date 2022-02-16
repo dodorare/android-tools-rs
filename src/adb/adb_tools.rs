@@ -1,5 +1,8 @@
-use std::{path::{Path, PathBuf}, process::Command};
 use crate::error::*;
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 #[derive(Clone, Default)]
 pub struct AdbTools {
@@ -117,56 +120,56 @@ impl AdbTools {
         self
     }
     pub fn run(&self) -> Result<()> {
-    let mut adb = Command::new("adb");
-    if self.devices {
-        adb.arg("devices");
-    }
-    if let Some(install) = &self.install {
-        adb.arg("install").arg(install);
-    }
-    if let Some(forward) = &self.forward {
-        adb.arg("forward").arg(forward);
-    }
-    if let Some(connect) = &self.connect {
-        adb.arg("connect").arg(connect);
-    }
-    if self.devices_l {
-        adb.arg("devices -l");
-    }
-    if self.kill_server {
-        adb.arg("kill-server");
-    }
-    if let Some(tcpip) = &self.tcpip {
-        adb.arg("tcpip").arg(tcpip);
-    }
-    if self.help {
-        adb.arg("--help");
-    }
-    if self.d {
-        adb.arg("-d");
-    }
-    if self.e {
-        adb.arg("-e");
-    }
-    if self.s {
-        adb.arg("-s");
-    }
-    if self.a {
-        adb.arg("-a");
-    }
-    if let Some(h) = &self.h {
-        adb.arg("-H").arg(h);
-    }
-    if let Some(p) = &self.p {
-        adb.arg("-P").arg(p);
-    }
-    if let Some(l) = &self.l {
-        adb.arg("-L").arg(l);
-    }
-    if self.version {
-        adb.arg("--version");
-    }
-    adb.output_err(true)?;
-    Ok(())
+        let mut adb = Command::new("adb");
+        if self.devices {
+            adb.arg("devices");
+        }
+        if let Some(install) = &self.install {
+            adb.arg("install").arg(install);
+        }
+        if let Some(forward) = &self.forward {
+            adb.arg("forward").arg(forward);
+        }
+        if let Some(connect) = &self.connect {
+            adb.arg("connect").arg(connect);
+        }
+        if self.devices_l {
+            adb.arg("devices -l");
+        }
+        if self.kill_server {
+            adb.arg("kill-server");
+        }
+        if let Some(tcpip) = &self.tcpip {
+            adb.arg("tcpip").arg(tcpip);
+        }
+        if self.help {
+            adb.arg("--help");
+        }
+        if self.d {
+            adb.arg("-d");
+        }
+        if self.e {
+            adb.arg("-e");
+        }
+        if self.s {
+            adb.arg("-s");
+        }
+        if self.a {
+            adb.arg("-a");
+        }
+        if let Some(h) = &self.h {
+            adb.arg("-H").arg(h);
+        }
+        if let Some(p) = &self.p {
+            adb.arg("-P").arg(p);
+        }
+        if let Some(l) = &self.l {
+            adb.arg("-L").arg(l);
+        }
+        if self.version {
+            adb.arg("--version");
+        }
+        adb.output_err(true)?;
+        Ok(())
     }
 }

@@ -1,8 +1,8 @@
-use std::process::Command;
 use crate::error::*;
+use std::process::Command;
 
 #[derive(Clone, Default)]
- pub struct AdbShellDumpsys {
+pub struct AdbShellDumpsys {
     activity: bool,
     iphonesybinfo: bool,
     battery_set_level: Option<String>,
@@ -11,14 +11,12 @@ use crate::error::*;
     battery_set_usb: Option<String>,
 }
 
-
 impl AdbShellDumpsys {
     pub fn new() -> Self {
         Self {
             ..Default::default()
         }
     }
-
 
     pub fn activity(&mut self, activity: bool) -> &mut Self {
         self.activity = activity;
