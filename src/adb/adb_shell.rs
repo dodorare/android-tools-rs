@@ -56,7 +56,7 @@ impl Shell {
 
     /// Displays the current screen resolution
     pub fn wm_size(&mut self, wm_size: String) -> &mut Self {
-        self.wm_size = Some(wm_size.to_owned());
+        self.wm_size = Some(wm_size);
         self
     }
 
@@ -86,7 +86,7 @@ impl Shell {
 
     /// Remove the app
     pub fn uninstall(&mut self, uninstall: String) -> &mut Self {
-        self.uninstall = Some(uninstall.to_owned());
+        self.uninstall = Some(uninstall);
         self
     }
 
@@ -104,7 +104,7 @@ impl Shell {
 
     /// List info on one package
     pub fn dump(&mut self, dump: String) -> &mut Self {
-        self.dump = Some(dump.to_owned());
+        self.dump = Some(dump);
         self
     }
 

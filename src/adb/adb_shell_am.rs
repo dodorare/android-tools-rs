@@ -78,7 +78,7 @@ impl AdbShellAm {
     }
 
     pub fn user(&mut self, user: String) -> &mut Self {
-        self.user = Some(user.to_owned());
+        self.user = Some(user);
         self
     }
 
@@ -118,7 +118,7 @@ impl AdbShellAm {
     }
 
     pub fn broadcast(&mut self, broadcast: String) -> &mut Self {
-        self.broadcast = Some(broadcast.to_owned());
+        self.broadcast = Some(broadcast);
         self
     }
 
@@ -173,17 +173,17 @@ impl AdbShellAm {
     }
 
     pub fn screen_compat(&mut self, screen_compat: ScreenCompatibilityMode) -> &mut Self {
-        self.screen_compat = Some(screen_compat.to_owned());
+        self.screen_compat = Some(screen_compat);
         self
     }
 
     pub fn display_size(&mut self, display_size: String) -> &mut Self {
-        self.display_size = Some(display_size.to_owned());
+        self.display_size = Some(display_size);
         self
     }
 
     pub fn display_density(&mut self, display_density: String) -> &mut Self {
-        self.display_density = Some(display_density.to_owned());
+        self.display_density = Some(display_density);
         self
     }
 

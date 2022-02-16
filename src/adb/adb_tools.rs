@@ -38,12 +38,12 @@ impl AdbTools {
     }
 
     pub fn forward(&mut self, forward: String) -> &mut Self {
-        self.forward = Some(forward.to_owned());
+        self.forward = Some(forward);
         self
     }
 
     pub fn connect(&mut self, connect: String) -> &mut Self {
-        self.connect = Some(connect.to_owned());
+        self.connect = Some(connect);
         self
     }
 
@@ -63,7 +63,7 @@ impl AdbTools {
     }
 
     pub fn tcpip(&mut self, tcpip: String) -> &mut Self {
-        self.tcpip = Some(tcpip.to_owned());
+        self.tcpip = Some(tcpip);
         self
     }
 
@@ -99,19 +99,19 @@ impl AdbTools {
 
     /// Name of adb server host [default=localhost]
     pub fn h(&mut self, h: String) -> &mut Self {
-        self.h = Some(h.to_owned());
+        self.h = Some(h);
         self
     }
 
     /// Port of adb server [default=5037]
     pub fn p(&mut self, p: String) -> &mut Self {
-        self.p = Some(p.to_owned());
+        self.p = Some(p);
         self
     }
 
     /// Listen on given socket for adb server [default=tcp:localhost:5037]
     pub fn l(&mut self, l: String) -> &mut Self {
-        self.l = Some(l.to_owned());
+        self.l = Some(l);
         self
     }
 

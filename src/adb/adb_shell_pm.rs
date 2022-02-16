@@ -69,13 +69,13 @@ impl AdbShellPm {
     /// * `-u`: Also include uninstalled packages.
     /// * `--user user_id`: The user space to query.
     pub fn list_packages(&mut self, list_packages: String) -> &mut Self {
-        self.list_packages = Some(list_packages.to_owned());
+        self.list_packages = Some(list_packages);
         self
     }
 
     /// Prints all known permission groups.
     pub fn list_permission_groups(&mut self, list_permission_groups: String) -> &mut Self {
-        self.list_permission_groups = Some(list_permission_groups.to_owned());
+        self.list_permission_groups = Some(list_permission_groups);
         self
     }
 
@@ -202,7 +202,7 @@ impl AdbShellPm {
     /// manifest. On devices running Android 5.1 (API level 22) and lower, must be
     /// an optional permission defined by the app.
     pub fn grant(&mut self, grant: String) -> &mut Self {
-        self.grant = Some(grant.to_owned());
+        self.grant = Some(grant);
         self
     }
 
@@ -211,7 +211,7 @@ impl AdbShellPm {
     /// On devices running Android 5.1 (API level 22) and lower, must be an optional
     /// permission defined by the app.
     pub fn revoke(&mut self, revoke: String) -> &mut Self {
-        self.revoke = Some(revoke.to_owned());
+        self.revoke = Some(revoke);
         self
     }
 
@@ -223,8 +223,8 @@ impl AdbShellPm {
     /// ## Note
     /// This is only intended for debugging; using this can cause apps to break and
     /// other undesireable behavior.
-    pub fn set_install_location(&mut self, set_install_location: &InstallLocation) -> &mut Self {
-        self.set_install_location = Some(set_install_location.to_owned());
+    pub fn set_install_location(&mut self, set_install_location: InstallLocation) -> &mut Self {
+        self.set_install_location = Some(set_install_location);
         self
     }
 
@@ -232,8 +232,8 @@ impl AdbShellPm {
     /// * `0`: Auto: Let system decide the best location.
     /// * `1`: Internal: install on internal device storage.
     /// * `2`: External: on external media.
-    pub fn get_install_location(&mut self, get_install_location: &InstallLocation) -> &mut Self {
-        self.get_install_location = Some(get_install_location.to_owned());
+    pub fn get_install_location(&mut self, get_install_location: InstallLocation) -> &mut Self {
+        self.get_install_location = Some(get_install_location);
         self
     }
 
@@ -252,14 +252,14 @@ impl AdbShellPm {
     /// Create a new user with the given user_name, printing the new user identifier
     /// of the user.
     pub fn create_user(&mut self, create_user: String) -> &mut Self {
-        self.create_user = Some(create_user.to_owned());
+        self.create_user = Some(create_user);
         self
     }
 
     /// Remove the user with the given user_id, deleting all data associated with
     /// that user
     pub fn remove_user(&mut self, remove_user: String) -> &mut Self {
-        self.remove_user = Some(remove_user.to_owned());
+        self.remove_user = Some(remove_user);
         self
     }
 
@@ -335,7 +335,7 @@ impl AdbShellPm {
     }
 
     pub fn user(&mut self, user: String) -> &mut Self {
-        self.user = Some(user.to_owned());
+        self.user = Some(user);
         self
     }
 

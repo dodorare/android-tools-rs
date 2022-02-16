@@ -22,12 +22,12 @@ impl AdbShellDpm {
     }
 
     pub fn name(&mut self, name: String) -> &mut Self {
-        self.name = Some(name.to_owned());
+        self.name = Some(name);
         self
     }
 
     pub fn user_id(&mut self, user_id: String) -> &mut Self {
-        self.user_id = Some(user_id.to_owned());
+        self.user_id = Some(user_id);
         self
     }
 

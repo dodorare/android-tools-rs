@@ -29,12 +29,12 @@ impl AdbShellDumpsys {
     }
 
     pub fn battery_set_level(&mut self, battery_set_level: String) -> &mut Self {
-        self.battery_set_level = Some(battery_set_level.to_owned());
+        self.battery_set_level = Some(battery_set_level);
         self
     }
 
     pub fn battery_set_status(&mut self, battery_set_status: String) -> &mut Self {
-        self.battery_set_status = Some(battery_set_status.to_owned());
+        self.battery_set_status = Some(battery_set_status);
         self
     }
 
@@ -44,7 +44,7 @@ impl AdbShellDumpsys {
     }
 
     pub fn battery_set_usb(&mut self, battery_set_usb: String) -> &mut Self {
-        self.battery_set_usb = Some(battery_set_usb.to_owned());
+        self.battery_set_usb = Some(battery_set_usb);
         self
     }
 
