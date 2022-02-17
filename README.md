@@ -10,6 +10,7 @@ Android-related tools for building and developing applications:
 | [bundletool](https://developer.android.com/studio/command-line/bundletool) | Tool to build an Android App Bundles | ✅ |
 | [java_tools](https://docs.oracle.com/javase/7/docs/technotes/tools/windows/jarsigner.html) | Allows to create keystore and sign JAR files | ✅ |
 | [emulator](https://developer.android.com/studio/run/emulator-commandline) | Allows to run and manage emulator | 🆗 |
+| [adb](https://developer.android.com/studio/command-line/adb) | Versatile command-line tool that lets you communicate with a device | 🆗 |
 
 ✅ = Works and tested — 🆗 = Works but may contain bugs — 🛠 = Under development
 
