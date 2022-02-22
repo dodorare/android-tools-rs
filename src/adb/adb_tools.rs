@@ -10,6 +10,7 @@ pub struct AdbTools {
     forward: Option<String>,
     connect: Option<String>,
     devices: bool,
+    shell: bool,
     devices_l: bool,
     kill_server: bool,
     tcpip: Option<String>,
@@ -49,6 +50,11 @@ impl AdbTools {
 
     pub fn devices(&mut self, devices: bool) -> &mut Self {
         self.devices = devices;
+        self
+    }
+
+    pub fn shell(&mut self, shell: bool) -> &mut Self {
+        self.shell = shell;
         self
     }
 
@@ -168,6 +174,9 @@ impl AdbTools {
         }
         if self.version {
             adb.arg("--version");
+        }
+        if self.shell {
+            adb.arg("shell");
         }
         adb.output_err(true)?;
         Ok(())

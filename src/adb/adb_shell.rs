@@ -21,6 +21,7 @@ pub struct Shell {
     list_permissions_g_r: bool,
     dump: Option<String>,
     path: Option<PathBuf>,
+    screencap: Option<PathBuf>,
 }
 
 impl Shell {
@@ -114,6 +115,11 @@ impl Shell {
         self
     }
 
+    pub fn screencap(&mut self, screencap: &Path) -> &mut Self {
+        self.screencap = Some(screencap.to_owned());
+        self
+    }
+
     pub fn run(&self) -> Result<()> {
         let mut shell = Command::new("adb");
         shell.arg("shell");
@@ -161,6 +167,9 @@ impl Shell {
         }
         if let Some(path) = &self.path {
             shell.arg("path").arg(path);
+        }
+        if let Some(screencap) = &self.screencap {
+            shell.arg("screencap").arg(screencap);
         }
         shell.output_err(true)?;
         Ok(())

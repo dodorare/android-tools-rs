@@ -1,7 +1,9 @@
 mod jarsigner;
+mod apksigner;
 mod keytool;
 
 pub use jarsigner::*;
+pub use apksigner::*;
 pub use keytool::*;
 
 use std::path::Path;

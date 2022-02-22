@@ -16,6 +16,7 @@ pub mod error;
 
 #[cfg(feature = "aapt2")]
 pub mod aapt2;
+#[cfg(feature = "adb")]
 pub mod adb;
 #[cfg(feature = "bundletool")]
 pub mod bundletool;

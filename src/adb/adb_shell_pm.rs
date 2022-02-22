@@ -8,15 +8,12 @@ use super::InstallLocation;
 
 #[derive(Clone, Default)]
 pub struct AdbShellPm {
-    list_packages: Option<String>,
     list_permission_groups: Option<String>,
-    list_permission: bool,
     list_instrumentation: bool,
     list_features: bool,
     list_libraries: bool,
     list_users: bool,
     path_package: Option<PathBuf>,
-    install_path: Option<PathBuf>,
     uninstall: Option<PathBuf>,
     clear: Option<PathBuf>,
     enable: Option<PathBuf>,
@@ -26,25 +23,14 @@ pub struct AdbShellPm {
     revoke: Option<String>,
     set_install_location: Option<InstallLocation>,
     get_install_location: Option<InstallLocation>,
-    install_location: Option<InstallLocation>,
     set_permission_enforced: bool,
     trim_caches: Option<PathBuf>,
     create_user: Option<String>,
     remove_user: Option<String>,
     get_max_users: bool,
     f: bool,
-    d: bool,
-    e: bool,
-    s: bool,
-    third_party: bool,
-    i: bool,
-    u: bool,
-    g: bool,
-    r: bool,
-    t: bool,
     k: bool,
     fastdeploy: bool,
-    no_incremental: bool,
     user: Option<String>,
 }
 
@@ -55,41 +41,9 @@ impl AdbShellPm {
         }
     }
 
-    /// Prints all packages, optionally only those whose package name contains
-    /// the text in filter.
-    ///
-    /// Options:
-    ///
-    /// * `-f`: See their associated file.
-    /// * `-d`: Filter to only show disabled packages.
-    /// * `-e`: Filter to only show enabled packages.
-    /// * `-s`: Filter to only show system packages.
-    /// * `-3`: Filter to only show third party packages.
-    /// * `-i`: See the installer for the packages.
-    /// * `-u`: Also include uninstalled packages.
-    /// * `--user user_id`: The user space to query.
-    pub fn list_packages(&mut self, list_packages: String) -> &mut Self {
-        self.list_packages = Some(list_packages);
-        self
-    }
-
     /// Prints all known permission groups.
     pub fn list_permission_groups(&mut self, list_permission_groups: String) -> &mut Self {
         self.list_permission_groups = Some(list_permission_groups);
-        self
-    }
-
-    /// Prints all known permissions, optionally only those in group.
-    ///
-    /// Options:
-    ///
-    /// * `-g`: Organize by group.
-    /// * `-f`: Print all information.
-    /// * `-s`: Short summary.
-    /// * `-d`: Only list dangerous permissions.
-    /// * `-u`: List only the permissions users will see.
-    pub fn list_permission(&mut self, list_permission: bool) -> &mut Self {
-        self.list_permission = list_permission;
         self
     }
 
@@ -125,40 +79,6 @@ impl AdbShellPm {
     /// Print the path to the APK of the given package.
     pub fn path_package(&mut self, path_package: &Path) -> &mut Self {
         self.path_package = Some(path_package.to_owned());
-        self
-    }
-
-    /// Installs a package (specified by path) to the system.
-    ///
-    /// Options:
-    /// * `-r`: Reinstall an existing app, keeping its data.
-    /// * `-t`: Allow test APKs to be installed. Gradle generates a test APK when
-    /// you have only run or debugged your app or have used the Android Studio
-    /// Build > Build APK command. If the APK is built using a developer preview
-    /// SDK (if the targetSdkVersion is a letter instead of a number), you must
-    /// include the -t option with the install command if you are installing a
-    /// test APK.
-    /// * `-i installer_package_name`: Specify the installer package name.
-    /// * `--install-location location`: Sets the install location using one of
-    /// the following values:
-    ///     * `0`: Use the default install location
-    ///     * `1`: Install on internal device storage
-    ///     * `2`: Install on external media
-    /// * `-f`: Install package on the internal system memory.
-    /// * `-d`: Allow version code downgrade.
-    /// * `-g`: Grant all permissions listed in the app manifest.
-    /// * `--fastdeploy`: Quickly update an installed package by only updating the
-    /// parts of the APK that changed.
-    /// * `--incremental`: Installs enough of the APK to launch the app while
-    /// streaming the remaining data in the background. To use this feature, you
-    /// must sign the APK, create an [`APK Signature Scheme v4 file`], and place this
-    /// file in the same directory as the APK. This feature is only supported on
-    /// certain devices. This option forces adb to use the feature or fail if it
-    /// is not supported (with verbose information on why it failed). Append the
-    /// `--wait` option to wait until the APK is fully installed before granting
-    /// access to the APK.
-    pub fn install_path(&mut self, install_path: &Path) -> &mut Self {
-        self.install_path = Some(install_path.to_owned());
         self
     }
 
@@ -274,51 +194,6 @@ impl AdbShellPm {
         self
     }
 
-    pub fn d(&mut self, d: bool) -> &mut Self {
-        self.d = d;
-        self
-    }
-
-    pub fn e(&mut self, e: bool) -> &mut Self {
-        self.e = e;
-        self
-    }
-
-    pub fn s(&mut self, s: bool) -> &mut Self {
-        self.s = s;
-        self
-    }
-
-    pub fn third_party(&mut self, third_party: bool) -> &mut Self {
-        self.third_party = third_party;
-        self
-    }
-
-    pub fn i(&mut self, i: bool) -> &mut Self {
-        self.i = i;
-        self
-    }
-
-    pub fn u(&mut self, u: bool) -> &mut Self {
-        self.u = u;
-        self
-    }
-
-    pub fn g(&mut self, g: bool) -> &mut Self {
-        self.g = g;
-        self
-    }
-
-    pub fn r(&mut self, r: bool) -> &mut Self {
-        self.r = r;
-        self
-    }
-
-    pub fn t(&mut self, t: bool) -> &mut Self {
-        self.t = t;
-        self
-    }
-
     pub fn k(&mut self, k: bool) -> &mut Self {
         self.k = k;
         self
@@ -326,11 +201,6 @@ impl AdbShellPm {
 
     pub fn fastdeploy(&mut self, fastdeploy: bool) -> &mut Self {
         self.fastdeploy = fastdeploy;
-        self
-    }
-
-    pub fn no_incremental(&mut self, no_incremental: bool) -> &mut Self {
-        self.no_incremental = no_incremental;
         self
     }
 
@@ -343,14 +213,8 @@ impl AdbShellPm {
         let mut pm = Command::new("adb");
         pm.arg("shell");
         pm.arg("pm");
-        if let Some(list_packages) = &self.list_packages {
-            pm.arg("list packages").arg(list_packages);
-        }
         if let Some(list_permission_groups) = &self.list_permission_groups {
             pm.arg("list permission groups").arg(list_permission_groups);
-        }
-        if self.list_permission {
-            pm.arg("list permissions");
         }
         if self.list_instrumentation {
             pm.arg("list instrumentation");
@@ -366,9 +230,6 @@ impl AdbShellPm {
         }
         if let Some(path_package) = &self.path_package {
             pm.arg("path").arg(path_package);
-        }
-        if let Some(install_path) = &self.install_path {
-            pm.arg("install").arg(install_path);
         }
         if let Some(uninstall) = &self.uninstall {
             pm.arg("uninstall").arg(uninstall);
@@ -399,10 +260,6 @@ impl AdbShellPm {
             pm.arg("get-install-location")
                 .arg(get_install_location.to_string());
         }
-        if let Some(install_location) = &self.install_location {
-            pm.arg("--install-location")
-                .arg(install_location.to_string());
-        }
         if self.set_permission_enforced {
             pm.arg("set-permission-enforced");
         }
@@ -421,41 +278,11 @@ impl AdbShellPm {
         if self.f {
             pm.arg("-f");
         }
-        if self.d {
-            pm.arg("-d");
-        }
-        if self.e {
-            pm.arg("-e");
-        }
-        if self.s {
-            pm.arg("-s");
-        }
-        if self.third_party {
-            pm.arg("-3");
-        }
-        if self.i {
-            pm.arg("-i");
-        }
-        if self.u {
-            pm.arg("-u");
-        }
-        if self.g {
-            pm.arg("-g");
-        }
-        if self.r {
-            pm.arg("-r");
-        }
-        if self.t {
-            pm.arg("-t");
-        }
         if self.k {
             pm.arg("-k");
         }
         if self.fastdeploy {
             pm.arg("--fastdeploy");
-        }
-        if self.no_incremental {
-            pm.arg("--no-incremental");
         }
         if let Some(user) = &self.user {
             pm.arg("--user").arg(user);

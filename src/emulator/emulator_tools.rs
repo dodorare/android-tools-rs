@@ -153,7 +153,7 @@ pub struct EmulatorTools {
     guest_angle: bool,
     qemu: bool,
     verbose: bool,
-    debug: Option<DebugTags>,
+    debug: Option<Vec<DebugTags>>,
     debug_no: Option<DebugTags>,
     help: bool,
     help_disk_images: bool,
@@ -1074,7 +1074,7 @@ impl EmulatorTools {
     }
 
     /// Enable/disable debug messages
-    pub fn debug(&mut self, debug: DebugTags) -> &mut Self {
+    pub fn debug(&mut self, debug: Vec<DebugTags>) -> &mut Self {
         self.debug = Some(debug);
         self
     }
@@ -1609,7 +1609,13 @@ impl EmulatorTools {
             emulator.arg("-verbose");
         }
         if let Some(debug) = &self.debug {
-            emulator.arg("-debug").arg(debug.to_string());
+            emulator.arg("-debug").arg(
+                debug
+                    .iter()
+                    .map(|v| v.to_string())
+                    .collect::<Vec<String>>()
+                    .join(","),
+            );
         }
         if let Some(debug_no) = &self.debug_no {
             emulator.arg(format!("-debug-no-{}", debug_no));

@@ -8,15 +8,8 @@ use super::ScreenCompatibilityMode;
 
 #[derive(Clone, Default)]
 pub struct AdbShellAm {
-    d: bool,
     w: bool,
-    p: Option<PathBuf>,
-    r: bool,
-    s: bool,
-    n: bool,
     user: Option<String>,
-    opengl_trace: bool,
-    start_profiler: Option<PathBuf>,
     start: bool,
     startservice: bool,
     force_stop: Option<PathBuf>,
@@ -24,7 +17,6 @@ pub struct AdbShellAm {
     kill_all: bool,
     broadcast: Option<String>,
     instrument: bool,
-    no_window_animation: bool,
     profile_start: Option<PathBuf>,
     profile_stop: bool,
     dumpheap: Option<PathBuf>,
@@ -47,48 +39,13 @@ impl AdbShellAm {
         }
     }
 
-    pub fn d(&mut self, d: bool) -> &mut Self {
-        self.d = d;
-        self
-    }
-
     pub fn w(&mut self, w: bool) -> &mut Self {
         self.w = w;
         self
     }
 
-    pub fn p(&mut self, p: &Path) -> &mut Self {
-        self.p = Some(p.to_owned());
-        self
-    }
-
-    pub fn r(&mut self, r: bool) -> &mut Self {
-        self.r = r;
-        self
-    }
-
-    pub fn s(&mut self, s: bool) -> &mut Self {
-        self.s = s;
-        self
-    }
-
-    pub fn n(&mut self, n: bool) -> &mut Self {
-        self.n = n;
-        self
-    }
-
     pub fn user(&mut self, user: String) -> &mut Self {
         self.user = Some(user);
-        self
-    }
-
-    pub fn opengl_trace(&mut self, opengl_trace: bool) -> &mut Self {
-        self.opengl_trace = opengl_trace;
-        self
-    }
-
-    pub fn start_profiler(&mut self, start_profiler: &Path) -> &mut Self {
-        self.start_profiler = Some(start_profiler.to_owned());
         self
     }
 
@@ -124,11 +81,6 @@ impl AdbShellAm {
 
     pub fn instrument(&mut self, instrument: bool) -> &mut Self {
         self.instrument = instrument;
-        self
-    }
-
-    pub fn no_window_animation(&mut self, no_window_animation: bool) -> &mut Self {
-        self.no_window_animation = no_window_animation;
         self
     }
 
@@ -201,32 +153,11 @@ impl AdbShellAm {
         let mut am = Command::new("adb");
         am.arg("shell");
         am.arg("am");
-        if self.d {
-            am.arg("-D");
-        }
         if self.w {
             am.arg("-W");
         }
-        if let Some(p) = &self.p {
-            am.arg("-P").arg(p);
-        }
-        if self.r {
-            am.arg("-R");
-        }
-        if self.s {
-            am.arg("-S");
-        }
-        if self.n {
-            am.arg("-n");
-        }
         if let Some(user) = &self.user {
             am.arg("-user").arg(user);
-        }
-        if self.opengl_trace {
-            am.arg("--opengl-trace");
-        }
-        if let Some(start_profiler) = &self.start_profiler {
-            am.arg("--start-profiler").arg(start_profiler);
         }
         if self.start {
             am.arg("start");
@@ -248,9 +179,6 @@ impl AdbShellAm {
         }
         if self.instrument {
             am.arg("instrument");
-        }
-        if self.no_window_animation {
-            am.arg("--no-window-animation");
         }
         if let Some(profile_start) = &self.profile_start {
             am.arg("profile start").arg(profile_start);

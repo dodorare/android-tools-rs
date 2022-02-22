@@ -24,8 +24,9 @@ fs_extra = "1.2"
 zip-extensions = "0.6"
 
 [features]
-default = ["aapt2", "bundletool", "java-tools", "emulator"]
+default = ["aapt2", "bundletool", "java-tools", "emulator", "adb"]
 aapt2 = []
 bundletool = []
+adb = []
 emulator = []
 java-tools = ["which", "dirs"]
