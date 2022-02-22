@@ -1,5 +1,8 @@
 use crate::error::*;
-use std::{process::Command, path::{PathBuf, Path}};
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 use super::InstallLocation;
 
@@ -127,7 +130,9 @@ impl AdbShellPmInstall {
             install.arg("--no-incremental");
         }
         if let Some(install_location) = &self.install_location {
-            install.arg("--install-location").arg(install_location.to_string());
+            install
+                .arg("--install-location")
+                .arg(install_location.to_string());
         }
         if let Some(path) = &self.path {
             install.arg(path);

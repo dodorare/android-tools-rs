@@ -47,7 +47,6 @@ impl AdbShellPmListPermissions {
         self
     }
 
-
     pub fn run(&self) -> Result<()> {
         let mut list_permissions = Command::new("adb");
         list_permissions.arg("shell");

@@ -1,5 +1,8 @@
 use crate::error::*;
-use std::{process::Command, path::{PathBuf, Path}};
+use std::{
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 #[derive(Clone, Default)]
 pub struct Apksigner {
@@ -312,10 +315,14 @@ impl Apksigner {
             apksigner.arg("--out").arg(out);
         }
         if let Some(min_sdk_version) = &self.min_sdk_version {
-            apksigner.arg("--min-sdk-version").arg(min_sdk_version.to_string());
+            apksigner
+                .arg("--min-sdk-version")
+                .arg(min_sdk_version.to_string());
         }
         if let Some(max_sdk_version) = &self.max_sdk_version {
-            apksigner.arg("--max-sdk-version").arg(max_sdk_version.to_string());
+            apksigner
+                .arg("--max-sdk-version")
+                .arg(max_sdk_version.to_string());
         }
         if self.v1_signing_enabled {
             apksigner.arg("--v1-signing-enabled");
@@ -327,7 +334,9 @@ impl Apksigner {
             apksigner.arg("--v3-signing-enabled");
         }
         if let Some(v4_signing_enabled) = &self.v4_signing_enabled {
-            apksigner.arg("--v4-signing-enabled").arg(v4_signing_enabled.to_string());
+            apksigner
+                .arg("--v4-signing-enabled")
+                .arg(v4_signing_enabled.to_string());
         }
         if self.v {
             apksigner.arg("-v");
@@ -397,7 +406,7 @@ impl std::fmt::Display for V4SigningEnabled {
         match *self {
             Self::False => write!(f, "false"),
             Self::True => write!(f, "true"),
-            Self::Only => write!(f, "only")
+            Self::Only => write!(f, "only"),
         }
     }
 }
