@@ -1,4 +1,8 @@
-use android_tools::{java_tools::{Apksigner, AabKey, Keytool, KeyAlgorithm}, aapt2::Aapt2, sdk_path_from_env};
+use android_tools::{
+    aapt2::Aapt2,
+    java_tools::{AabKey, Apksigner, KeyAlgorithm, Keytool, android_dir},
+    sdk_path_from_env,
+};
 
 #[test]
 fn test_apksigner() {
@@ -55,6 +59,15 @@ fn test_apksigner() {
     aapt2_link.android_jar(android_jar).verbose(true);
     aapt2_link.run().unwrap();
 
+    // Removes old keystore if it exists
+    let android_dir = android_dir().unwrap();
+    let target = vec![android_dir.join("debug.keystore")];
+    target.iter().for_each(|content| {
+        if content.is_file() {
+            std::fs::remove_file(&content).unwrap();
+        }
+    });
+
     // Creates new keystore to sign aab
     let key = AabKey::new_default().unwrap();
     Keytool::new()
@@ -72,10 +85,10 @@ fn test_apksigner() {
         .unwrap();
 
     Apksigner::new()
-    .sign(true)
-    .ks(&key.key_path)
-    .ks_pass(format!("pass:{}", &key.key_pass))
-    .apk_path(&apk_path)
-    .run()
-    .unwrap();
+        .sign(true)
+        .ks(&key.key_path)
+        .ks_pass(format!("pass:{}", &key.key_pass))
+        .apk_path(&apk_path)
+        .run()
+        .unwrap();
 }

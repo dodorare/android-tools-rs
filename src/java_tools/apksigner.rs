@@ -323,6 +323,9 @@ impl Apksigner {
 
     pub fn run(&self) -> Result<()> {
         let mut apksigner = apksigner_tool()?;
+        if self.sign {
+            apksigner.arg("sign");
+        }
         if let Some(out) = &self.out {
             apksigner.arg("--out").arg(out);
         }
@@ -392,9 +395,6 @@ impl Apksigner {
         if let Some(ks_provider_arg) = &self.ks_provider_arg {
             apksigner.arg("--ks-provider-arg").arg(ks_provider_arg);
         }
-        if self.sign {
-            apksigner.arg("sign");
-        }
         if let Some(verify) = &self.verify {
             apksigner.arg("verify").arg(verify);
         }
@@ -413,6 +413,7 @@ impl Apksigner {
         if self.help {
             apksigner.arg("--help");
         }
+        println!("output: {:?}", apksigner);
         apksigner.output_err(true)?;
         Ok(())
     }
