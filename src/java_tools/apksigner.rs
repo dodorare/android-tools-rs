@@ -368,9 +368,6 @@ impl Apksigner {
         if let Some(ks) = &self.ks {
             apksigner.arg("--ks").arg(ks);
         }
-        if let Some(apk_path) = &self.apk_path {
-            apksigner.arg(apk_path);
-        }
         if let Some(ks_key_alias) = &self.ks_key_alias {
             apksigner.arg("--ks-key-alias").arg(ks_key_alias);
         }
@@ -413,7 +410,9 @@ impl Apksigner {
         if self.help {
             apksigner.arg("--help");
         }
-        println!("output: {:?}", apksigner);
+        if let Some(apk_path) = &self.apk_path {
+            apksigner.arg(apk_path);
+        }
         apksigner.output_err(true)?;
         Ok(())
     }

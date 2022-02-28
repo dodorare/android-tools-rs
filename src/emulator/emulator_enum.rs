@@ -204,7 +204,6 @@ impl std::fmt::Display for Netdelay {
     }
 }
 
-
 impl std::fmt::Display for CameraMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match *self {
