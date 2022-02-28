@@ -13,18 +13,58 @@ pub enum Engine {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Netspeed {
+    /// GSM/CSD (up: 14.4, down: 14.4).
     Gsm,
+    /// HSCSD (up: 14.4, down: 57.6).
     Hscsd,
+    /// GPRS (up: 28.8, down: 57.6).
     Gprs,
-    Wdge,
+    /// EDGE/EGPRS (up: 473.6, down: 473.6).
+    Edge,
+    /// UMTS/3G (up: 384.0, down: 384.0).
     Umts,
+    /// HSDPA (up: 5760.0, down: 13,980.0).
     Hsdpa,
+    /// LTE (up: 58,000, down: 173,000).
     Lte,
+    /// EVDO (up: 75,000, down: 280,000).
     Evdo,
+    /// No limit, the default (up: 0.0, down: 0.0).
     Full,
+    /// Specify both upload and download speed.
     Num,
+    /// Specify individual up speeds.
     Up,
+    /// Specify individual down speeds.
     Down,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Netdelay {
+    /// GSM/CSD (min 150, max 550).
+    Gsm,
+    /// HSCSD (min 80, max 400).
+    Hscsd,
+    /// GPRS (min 35, max 200).
+    Gprs,
+    /// EDGE/EGPRS (min 80, max 400).
+    Edge,
+    /// UMTS/3G (min 35, max 200).
+    Umts,
+    /// HSDPA (min 0, max 0).
+    Hsdpa,
+    /// LTE (min 0, max 0).
+    Lte,
+    /// EVDO (min 0, max 0).
+    Evdo,
+    /// No latency, the default (min 0, max 0).
+    None,
+    /// Specify exact latency.
+    Num,
+    /// Specify individual minimum latencies.
+    Min,
+    /// Specify individual maximum latencies.
+    Max,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -132,7 +172,7 @@ impl std::fmt::Display for Netspeed {
             Self::Gsm => write!(f, "gsm"),
             Self::Hscsd => write!(f, "hscsd"),
             Self::Gprs => write!(f, "gprs"),
-            Self::Wdge => write!(f, "wdge"),
+            Self::Edge => write!(f, "edge"),
             Self::Umts => write!(f, "umts"),
             Self::Hsdpa => write!(f, "hsdpa"),
             Self::Lte => write!(f, "lte"),
@@ -144,6 +184,26 @@ impl std::fmt::Display for Netspeed {
         }
     }
 }
+
+impl std::fmt::Display for Netdelay {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match *self {
+            Self::Gsm => write!(f, "gsm"),
+            Self::Hscsd => write!(f, "hscsd"),
+            Self::Gprs => write!(f, "gprs"),
+            Self::Edge => write!(f, "edge"),
+            Self::Umts => write!(f, "umts"),
+            Self::Hsdpa => write!(f, "hsdpa"),
+            Self::Lte => write!(f, "lte"),
+            Self::Evdo => write!(f, "evdo"),
+            Self::None => write!(f, "none"),
+            Self::Num => write!(f, "num"),
+            Self::Min => write!(f, "min"),
+            Self::Max => write!(f, "max"),
+        }
+    }
+}
+
 
 impl std::fmt::Display for CameraMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

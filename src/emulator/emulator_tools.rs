@@ -51,7 +51,7 @@ pub struct EmulatorTools {
     ranchu: bool,
     engine: Option<Engine>,
     netspeed: Option<Netspeed>,
-    netdelay: Option<String>,
+    netdelay: Option<Netdelay>,
     netfast: bool,
     code_profile: Option<String>,
     show_kernel: bool,
@@ -152,6 +152,7 @@ pub struct EmulatorTools {
     no_mouse_reposition: bool,
     guest_angle: bool,
     qemu: bool,
+    qemu_h: bool,
     verbose: bool,
     debug: Option<Vec<DebugTags>>,
     debug_no: Option<DebugTags>,
@@ -173,19 +174,51 @@ impl EmulatorTools {
         }
     }
 
-    /// List available AVDs
+    /// For a list of AVD names, enter the following command:
+    ///
+    /// ```xml
+    /// emulator -list-avds
+    /// ```
+    ///
+    /// When you use this option, it displays a list of AVD names from your Android
+    /// home directory. Note that you can override the default home directory by
+    /// setting the ANDROID_SDK_HOME environment variable: the root of the
+    /// user-specific directory where all configuration and AVD content is stored.
+    /// You could set the environment variable in the terminal window before
+    /// launching a virtual device, or you could set it through your user settings
+    /// in the operating system; for example, in your .bashrc file on Linux.
+    ///
+    /// To stop the Android Emulator, just close the emulator window.
     pub fn list_avds(&mut self, list_avds: bool) -> &mut Self {
         self.list_avds = list_avds;
         self
     }
 
-    /// Search for system disk images in <dir>
+    /// Specify a system directory using an absolute path. For more information,
+    /// see AVD system directory. For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -sysdir
+    /// ~/Library/Android/sdk/system-images/android-23/
+    /// google_apis/x86/test
+    /// ```
     pub fn sysdir(&mut self, sysdir: &Path) -> &mut Self {
         self.sysdir = Some(sysdir.to_owned());
         self
     }
 
-    /// Read initial system image from <file>
+    /// Specify an initial system file. Provide the filename, and an absolute path
+    /// or a path relative to the working directory. If you don't use this option,
+    /// the default is the system.img file in the system directory. For more
+    /// information, see [`AVD system directory`]. For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -system
+    /// ~/Library/Android/sdk/system-images/android-23/
+    /// google_apis/x86/system-test.img
+    /// ```
+    ///
+    /// [AVD system directory]: (https://developer.android.com/studio/run/emulator-commandline#system-filedir)
     pub fn system(&mut self, system: &Path) -> &mut Self {
         self.system = Some(system.to_owned());
         self
@@ -197,7 +230,13 @@ impl EmulatorTools {
         self
     }
 
-    /// Make system & vendor image writable after `adb remount`
+    /// Use this option to have a writable system image during your emulation
+    /// session.To do so:
+    ///
+    /// 1. Start a virtual device with the -writable-system option.
+    /// 2. Enter the adb remount command from a command terminal to tell the
+    /// emulator to remount system/ as read/write (it’s mounted as read-only by
+    /// default).
     pub fn writable_system(&mut self, writable_system: bool) -> &mut Self {
         self.writable_system = writable_system;
         self
@@ -209,19 +248,50 @@ impl EmulatorTools {
         self
     }
 
-    /// Write user data into <dir>
+    /// Specify a data directory using an absolute path. For more information,
+    /// see AVD data directory.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -datadir
+    /// ~/.android/avd/Nexus_5X_API_23.avd/mytest
+    /// ```
     pub fn datadir(&mut self, datadir: &Path) -> &mut Self {
         self.datadir = Some(datadir.to_owned());
         self
     }
 
-    /// Use specific emulated kernel
+    /// Use a specific emulated kernel. If you don't specify a path, the
+    /// emulator looks in the system directory. If you don't specify this
+    /// option, the default is kernel-ranchu. For more information, see [`AVD
+    /// system directory`]. Use the ‑show‑kernel option to view kernel debug
+    /// messages.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -kernel
+    /// ~/Library/Android/sdk/system-images/android-23/
+    /// google_apis/x86/kernel-test.img -show-kernel
+    /// ```
     pub fn kernel(&mut self, kernel: &Path) -> &mut Self {
         self.kernel = Some(kernel.to_owned());
         self
     }
 
-    /// Ramdisk image (default <system>/ramdisk.img)
+    /// Specify a ramdisk boot image. Specify the filename, and an absolute path
+    /// or a path relative to the working directory. If you don't use this option,
+    /// the default is the ramdisk.img file in the system directory. For more
+    /// information, see AVD system directory.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -ramdisk
+    /// ~/Library/Android/sdk/system-images/android-23/
+    /// google_apis/x86/ramdisk-test.img
+    /// ```
     pub fn ramdisk(&mut self, ramdisk: &Path) -> &mut Self {
         self.ramdisk = Some(ramdisk.to_owned());
         self
@@ -233,13 +303,40 @@ impl EmulatorTools {
         self
     }
 
-    /// Same as `-init-data <file>`
+    /// Specify the initial version of the data partition. After wiping user data,
+    /// the emulator copies the contents of the specified file to user data (by
+    /// default, the userdata-qemu.img file) instead of using the default
+    /// userdata.img file as the initial version. Specify the filename, and an
+    /// absolute path or a path relative to the working directory. If you don't
+    /// specify a path, it places the file in the system directory. For more
+    /// information, see [`AVD system directory`].
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -initdata
+    /// ~/Library/Android/sdk/system-images/android-23/
+    /// google_apis/x86/userdata-test.img
+    /// ```
     pub fn initdata(&mut self, initdata: &Path) -> &mut Self {
         self.initdata = Some(initdata.to_owned());
         self
     }
 
-    /// Data image (default <datadir>/userdata-qemu.img)
+    /// Set the user data partition image file. Provide a filename, and an absolute
+    /// path or a path relative to the working directory, to set up a persistent
+    /// user data file. If the file doesn't exist, the emulator creates an image
+    /// from the default userdata.img file, stores it in the filename you specified,
+    /// and persists user data to it at shutdown. If you don't use this option, the
+    /// default is a file named userdata-qemu.img. For more information about the
+    /// user data file, see AVD data directory.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -data
+    /// ~/.android/avd/Nexus_5X_API_23.avd/userdata-test.img
+    /// ```
     pub fn data(&mut self, data: &Path) -> &mut Self {
         self.data = Some(data.to_owned());
         self
@@ -257,25 +354,60 @@ impl EmulatorTools {
         self
     }
 
-    /// System/data partition size in MBs
+    /// Specify the system data partition size in MBs.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -partition-size 1024
+    /// ```
     pub fn partition_size(&mut self, partition_size: u32) -> &mut Self {
         self.partition_size = Some(partition_size);
         self
     }
 
-    /// Cache partition image (default is temporary file)
+    /// Specify a cache partition image file. Provide a filename, and an absolute
+    /// path or a path relative to the data directory, to set up a persistent
+    /// cache file. If the file doesn't exist, the emulator creates it as an empty
+    /// file. If you don't use this option, the default is a temporary file named
+    /// cache.img. For more information, see [`AVD data directory`].
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -cache
+    /// ~/.android/avd/Nexus_5X_API_23.avd/cache_persistent.img
+    /// ```
     pub fn cache(&mut self, cache: &Path) -> &mut Self {
         self.cache = Some(cache.to_owned());
         self
     }
 
-    /// Cache partition size in MBs
+    /// Set the cache partition size in MBs. If you don't specify this option, the
+    /// default is 66 MB. Normally, most app developers don't need this option,
+    /// unless they need to download very large files that are larger than the
+    /// default cache. For more information about the cache file, see [`AVD data
+    /// directory`].
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -cache-size 1000
+    /// ```
     pub fn cache_size(&mut self, cache_size: u32) -> &mut Self {
         self.cache_size = Some(cache_size);
         self
     }
 
-    /// Disable the cache partition
+    /// Start the emulator without a cache partition. If you don't use this option,
+    /// the default is a temporary file named cache.img. This option is for platform
+    /// developers only. For more information, see [`AVD data directory`].
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -nocache
+    /// ```
     pub fn no_cache(&mut self, no_cache: bool) -> &mut Self {
         self.no_cache = no_cache;
         self
@@ -287,7 +419,20 @@ impl EmulatorTools {
         self
     }
 
-    /// SD card image (default <datadir>/sdcard.img)
+    /// Specify the filename and path to an SD card partition image file.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -sdcard C:/sd/sdcard.img
+    /// ```
+    ///
+    /// If the file isn't found, the emulator still launches, but without an SD card;
+    /// the command returns a `No SD Card Image` warning.
+    ///
+    /// If you don't specify this option, the default is `sdcard.img` in the data
+    /// directory (unless the AVD specifies something different). For details about
+    /// emulated SD cards, see AVD data directory.
     pub fn sdcard(&mut self, sdcard: &Path) -> &mut Self {
         self.sdcard = Some(sdcard.to_owned());
         self
@@ -299,7 +444,7 @@ impl EmulatorTools {
         self
     }
 
-    /// Use the emulator in the specified dir (relative or absolute path)v
+    /// Use the emulator in the specified dir (relative or absolute path)
     pub fn qemu_top_dir(&mut self, qemu_top_dir: &Path) -> &mut Self {
         self.qemu_top_dir = Some(qemu_top_dir.to_owned());
         self
@@ -311,37 +456,101 @@ impl EmulatorTools {
         self
     }
 
-    /// File that contains all state snapshots (default <datadir>/snapshots.img)
+    /// Specify a repository file that contains all state snapshots. All snapshots
+    /// made during execution will be saved in this file, and only snapshots in
+    /// this file can be restored during the emulator run. If you don’t specify
+    /// this option, the default is snapshots.img in the data directory. If the
+    /// specified file doesn’t exist, the emulator will start, but without support
+    /// for saving or loading state snapshots.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -snapstorage
+    /// ~/.android/avd/Nexus_5X_API_23.avd/snapshots-test.img
+    /// ```
     pub fn snapstorage(&mut self, snapstorage: &Path) -> &mut Self {
         self.snapstorage = Some(snapstorage.to_owned());
         self
     }
 
-    /// Do not mount a snapshot storage file (this disables all snapshot functionality)
+    /// Start the emulator without mounting a file to store or load state snapshots,
+    /// forcing a full boot and disabling state snapshot functionality. This option
+    /// overrides the `-snapstorage` and `-snapshot` options.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -no-snapstorage
+    /// ```
     pub fn no_snapstorage(&mut self, no_snapstorage: bool) -> &mut Self {
         self.no_snapstorage = no_snapstorage;
         self
     }
 
-    /// Name of snapshot within storage file for auto-start and auto-save (default 'default-boot')
+    /// Specify the name of a snapshot within a snapshot storage file for automatic
+    /// start and save operations. Rather than executing a full boot sequence, the
+    /// emulator can resume execution from an earlier state snapshot, which is
+    /// usually significantly faster. When you supply this option, the emulator
+    /// loads the snapshot of that name from the snapshot image and saves it back
+    /// under the same name on exit. If you don’t use this option, the default is
+    /// a full boot sequence. If the specified snapshot doesn’t exist, the emulator
+    /// performs a full boot sequence instead, and performs a save operation.
+    ///
+    /// See the `-snapstorage` option for information on specifying a snapshot storage
+    /// file and the default file.
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -snapshot snapshot2
+    /// ```
+    ///
+    /// It’s important to remember that in the process of loading a snapshot, all
+    /// contents of the system, user data, and SD card images are overwritten with
+    /// the contents they held when the snapshot was made. Unless you save this
+    /// information in a different snapshot, any changes since then are lost.
+    ///
+    /// You can also create a snapshot from the Emulator Console by using the avd
+    /// snapshot save `name` command. For more information, see [`Send Emulator Console
+    /// Commands to a Virtual Device`].
     pub fn snapshot(&mut self, snapshot: String) -> &mut Self {
         self.snapshot = Some(snapshot);
         self
     }
 
-    /// Perform a full boot and do not auto-save, but qemu vmload and vmsave operate on snapstorage
+    /// Inhibit both the automatic load and save operations, causing the emulator to
+    /// execute a full boot sequence and to lose its state when closed. It overrides
+    /// the-snapshot option.
+    ///
+    /// For example:
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -no-snapshot
+    /// ```
     pub fn no_snapshot(&mut self, no_snapshot: bool) -> &mut Self {
         self.no_snapshot = no_snapshot;
         self
     }
 
-    /// Do not auto-save to snapshot on exit: abandon changed state
+    /// Prevent the emulator from saving the AVD state to snapshot storage on exit,
+    /// meaning that all changes will be lost.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -no-snapshot-save
+    /// ```
     pub fn no_snapshot_save(&mut self, no_snapshot_save: bool) -> &mut Self {
         self.no_snapshot_save = no_snapshot_save;
         self
     }
 
-    /// Do not auto-start from snapshot: perform a full boot
+    /// Prevent the emulator from loading the AVD state from snapshot storage.
+    /// Perform a full boot.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -no-snapshot-load
+    /// ```
     pub fn no_snapshot_load(&mut self, no_snapshot_load: bool) -> &mut Self {
         self.no_snapshot_load = no_snapshot_load;
         self
@@ -359,13 +568,30 @@ impl EmulatorTools {
         self
     }
 
-    /// Reset the user data image (copy it from initdata)
+    /// Delete user data and copy data from the initial data file. This option clears
+    /// the data for the virtual device and returns it to the same state as when it
+    /// was first defined. All installed apps and settings are removed.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -wipe-data
+    /// ```
+    ///
+    /// By default, the user data file is userdata-qemu.img and the initial data file
+    /// is userdata.img, both residing in the data directory. The -wipe-data option
+    /// doesn't affect the sdcard.img file. For more information about user data, see
+    /// [`Understanding the default directories and files`].
     pub fn wipe_data(&mut self, wipe_data: bool) -> &mut Self {
         self.wipe_data = wipe_data;
         self
     }
 
-    /// Use a specific android virtual device
+    /// Use the emulator command to start the emulator, as an alternative to running
+    /// your project or starting it through the AVD Manager.
+    ///
+    /// Here's the basic command-line syntax for starting a virtual device from a
+    /// terminal prompt:
     pub fn avd(&mut self, avd: String) -> &mut Self {
         self.avd = Some(avd);
         self
@@ -401,7 +627,15 @@ impl EmulatorTools {
         self
     }
 
-    /// Physical RAM size in MBs
+    /// Specify the physical RAM size from 128 to 4096 MBs.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -memory 2048
+    /// ```
+    ///
+    /// This value overrides the AVD setting.
     pub fn memory(&mut self, memory: u32) -> &mut Self {
         self.memory = Some(memory);
         self
@@ -425,13 +659,44 @@ impl EmulatorTools {
         self
     }
 
-    /// Configure emulation acceleration
+    /// Configure emulator VM acceleration.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -accel auto
+    /// ```
+    ///
+    /// Accelerated emulation works for x86 and x86_64 system images only. On Linux,
+    /// it relies on KVM. On Windows and Mac, it relies on an Intel CPU and Intel
+    /// HAXM driver. This option is ignored if you're not emulating an x86 or
+    /// x86_64 device.
+    ///
+    /// Valid values for mode are:
+    ///
+    /// * auto - Determine automatically if acceleration is supported and use it when
+    /// possible (default).
+    /// * off - Disables acceleration entirely, which is primarily useful for
+    /// debugging.
+    /// * on - Force acceleration. If KVM or HAXM isn't installed or usable, the
+    /// emulator won't start and prints an error message.
+    ///
+    /// For more information, see [`Configure Hardware Acceleration`].
     pub fn accel(&mut self, accel: AccelMode) -> &mut Self {
         self.accel = Some(accel);
         self
     }
 
-    /// Same as '-accel off'
+    /// Disable emulator VM acceleration when using an x86 or x86_64 system image.
+    /// It's useful for debugging only and is the same as specifying -accel off.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -no-accel
+    /// ```
+    ///
+    /// For more information, see [`Configure Hardware Acceleration`].
     pub fn no_accel(&mut self, no_accel: bool) -> &mut Self {
         self.no_accel = no_accel;
         self
@@ -443,25 +708,96 @@ impl EmulatorTools {
         self
     }
 
-    /// Select engine. auto|classic|qemu2
+    /// Specify the emulator engine:
+    ///
+    /// * `auto` - Automatically select an engine (default).
+    /// * `classic` - Use the older QEMU 1 engine.
+    /// * `qemu2` - Use the newer QEMU 2 engine.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -engine auto
+    /// ```
+    ///
+    /// Auto-detection should choose the value that provides the best performance
+    /// when emulating a particular AVD. You should use the -engine option for
+    /// debugging and comparison purposes only.
     pub fn engine(&mut self, engine: Engine) -> &mut Self {
         self.engine = Some(engine);
         self
     }
 
-    /// Maximum network download/upload speeds
+    /// Set the network speed emulation. Specify the maximum network upload and
+    /// download speeds with one of the following speed values in kbps:
+    ///
+    /// * gsm - GSM/CSD (up: 14.4, down: 14.4).
+    /// * hscsd - HSCSD (up: 14.4, down: 57.6).
+    /// * gprs - GPRS (up: 28.8, down: 57.6).
+    /// * edge - EDGE/EGPRS (up: 473.6, down: 473.6).
+    /// * umts - UMTS/3G (up: 384.0, down: 384.0).
+    /// * hsdpa - HSDPA (up: 5760.0, down: 13,980.0).
+    /// * lte - LTE (up: 58,000, down: 173,000).
+    /// * evdo - EVDO (up: 75,000, down: 280,000).
+    /// * full - No limit, the default (up: 0.0, down: 0.0).
+    /// * num - Specify both upload and download speed.
+    /// * up:down - Specify individual up and down speeds.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -netspeed edge
+    /// ```
+    ///
+    /// The emulator supports network throttling (limiting the maximum network
+    /// bandwidth, also called network shaping) as well as higher connection
+    /// latencies. You can define it either through the skin configuration, or
+    /// with the `‑netspeed` and `-netdelay` options.
     pub fn netspeed(&mut self, netspeed: Netspeed) -> &mut Self {
         self.netspeed = Some(netspeed);
         self
     }
 
-    /// Network latency emulation
-    pub fn netdelay(&mut self, netdelay: String) -> &mut Self {
+    /// Set network latency emulation to one of the following delay values in
+    /// milliseconds:
+    ///
+    /// * gsm - GSM/CSD (min 150, max 550).
+    /// * hscsd - HSCSD (min 80, max 400).
+    /// * gprs - GPRS (min 35, max 200).
+    /// * edge - EDGE/EGPRS (min 80, max 400).
+    /// * umts - UMTS/3G (min 35, max 200).
+    /// * hsdpa - HSDPA (min 0, max 0).
+    /// * lte - LTE (min 0, max 0).
+    /// * evdo - EVDO (min 0, max 0).
+    /// * none - No latency, the default (min 0, max 0).
+    /// * num - Specify exact latency.
+    /// * min:max - Specify individual minimum and maximum latencies.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -netdelay gsm
+    /// ```
+    ///
+    /// The emulator supports network throttling (limiting the maximum network
+    /// bandwidth, also called network shaping) as well as higher connection
+    /// latencies. You can define it either through the skin configuration, or
+    /// with the `‑netspeed` and `-netdelay` options.
+    pub fn netdelay(&mut self, netdelay: Netdelay) -> &mut Self {
         self.netdelay = Some(netdelay);
         self
     }
 
-    /// Disable network shaping
+    /// Disable network throttling.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -netfast
+    /// ```
+    ///
+    /// This option is the same as specifying `-netspeed` full `-netdelay` none.
+    /// These are the default values for these options.
     pub fn netfast(&mut self, netfast: bool) -> &mut Self {
         self.netfast = netfast;
         self
@@ -473,25 +809,65 @@ impl EmulatorTools {
         self
     }
 
-    /// Display kernel messages
+    /// Display kernel debug messages in the terminal window.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -show-kernel
+    /// ```
+    ///
+    /// One use of this option is to check that the boot process works correctly.
     pub fn show_kernel(&mut self, show_kernel: bool) -> &mut Self {
         self.show_kernel = show_kernel;
         self
     }
 
-    /// Enable root shell on current terminal
+    /// Create a root shell console on the current terminal. It differs from
+    /// the adb shell command in the following ways:
+    ///
+    /// * It creates a root shell that allows you to modify many parts of the
+    /// system.
+    /// * It works even if the adb daemon in the emulated system is broken.
+    /// * Pressing Ctrl+C (⌘C) stops the emulator, instead of the shell.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -shell
+    /// ```
     pub fn shell(&mut self, shell: bool) -> &mut Self {
         self.shell = shell;
         self
     }
 
-    /// Deprecated, see dalvik_vm_checkjni
+    /// Disable extended Java Native Interface (JNI) checks in the Android
+    /// Dalvik or ART runtime.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -no-jni
+    /// ```
+    ///
+    /// When you start a virtual device, extended JNI checks are enabled
+    /// by default. For more information, see JNI Tips.
     pub fn no_jni(&mut self, no_jni: bool) -> &mut Self {
         self.no_jni = no_jni;
         self
     }
 
-    /// Deprecated, see dalvik_vm_checkjni
+    /// Disable extended Java Native Interface (JNI) checks in the Android
+    /// Dalvik or ART runtime.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -nojni
+    /// ```
+    ///
+    /// When you start a virtual device, extended JNI checks are enabled
+    /// by default. For more information, see JNI Tips.
     pub fn nojni(&mut self, nojni: bool) -> &mut Self {
         self.nojni = nojni;
         self
@@ -503,19 +879,40 @@ impl EmulatorTools {
         self
     }
 
+    /// TODO: Fix logcat
     /// Enable logcat output with given tags
     pub fn logcat(&mut self, logcat: String) -> &mut Self {
         self.logcat = Some(logcat);
         self
     }
 
-    /// Disable audio support
+    /// Disable audio support for this virtual device. Some Linux and Windows
+    /// computers have faulty audio drivers that cause different symptoms,
+    /// such as preventing the emulator from starting. In this case, you can
+    /// use this option to overcome the issue. Alternatively, you can use the
+    /// QEMU_AUDIO_DRV environment variable to change the audio backend.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -no-audio
+    /// ```
     pub fn no_audio(&mut self, no_audio: bool) -> &mut Self {
         self.no_audio = no_audio;
         self
     }
 
-    /// Same as -no-audio
+    /// Disable audio support for this virtual device. Some Linux and Windows
+    /// computers have faulty audio drivers that cause different symptoms,
+    /// such as preventing the emulator from starting. In this case, you can
+    /// use this option to overcome the issue. Alternatively, you can use the
+    /// QEMU_AUDIO_DRV environment variable to change the audio backend.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -noaudio
+    /// ```
     pub fn noaudio(&mut self, noaudio: bool) -> &mut Self {
         self.noaudio = noaudio;
         self
@@ -533,13 +930,60 @@ impl EmulatorTools {
         self
     }
 
-    /// TCP port that will be used for the console
+    /// Set the TCP port number that's used for the console and adb.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -port 5556
+    /// ```
+    ///
+    /// The default value is 5554 for the first virtual device instance
+    /// running on the your machine. A virtual device normally occupies a
+    /// pair of adjacent ports: a console port and an adb port. The console
+    /// of the first virtual device running on a particular machine uses
+    /// console port 5554 and adb port 5555. Subsequent instances use port
+    /// numbers increasing by two — for example, 5556/5557, 5558/5559, and
+    /// so on. The range is 5554 to 5682, allowing for 64 concurrent virtual
+    /// devices.
+    ///
+    /// The port assignments are often the same as specifying -ports port,
+    /// {port + 1}. {port + 1} must be free and will be reserved for adb. If
+    /// any of the console or adb ports is already in use, the emulator won't
+    /// start. The ‑port option reports which ports and serial number the
+    /// virtual device is using, and warns if there are any issues with the
+    /// values you provided. In the emulator UI, you can see the console port
+    /// number in the window title, and you can view the adb port number by
+    /// selecting Help > About.
+    ///
+    /// Note that if the port value is not even and is in the range 5554 to
+    /// 5584, the virtual device will start but not be visible when you use
+    /// the adb devices command if the adb server starts after the emulator.
+    /// For this reason, we recommend using an even console port number.
     pub fn port(&mut self, port: String) -> &mut Self {
         self.port = Some(port);
         self
     }
 
-    /// TCP ports used for the console and adb bridge
+    /// Set the TCP ports used for the console and adb.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -ports 5556,5559
+    /// ```
+    ///
+    /// The valid ports range is 5554 to 5682, allowing for 64 concurrent
+    /// virtual devices. The -ports option reports which ports and serial
+    /// number the emulator instance is using, and warns if there are any
+    /// issues with the values you provided.
+    ///
+    /// We recommend using the -port option instead, where possible. The
+    /// -ports option is available for network configurations that require
+    /// special settings.
+    ///
+    /// For more information about setting console and adb ports, see the
+    /// `-port` option.
     pub fn ports(&mut self, ports: Vec<String>) -> &mut Self {
         self.ports = Some(ports);
         self
@@ -587,13 +1031,55 @@ impl EmulatorTools {
         self
     }
 
-    /// Make TCP connections through a HTTP/HTTPS proxy
+    /// Make all TCP connections through a specified HTTP/HTTPS proxy. If your
+    /// emulator must access the internet through a proxy server, you can use
+    /// this option or the http_proxy environment variable to set up the
+    /// appropriate redirection.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -http-proxy myserver:1981
+    /// ```
+    ///
+    /// proxy can be one of the following:
+    ///
+    /// ```
+    /// http://server:port
+    /// http://username:password@server:port
+    /// ```
+    ///
+    /// The http:// prefix can be omitted.
+    ///
+    /// If this option isn't supplied, the emulator looks up the http_proxy
+    /// environment variable and automatically uses any value matching the proxy
+    /// format. For more information, see [`Using the emulator with a proxy`].
     pub fn http_proxy(&mut self, http_proxy: String) -> &mut Self {
         self.http_proxy = Some(http_proxy);
         self
     }
 
-    /// Use this timezone instead of the host's default
+    /// Set the timezone for the virtual device to timezone, instead of the host
+    /// timezone.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -timezone Europe/Paris
+    /// ```
+    ///
+    /// By default, the emulator uses the timezone of your development computer.
+    /// Use this option to specify a different timezone or if the automatic
+    /// detection isn't working correctly. The timezone value must be in zoneinfo
+    /// format, which is area/location or area/subarea/location.
+    ///
+    /// For example:
+    ///
+    /// * America/Los_Angeles
+    /// * Europe/Paris
+    /// * America/Argentina/Buenos_Aires
+    ///
+    /// The specified timezone must be in the [`zoneinfo database`].
     pub fn timezone(&mut self, timezone: String) -> &mut Self {
         self.timezone = Some(timezone);
         self
@@ -617,7 +1103,19 @@ impl EmulatorTools {
         self
     }
 
-    /// Use this DNS server(s) in the emulated system
+    /// Use the specified DNS servers. servers is a comma-separated list of up to
+    /// four DNS server names or IP addresses.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -dns-server 192.0.2.0, 192.0.2.255
+    /// ```
+    ///
+    /// By default, the emulator tries to detect the DNS servers you're using and
+    /// sets up special aliases in the emulated firewall network to allow the
+    /// Android system to connect directly to them. Use the -dns-server option to
+    /// specify a different list of DNS servers.
     pub fn dns_server(&mut self, dns_server: String) -> &mut Self {
         self.dns_server = Some(dns_server);
         self
@@ -653,7 +1151,15 @@ impl EmulatorTools {
         self
     }
 
-    /// Disable graphical window display
+    /// Disable graphical window display on the emulator. This option is useful
+    /// when running the emulator on servers that have no display. You'll still be
+    /// able to access the emulator through adb or the console.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -no-window
+    /// ```
     pub fn no_window(&mut self, no_window: bool) -> &mut Self {
         self.no_window = no_window;
         self
@@ -677,7 +1183,17 @@ impl EmulatorTools {
         self
     }
 
-    /// Display emulator version number
+    /// Display the emulator version number.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -version
+    /// ```
+    /// or
+    /// ```xml
+    /// emulator -version
+    /// ```
     pub fn version(&mut self, version: bool) -> &mut Self {
         self.version = version;
         self
@@ -721,7 +1237,15 @@ impl EmulatorTools {
         self
     }
 
-    /// Report console port to remote socket
+    /// Report the console port to a remote third party before starting emulation.
+    /// It can be useful for an automated testing script. socket must use one of
+    /// these formats:
+    ///
+    /// * tcp:port[,server][,max=seconds][,ipv6]
+    /// * unix:port[,server][,max=seconds][,ipv6]
+    ///
+    /// For more information, use the -help-report-console option as described in
+    /// [`Getting detailed help for a specific option`].
     pub fn report_console(&mut self, report_console: String) -> &mut Self {
         self.report_console = Some(report_console);
         self
@@ -739,13 +1263,37 @@ impl EmulatorTools {
         self
     }
 
-    /// Capture network packets to file
+    /// Capture network packets and store them in a file.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -tcpdump /path/dumpfile.cap
+    /// ```
+    ///
+    /// Use the option to begin capturing all network packets that are sent
+    /// through the virtual Ethernet LAN of the emulator. After, you can use a
+    /// tool like Wireshark to analyze the traffic.
+    ///
+    /// Note that this option captures all Ethernet packets, and isn't limited
+    /// to TCP connections.
     pub fn tcpdump(&mut self, tcpdump: &Path) -> &mut Self {
         self.tcpdump = Some(tcpdump.to_owned());
         self
     }
 
-    /// Enable bootcharting
+    /// Enable bootcharting, with a timeout in seconds. Some Android system
+    /// images have a modified init system that integrates a bootcharting
+    /// facility. You can pass a bootcharting timeout period to the system with
+    /// this option. If your init system doesn't have bootcharting activated,
+    /// the option does nothing. This option is primarily useful to platform
+    /// developers, not external app developers.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -bootchart 120
+    /// ```
     pub fn bootchart(&mut self, bootchart: String) -> &mut Self {
         self.bootchart = Some(bootchart);
         self
@@ -763,7 +1311,18 @@ impl EmulatorTools {
         self
     }
 
-    /// Set system property on boot
+    /// Set an Android system property in the emulator when it boots. name must
+    /// be a property name labeled as qemu_prop (for an example, see the
+    /// property_contexts file) of at most 32 characters, without any spaces in
+    /// it, and value must be a string of at most 92 characters. You can specify
+    /// several ‑prop options on one command line. This option can be useful
+    /// for debugging.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -prop qemu.name=value -prop qemu.abc=xyz
+    /// ```
     pub fn prop(&mut self, prop: String) -> &mut Self {
         self.prop = Some(prop);
         self
@@ -775,7 +1334,16 @@ impl EmulatorTools {
         self
     }
 
-    /// Set hardware OpenGLES emulation mode
+    /// Select the GPU emulation mode.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -gpu swiftshader_indirect
+    /// ```
+    ///
+    /// For more information, see [`Configuring graphics acceleration on the
+    /// command line`].
     pub fn gpu(&mut self, gpu: String) -> &mut Self {
         self.gpu = Some(gpu);
         self
@@ -787,19 +1355,62 @@ impl EmulatorTools {
         self
     }
 
-    /// Set emulation mode for a camera facing back
+    /// Set the emulation mode for a camera facing back or front. It overrides
+    /// any camera setting in the AVD.mode can be any of the following values:
+    ///
+    /// * `emulated` - The emulator simulates a camera in the software.
+    /// * `webcamn` - The emulator uses a webcam connected to your development
+    /// computer, specified by number. For a list of webcams, use the
+    /// -webcam-list option; for example, webcam0.
+    /// * `none` - Disable the camera in the virtual device.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -camera-back webcam0
+    /// ```
     pub fn camera_back(&mut self, camera_back: CameraMode) -> &mut Self {
         self.camera_back = Some(camera_back);
         self
     }
 
-    /// Set emulation mode for a camera facing front
+    /// Set the emulation mode for a camera facing back or front. It overrides
+    /// any camera setting in the AVD.mode can be any of the following values:
+    ///
+    /// * `emulated` - The emulator simulates a camera in the software.
+    /// * `webcamn` - The emulator uses a webcam connected to your development
+    /// computer, specified by number. For a list of webcams, use the
+    /// -webcam-list option; for example, webcam0.
+    /// * `none` - Disable the camera in the virtual device.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -camera-front webcam0
+    /// ```
     pub fn camera_front(&mut self, camera_front: CameraMode) -> &mut Self {
         self.camera_front = Some(camera_front);
         self
     }
 
-    /// Lists web cameras available for emulation
+    /// List the web cameras on your development computer that are available
+    /// for emulation.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -webcam-list
+    ///     List of web cameras connected to the computer:
+    ///     Camera 'webcam0' is connected to device 'webcam0'
+    ///     on channel 0 using pixel format 'UYVY'
+    /// ```
+    ///
+    /// In the example, the first webcam0 is the name you use on the command
+    /// line. The second webcam0 is the name used by the OS on the development
+    /// computer. The second name varies depending on the OS.
+    ///
+    /// As of SDK Tools 25.2.4, the AVD name is required, although it might
+    /// not be in the future.
     pub fn webcam_list(&mut self, webcam_list: bool) -> &mut Self {
         self.webcam_list = webcam_list;
         self
@@ -811,19 +1422,51 @@ impl EmulatorTools {
         self
     }
 
-    /// Set emulated screen mode
+    /// Set emulated touch screen mode.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -screen no-touch
+    /// ```
+    ///
+    /// mode can be any of the following values:
+    ///
+    /// * `touch` - Emulate a touch screen (default).
+    /// * `multi-touch` - Emulate a multi-touch screen.
+    /// * `no-touch` - Disable touch and multi-touch screen emulation.
     pub fn screen(&mut self, screen: ScreenMode) -> &mut Self {
         self.screen = Some(screen);
         self
     }
 
-    /// Always use 32-bit emulator
+    /// Use the 32-bit emulator on 64-bit platforms. Occasionally, this option
+    /// is useful for testing or debugging. For example, there was an issue
+    /// where the emulator would sometimes not run on 64-bit Windows, but
+    /// 32-bit did run; this option was helpful for performing comparisons to
+    /// debug the issue.Here's an example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -force-32bit
+    /// ```
     pub fn force_32bit(&mut self, force_32bit: bool) -> &mut Self {
         self.force_32bit = force_32bit;
         self
     }
 
-    /// Set SELinux to either disabled or permissive mode
+    /// Set the Security-Enhanced Linux (SELinux) security module to either
+    /// disabled or permissive mode on a Linux operating system.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// me-linux$ emulator @Nexus_5X_API_23 -selinux permissive
+    /// ```
+    ///
+    /// By default, SELinux is in enforcing mode, meaning the security policy
+    /// is enforced. permissive mode loads the SELinux policy, but doesn't
+    /// enforce it; it just logs policy violations. disabled mode disables
+    /// kernel support for SELinux.
     pub fn selinux(&mut self, selinux: SELinux) -> &mut Self {
         self.selinux = Some(selinux);
         self
@@ -1061,24 +1704,62 @@ impl EmulatorTools {
         self
     }
 
-    /// Pass arguments to qemu
+    /// Pass arguments to the QEMU emulator software. Note that QEMU 1 and QEMU 2
+    /// can use different arguments. When using this option, make sure it's the
+    /// last option specified, as all options after it are interpreted as
+    /// QEMU-specific options. This option is quite advanced and should be used
+    /// only by developers who are very familiar with QEMU and Android emulation.
     pub fn qemu(&mut self, qemu: bool) -> &mut Self {
         self.qemu = qemu;
         self
     }
 
-    /// Same as '-debug-init'
+    pub fn qemu_h(&mut self, qemu_h: bool) -> &mut Self {
+        self.qemu_h = qemu_h;
+        self
+    }
+
+    /// Print emulator initialization messages to the terminal window.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -verbose
+    /// ```
+    ///
+    /// It displays which files and settings are actually selected when starting
+    /// a virtual device defined in an AVD. This option is the same as specifying
+    /// -debug-init.
     pub fn verbose(&mut self, verbose: bool) -> &mut Self {
         self.verbose = verbose;
         self
     }
 
-    /// Enable/disable debug messages
+    /// Enable a specific debug message type. Use the no form to disable a debug
+    /// message type.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -debug-all -debug-no-metrics
+    /// ```
+    ///
+    /// For a list of tags, use the emulator -help-debug-tags command.
     pub fn debug(&mut self, debug: Vec<DebugTags>) -> &mut Self {
         self.debug = Some(debug);
         self
     }
 
+    /// Enable a specific debug message type. Use the no form to disable a debug
+    /// message type.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator @Nexus_5X_API_23 -debug-all -debug-no-metrics
+    /// ```
+    ///
+    /// For a list of tags, use the emulator -help-debug-tags command.
     pub fn debug_no(&mut self, debug_no: DebugTags) -> &mut Self {
         self.debug_no = Some(debug_no);
         self
@@ -1090,7 +1771,14 @@ impl EmulatorTools {
         self
     }
 
-    /// About disk images
+    /// Get help about about disk images. It provides information relevant to
+    /// both app and platform developers.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator -help-disk-images
+    /// ```
     pub fn help_disk_images(&mut self, help_disk_images: bool) -> &mut Self {
         self.help_disk_images = help_disk_images;
         self
@@ -1102,7 +1790,14 @@ impl EmulatorTools {
         self
     }
 
-    /// Character <device> specification
+    /// Get help about character device specifications. A device parameter is
+    /// required by some emulator options.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator -help-char-devices
+    /// ```
     pub fn help_char_devices(&mut self, help_char_devices: bool) -> &mut Self {
         self.help_char_devices = help_char_devices;
         self
@@ -1120,13 +1815,26 @@ impl EmulatorTools {
         self
     }
 
-    /// About disk images when using the SDK
+    /// Get help about disk images relevant to app developers. It explains where
+    /// the image files are located for an AVD created with the SDK tools.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator -help-sdk-images
+    /// ```
     pub fn help_sdk_images(&mut self, help_sdk_images: bool) -> &mut Self {
         self.help_sdk_images = help_sdk_images;
         self
     }
 
-    /// About disk images when building Android
+    /// Get help about disk images relevant to platform developers.
+    ///
+    /// For example:
+    ///
+    /// ```xml
+    /// emulator -help-build-images
+    /// ```
     pub fn help_build_images(&mut self, help_build_images: bool) -> &mut Self {
         self.help_build_images = help_build_images;
         self
@@ -1158,6 +1866,9 @@ impl EmulatorTools {
         }
         if self.delay_adb {
             emulator.arg("-delay-adb");
+        }
+        if self.qemu_h {
+            emulator.arg("-qemu -h");
         }
         if let Some(datadir) = &self.datadir {
             emulator.arg("-datadir").arg(datadir);
@@ -1287,7 +1998,7 @@ impl EmulatorTools {
             emulator.arg("-netspeed").arg(netspeed.to_string());
         }
         if let Some(netdelay) = &self.netdelay {
-            emulator.arg("-netdelay").arg(netdelay);
+            emulator.arg("-netdelay").arg(netdelay.to_string());
         }
         if self.netfast {
             emulator.arg("-netfast");

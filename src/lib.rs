@@ -12,6 +12,17 @@ macro_rules! bin {
     }};
 }
 
+/// On Windows adds `.bat` to given string.
+macro_rules! bat {
+    ($bat:expr) => {{
+        #[cfg(not(target_os = "windows"))]
+        let bat = $bat;
+        #[cfg(target_os = "windows")]
+        let bat = concat!($bat, ".bat");
+        bat
+    }};
+}
+
 pub mod error;
 
 #[cfg(feature = "aapt2")]

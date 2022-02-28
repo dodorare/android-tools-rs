@@ -1,4 +1,4 @@
-use crate::error::*;
+use crate::{error::*, sdk_path_from_env};
 use std::{
     path::{Path, PathBuf},
     process::Command,
@@ -15,11 +15,11 @@ pub struct Apksigner {
     v4_signing_enabled: Option<V4SigningEnabled>,
     v: bool,
     sign: bool,
-    verify: bool,
+    verify: Option<PathBuf>,
     verbose: bool,
     next_signer: bool,
     v1_signer_name: Option<String>,
-    ks: Option<String>,
+    ks: Option<PathBuf>,
     ks_key_alias: Option<String>,
     ks_pass: Option<String>,
     pass_encoding: Option<String>,
@@ -32,6 +32,8 @@ pub struct Apksigner {
     cert: Option<String>,
     print_certs: bool,
     werr: bool,
+    help: bool,
+    apk_path: Option<PathBuf>,
 }
 
 impl Apksigner {
@@ -83,6 +85,11 @@ impl Apksigner {
     /// this signature scheme
     pub fn v2_signing_enabled(&mut self, v2_signing_enabled: bool) -> &mut Self {
         self.v2_signing_enabled = v2_signing_enabled;
+        self
+    }
+
+    pub fn help(&mut self, help: bool) -> &mut Self {
+        self.help = help;
         self
     }
 
@@ -142,8 +149,8 @@ impl Apksigner {
     /// Java-based KeyStore file. If the filename is set to "NONE", the
     /// KeyStore containing the key and certificate doesn't need a file
     /// specified, which is the case for some PKCS #11 KeyStores
-    pub fn ks(&mut self, ks: String) -> &mut Self {
-        self.ks = Some(ks);
+    pub fn ks(&mut self, ks: &Path) -> &mut Self {
+        self.ks = Some(ks.to_owned());
         self
     }
 
@@ -303,14 +310,19 @@ impl Apksigner {
         self
     }
 
-    /// Verify the signature of an APK
-    pub fn verify(&mut self, verify: bool) -> &mut Self {
-        self.verify = verify;
+    pub fn verify(&mut self, verify: &Path) -> &mut Self {
+        self.verify = Some(verify.to_owned());
+        self
+    }
+
+    /// Apk path
+    pub fn apk_path(&mut self, apk_path: &Path) -> &mut Self {
+        self.apk_path = Some(apk_path.to_owned());
         self
     }
 
     pub fn run(&self) -> Result<()> {
-        let mut apksigner = Command::new("apksigner");
+        let mut apksigner = apksigner_tool()?;
         if let Some(out) = &self.out {
             apksigner.arg("--out").arg(out);
         }
@@ -353,6 +365,9 @@ impl Apksigner {
         if let Some(ks) = &self.ks {
             apksigner.arg("--ks").arg(ks);
         }
+        if let Some(apk_path) = &self.apk_path {
+            apksigner.arg(apk_path);
+        }
         if let Some(ks_key_alias) = &self.ks_key_alias {
             apksigner.arg("--ks-key-alias").arg(ks_key_alias);
         }
@@ -377,6 +392,12 @@ impl Apksigner {
         if let Some(ks_provider_arg) = &self.ks_provider_arg {
             apksigner.arg("--ks-provider-arg").arg(ks_provider_arg);
         }
+        if self.sign {
+            apksigner.arg("sign");
+        }
+        if let Some(verify) = &self.verify {
+            apksigner.arg("verify").arg(verify);
+        }
         if let Some(key) = &self.key {
             apksigner.arg("--key").arg(key);
         }
@@ -388,6 +409,9 @@ impl Apksigner {
         }
         if self.werr {
             apksigner.arg("-Werr");
+        }
+        if self.help {
+            apksigner.arg("--help");
         }
         apksigner.output_err(true)?;
         Ok(())
@@ -409,4 +433,22 @@ impl std::fmt::Display for V4SigningEnabled {
             Self::Only => write!(f, "only"),
         }
     }
+}
+
+pub fn apksigner_tool() -> Result<Command> {
+    if let Ok(apksigner) = which::which(bat!("apksigner")) {
+        return Ok(Command::new(apksigner));
+    }
+    let sdk_path = sdk_path_from_env()?;
+    let build_tools = sdk_path.join("build-tools");
+    let target_sdk_version = std::fs::read_dir(&build_tools)
+        .map_err(|_| Error::PathNotFound(build_tools.clone()))?
+        .filter_map(|path| path.ok())
+        .filter(|path| path.path().is_dir())
+        .filter_map(|path| path.file_name().into_string().ok())
+        .filter(|name| name.chars().next().unwrap().is_digit(10))
+        .max()
+        .ok_or(AndroidError::BuildToolsNotFound)?;
+    let apksigner_bat = build_tools.join(target_sdk_version).join(bat!("apksigner"));
+    Ok(Command::new(apksigner_bat))
 }

@@ -1032,9 +1032,9 @@ pub struct AabKey {
 
 impl AabKey {
     pub fn new_default() -> Result<Self> {
-        let key_path = android_dir()?.join("aab.keystore");
+        let key_path = android_dir()?.join("debug.keystore");
         let key_pass = "android".to_string();
-        let key_alias = "androidaabkey".to_string();
+        let key_alias = "androidapk".to_string();
         Ok(Self {
             key_path,
             key_pass,
