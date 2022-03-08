@@ -33,6 +33,7 @@ impl AdbPull {
         self
     }
 
+    /// Runs `adb pull` commands
     pub fn run(&self) -> Result<()> {
         let mut pull = Command::new("adb");
         pull.arg("pull");

@@ -48,6 +48,7 @@ impl AdbShellDumpsys {
         self
     }
 
+    /// Runs `adb shell dumpsys` commands
     pub fn run(&self) -> Result<()> {
         let mut dumpsys = Command::new("adb");
         dumpsys.arg("shell");

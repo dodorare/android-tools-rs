@@ -100,6 +100,7 @@ impl AdbShellPmInstall {
         self
     }
 
+    /// Runs `adb shell pm install` commands
     pub fn run(&self) -> Result<()> {
         let mut install = Command::new("adb");
         install.arg("shell");

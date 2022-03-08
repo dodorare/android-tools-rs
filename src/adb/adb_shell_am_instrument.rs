@@ -59,6 +59,7 @@ impl AdbShellAmInstrument {
         self
     }
 
+    /// Runs `adb shell am instrument` commands
     pub fn run(&self) -> Result<()> {
         let mut instrument = Command::new("adb");
         instrument.arg("shell");

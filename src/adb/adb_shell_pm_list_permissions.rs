@@ -1,6 +1,7 @@
 use crate::error::*;
 use std::process::Command;
 
+/// Prints all known permissions, optionally only those in `group`.
 #[derive(Clone, Default)]
 pub struct AdbShellPmListPermissions {
     f: bool,
@@ -47,11 +48,13 @@ impl AdbShellPmListPermissions {
         self
     }
 
+    /// Runs `adb shell pm list permissions` commands
     pub fn run(&self) -> Result<()> {
         let mut list_permissions = Command::new("adb");
         list_permissions.arg("shell");
         list_permissions.arg("pm");
-        list_permissions.arg("list packages");
+        list_permissions.arg("list");
+        list_permissions.arg("permissions");
         if self.f {
             list_permissions.arg("-f");
         }

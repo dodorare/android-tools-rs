@@ -43,6 +43,7 @@ impl AdbPush {
         self
     }
 
+    /// Runs `adb push` commands
     pub fn run(&self) -> Result<()> {
         let mut adb_push = Command::new("adb");
         adb_push.arg("push");

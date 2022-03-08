@@ -107,6 +107,7 @@ impl AdbShellDpm {
         self
     }
 
+    /// Runs `adb shell dpm` commands
     pub fn run(&self) -> Result<()> {
         let mut dpm = Command::new("adb");
         dpm.arg("shell");

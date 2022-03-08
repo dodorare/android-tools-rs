@@ -149,6 +149,7 @@ impl AdbShellAm {
         self
     }
 
+    /// Runs `adb shell am` commands
     pub fn run(&self) -> Result<()> {
         let mut am = Command::new("adb");
         am.arg("shell");

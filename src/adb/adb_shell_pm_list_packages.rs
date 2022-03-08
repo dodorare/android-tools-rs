@@ -1,6 +1,8 @@
 use crate::error::*;
 use std::process::Command;
 
+/// Prints all packages, optionally only those whose package name contains
+/// the text in `filter`.
 #[derive(Clone, Default)]
 pub struct AdbShellPmListPackages {
     f: bool,
@@ -68,11 +70,13 @@ impl AdbShellPmListPackages {
         self
     }
 
+    /// Runs `adb shell pm list packages` commands.
     pub fn run(&self) -> Result<()> {
         let mut list_packages = Command::new("adb");
         list_packages.arg("shell");
         list_packages.arg("pm");
-        list_packages.arg("list packages");
+        list_packages.arg("list");
+        list_packages.arg("packages");
         if self.f {
             list_packages.arg("-f");
         }

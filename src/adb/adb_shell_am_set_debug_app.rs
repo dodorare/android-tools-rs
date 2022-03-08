@@ -26,6 +26,7 @@ impl AdbShellAmSetDebugApp {
         self
     }
 
+    /// Runs `adb shell am set-debug-app` commands
     pub fn run(&self) -> Result<()> {
         let mut set_debug_app = Command::new("adb");
         set_debug_app.arg("shell");

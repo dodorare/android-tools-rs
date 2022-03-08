@@ -6,6 +6,24 @@ use std::{
 
 use super::InstallLocation;
 
+/// # Call package manager (pm)
+///
+/// Within an adb shell, you can issue commands with the package manager
+/// (pm) tool to perform actions and queries on app packages installed
+/// on the device. While in a shell, the syntax is:
+///
+/// ```xml
+/// pm command
+/// ```
+///
+/// You can also issue a package manager command directly from adb without
+/// entering a remote shell.
+///
+/// For example:
+///
+/// ```xml
+/// adb shell pm uninstall com.example.MyApp
+/// ```
 #[derive(Clone, Default)]
 pub struct AdbShellPm {
     list_permission_groups: Option<String>,
