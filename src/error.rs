@@ -43,7 +43,7 @@ pub enum Error {
     CmdNotFound(String),
     /// Command had a non-zero exit code. Stdout: {0} Stderr: {1}
     CmdFailed(String, String),
-    /// Bundletool is not found
+    /// Bundletool is not found. Please, use crossbundle install command to setup bundletool
     BundletoolNotFound,
     /// Compiled resources not found
     CompiledResourcesNotFound,
