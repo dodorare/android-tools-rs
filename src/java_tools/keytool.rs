@@ -1,5 +1,3 @@
-use serde::{Deserialize, Serialize};
-
 use crate::error::*;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -1025,7 +1023,7 @@ impl std::fmt::Display for KeyAlgorithm {
     }
 }
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Clone)]
 pub struct Key {
     pub key_path: PathBuf,
     pub key_pass: String,
