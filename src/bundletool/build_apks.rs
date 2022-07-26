@@ -28,7 +28,7 @@ use std::path::{Path, PathBuf};
 /// The table below describes the various flags and options you can set when using the
 /// `bundletool build-apks` command in greater detail. Only `--bundle` and `--output` are
 /// required—all other flags are optional
-#[derive(Debug, PartialEq, Default)]
+#[derive(Debug, Default)]
 pub struct BuildApks {
     bundle: PathBuf,
     output: PathBuf,
@@ -47,13 +47,13 @@ pub struct BuildApks {
     local_testing: bool,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub enum KsPass {
     KsPassPass,
     KsPassFile,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug)]
 pub enum KeyPass {
     KeyPassPass,
     KeyPassFile,

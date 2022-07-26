@@ -20,7 +20,7 @@ use std::path::{Path, PathBuf};
 /// `bundletool build-apks --device-spec=/MyApp/pixel2.json`
 /// `--bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks`
 /// ```
-#[derive(Debug, PartialEq, PartialOrd)]
+#[derive(Debug)]
 pub struct GetDeviceSpec {
     output: PathBuf,
 }

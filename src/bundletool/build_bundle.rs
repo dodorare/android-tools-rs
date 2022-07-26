@@ -15,7 +15,7 @@ use std::path::{Path, PathBuf};
 /// can not use apksigner to sign your app bundle.
 ///
 /// [jarsigner]: https://docs.oracle.com/javase/8/docs/technotes/tools/windows/jarsigner.html
-#[derive(Debug, PartialEq, PartialOrd)]
+#[derive(Debug)]
 pub struct BuildBundle {
     modules: Vec<PathBuf>,
     output: PathBuf,

@@ -9,6 +9,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 /// Android specific error type
 #[derive(Display, Debug, Error)]
 pub enum AndroidError {
+    /// Android SDK or Android NDK is not found.
+    AndroidToolIsNotFound,
     /// Android SDK is not found
     AndroidSdkNotFound,
     /// Android NDK is not found
@@ -43,7 +45,7 @@ pub enum Error {
     CmdNotFound(String),
     /// Command had a non-zero exit code. Stdout: {0} Stderr: {1}
     CmdFailed(String, String),
-    /// Bundletool is not found
+    /// Bundletool is not found. Please, use crossbundle install command to setup bundletool
     BundletoolNotFound,
     /// Compiled resources not found
     CompiledResourcesNotFound,

@@ -785,8 +785,8 @@ impl Keytool {
     }
 
     /// Runs keytool commands
-    pub fn run(&self) -> Result<Option<AabKey>> {
-        let mut key = Some(AabKey::new_default()?);
+    pub fn run(&self) -> Result<Option<Key>> {
+        let mut key = Some(Key::new_default()?);
         let mut keytool = keytool()?;
         if self.v {
             keytool.arg("-v");
@@ -1024,13 +1024,13 @@ impl std::fmt::Display for KeyAlgorithm {
 }
 
 #[derive(Debug, Clone)]
-pub struct AabKey {
+pub struct Key {
     pub key_path: PathBuf,
     pub key_pass: String,
     pub key_alias: String,
 }
 
-impl AabKey {
+impl Key {
     pub fn new_default() -> Result<Self> {
         let key_path = android_dir()?.join("aab.keystore");
         let key_pass = "android".to_string();

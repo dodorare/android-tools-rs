@@ -1,4 +1,4 @@
-use android_tools::java_tools::{android_dir, AabKey, JarSigner, KeyAlgorithm, Keytool};
+use android_tools::java_tools::{android_dir, JarSigner, Key, KeyAlgorithm, Keytool};
 
 #[test]
 /// The [`jarsigner`] tool has two purposes:
@@ -39,7 +39,7 @@ fn test_sign_application_with_jarsigner() {
     });
 
     // Creates new keystore to sign aab
-    let key = AabKey::new_default().unwrap();
+    let key = Key::new_default().unwrap();
     Keytool::new()
         .genkeypair(true)
         .v(true)
