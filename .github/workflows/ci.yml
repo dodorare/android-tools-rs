@@ -33,6 +33,9 @@ jobs:
           cargo deadlinks --check-http
 
   run-tests:
+    name: Run tests
+    runs-on: macos-latest
+    steps:
       - uses: actions/checkout@master
       - uses: actions-rs/toolchain@v1
         with:
