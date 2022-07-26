@@ -1,5 +1,7 @@
 use std::path::PathBuf;
 
+use error::AndroidError;
+
 /// On Windows adds `.exe` to given string.
 macro_rules! bin {
     ($bin:expr) => {{
@@ -59,4 +61,15 @@ pub fn sdk_install_path() -> crate::error::Result<PathBuf> {
         std::fs::create_dir_all(&sdk_path)?;
     }
     Ok(sdk_path)
+}
+
+pub fn find_max_version(target_dir: &std::path::Path) -> crate::error::Result<String> {
+    let max_version = std::fs::read_dir(&target_dir)?
+        .filter_map(|path| path.ok())
+        .filter(|path| path.path().is_dir())
+        .filter_map(|path| path.file_name().into_string().ok())
+        .filter(|name| name.chars().next().unwrap().is_digit(10))
+        .max()
+        .ok_or(AndroidError::AndroidToolIsNotFound)?;
+    Ok(max_version)
 }

@@ -26,7 +26,7 @@ pub use optimize::*;
 pub use version::*;
 
 use self::{daemon::Aapt2Daemon, diff::Aapt2Diff, version::Aapt2Version};
-use crate::{error::*, sdk_path_from_env};
+use crate::{error::*, sdk_path_from_env, find_max_version};
 use std::{
     path::{Path, PathBuf},
     process::Command,
@@ -110,14 +110,7 @@ pub fn aapt2_tool() -> Result<Command> {
     }
     let sdk_path = sdk_path_from_env()?;
     let build_tools = sdk_path.join("build-tools");
-    let target_sdk_version = std::fs::read_dir(&build_tools)
-        .map_err(|_| Error::PathNotFound(build_tools.clone()))?
-        .filter_map(|path| path.ok())
-        .filter(|path| path.path().is_dir())
-        .filter_map(|path| path.file_name().into_string().ok())
-        .filter(|name| name.chars().next().unwrap().is_digit(10))
-        .max()
-        .ok_or(AndroidError::BuildToolsNotFound)?;
+    let target_sdk_version = find_max_version(&build_tools)?;
     let aapt2_exe = build_tools.join(target_sdk_version).join(bin!("aapt2"));
     Ok(Command::new(aapt2_exe))
 }

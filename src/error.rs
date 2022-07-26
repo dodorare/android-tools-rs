@@ -9,6 +9,8 @@ pub type Result<T> = std::result::Result<T, Error>;
 /// Android specific error type
 #[derive(Display, Debug, Error)]
 pub enum AndroidError {
+    /// Android SDK or Android NDK is not found.
+    AndroidToolIsNotFound,
     /// Android SDK is not found
     AndroidSdkNotFound,
     /// Android NDK is not found
