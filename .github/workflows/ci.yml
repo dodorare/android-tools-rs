@@ -48,7 +48,7 @@ jobs:
         run: |
           wget https://github.com/google/bundletool/releases/download/1.8.2/bundletool-all-1.8.2.jar
           mv bundletool-all-1.8.2.jar $HOME/bundletool.jar
-          export BUNDLETOOL_PATH="$HOME/bundletool.jar"
-        - name: Run tests
+      - name: Run tests
         run: |
+          export BUNDLETOOL_PATH="$HOME/bundletool.jar"
           cargo test --all
