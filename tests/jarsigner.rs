@@ -1,4 +1,4 @@
-use android_tools::java_tools::{android_dir, Key, JarSigner, KeyAlgorithm, Keytool};
+use android_tools::java_tools::{android_dir, JarSigner, Key, KeyAlgorithm, Keytool};
 
 #[test]
 /// The [`jarsigner`] tool has two purposes:

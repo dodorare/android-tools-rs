@@ -26,7 +26,7 @@ pub use optimize::*;
 pub use version::*;
 
 use self::{daemon::Aapt2Daemon, diff::Aapt2Diff, version::Aapt2Version};
-use crate::{error::*, sdk_path_from_env, find_max_version};
+use crate::{error::*, find_max_version, sdk_path_from_env};
 use std::{
     path::{Path, PathBuf},
     process::Command,

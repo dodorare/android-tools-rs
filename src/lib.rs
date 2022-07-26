@@ -68,7 +68,7 @@ pub fn find_max_version(target_dir: &std::path::Path) -> crate::error::Result<St
         .filter_map(|path| path.ok())
         .filter(|path| path.path().is_dir())
         .filter_map(|path| path.file_name().into_string().ok())
-        .filter(|name| name.chars().next().unwrap().is_digit(10))
+        .filter(|name| name.chars().next().unwrap().is_ascii_digit())
         .max()
         .ok_or(AndroidError::AndroidToolIsNotFound)?;
     Ok(max_version)
