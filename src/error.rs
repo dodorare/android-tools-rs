@@ -19,6 +19,8 @@ pub enum AndroidError {
     BuildToolsNotFound,
     /// Android SDK has no platforms installed
     NoPlatformsFound,
+    /// Unable to access to home directory or home directory doesn't exists
+    HomeDirectoryUnableToAccess,
     /// Failed to create directory
     DirectoryWasNotCreated,
     /// Platform {0} is not installed
@@ -39,20 +41,18 @@ pub enum AndroidError {
 
 #[derive(Display, Debug, Error)]
 pub enum Error {
-    /// Path {0:?} doesn't exist
+    /// Path {0:?} doesn't exists
     PathNotFound(PathBuf),
     /// Command {0} not found
     CmdNotFound(String),
     /// Command had a non-zero exit code. Stdout: {0} Stderr: {1}
     CmdFailed(String, String),
-    /// Bundletool is not found. Please, use crossbundle install command to setup bundletool
-    BundletoolNotFound,
     /// Compiled resources not found
     CompiledResourcesNotFound,
     /// IO error
     Io(#[from] std::io::Error),
-    /// IO error
-    AndroidError(#[from] AndroidError),
+    /// Android error: {0:?}
+    Android(#[from] AndroidError),
 }
 
 /// Extension trait for [`Command`] that helps
@@ -81,3 +81,9 @@ impl CommandExt for Command {
         Ok(output)
     }
 }
+
+// impl From<AndroidError> for Error {
+//     fn from(error: AndroidError) -> Self {
+//         Error::Android(error)
+//     }
+// }

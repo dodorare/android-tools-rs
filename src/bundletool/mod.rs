@@ -98,7 +98,7 @@ pub fn bundletool() -> Result<Command> {
         if bundletool_file_path.exists() {
             bundletool_init.arg(bundletool_file_path);
         } else {
-            return Err(Error::BundletoolNotFound);
+            return Err(AndroidError::BuildToolsNotFound.into());
         }
     }
     Ok(bundletool_init)

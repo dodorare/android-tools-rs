@@ -41,7 +41,7 @@ pub fn sdk_path_from_env() -> crate::error::Result<PathBuf> {
 
 /// Default installation path
 pub fn sdk_install_path() -> crate::error::Result<PathBuf> {
-    let home_dir_path = dirs::home_dir().unwrap();
+    let home_dir_path = dirs::home_dir().ok_or(AndroidError::HomeDirectoryUnableToAccess)?;
     #[cfg(target_os = "windows")]
     let path = std::path::Path::new("Local").join("Android").join("Sdk");
     #[cfg(target_os = "macos")]
@@ -58,7 +58,7 @@ pub fn sdk_install_path() -> crate::error::Result<PathBuf> {
     let sdk_path = home_dir_path.join(path);
 
     if !sdk_path.exists() {
-        std::fs::create_dir_all(&sdk_path)?;
+        return Err(AndroidError::AndroidSdkNotFound)?;
     }
     Ok(sdk_path)
 }
