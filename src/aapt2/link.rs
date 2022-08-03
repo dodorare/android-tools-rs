@@ -609,7 +609,7 @@ impl Aapt2Link {
             });
         } else if let Some(compiled_res) = &self.compiled_res {
             let paths = std::fs::read_dir(compiled_res)
-                .map_err(|_| Error::CompiledResourcesNotFound)?
+                .map_err(|_| Error::CompiledResourcesIsNotFound)?
                 .flat_map(|e| e.map(|x| x.path()))
                 .collect::<Vec<_>>();
             paths.iter().for_each(|input| {

@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use error::AndroidError;
+use error::Error;
 
 /// On Windows adds `.exe` to given string.
 macro_rules! bin {
@@ -41,7 +41,7 @@ pub fn sdk_path_from_env() -> crate::error::Result<PathBuf> {
 
 /// Default installation path
 pub fn sdk_install_path() -> crate::error::Result<PathBuf> {
-    let home_dir_path = dirs::home_dir().ok_or(AndroidError::HomeDirectoryUnableToAccess)?;
+    let home_dir_path = dirs::home_dir().ok_or(Error::HomeDirectoryUnableToAccess)?;
     #[cfg(target_os = "windows")]
     let path = std::path::Path::new("Local").join("Android").join("Sdk");
     #[cfg(target_os = "macos")]
@@ -58,7 +58,7 @@ pub fn sdk_install_path() -> crate::error::Result<PathBuf> {
     let sdk_path = home_dir_path.join(path);
 
     if !sdk_path.exists() {
-        return Err(AndroidError::AndroidSdkNotFound)?;
+        return Err(Error::AndroidSdkIsNotFound)?;
     }
     Ok(sdk_path)
 }
@@ -70,6 +70,6 @@ pub fn find_max_version(target_dir: &std::path::Path) -> crate::error::Result<St
         .filter_map(|path| path.file_name().into_string().ok())
         .filter(|name| name.chars().next().unwrap().is_ascii_digit())
         .max()
-        .ok_or(AndroidError::AndroidToolIsNotFound)?;
+        .ok_or(Error::AndroidToolIsNotFound)?;
     Ok(max_version)
 }

@@ -484,5 +484,5 @@ fn jarsigner_tool() -> Result<Command> {
             return Ok(Command::new(keytool));
         }
     }
-    Err(Error::CmdNotFound("jarsigner".to_string()))
+    Err(Error::CmdIsNotFound("jarsigner".to_string()))
 }

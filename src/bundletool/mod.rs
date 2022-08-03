@@ -93,12 +93,12 @@ pub fn bundletool() -> Result<Command> {
             std::env::var("BUNDLETOOL_VERSION").unwrap_or_else(|_| BUNDLETOOL_VERSION.to_string());
         let bundletool_file = format!("bundletool-all-{}.jar", env_version);
         let bundletool_file_path = dirs::home_dir()
-            .ok_or_else(|| Error::PathNotFound(PathBuf::from("$HOME")))?
+            .ok_or_else(|| Error::PathIsNotFound(PathBuf::from("$HOME")))?
             .join(bundletool_file);
         if bundletool_file_path.exists() {
             bundletool_init.arg(bundletool_file_path);
         } else {
-            return Err(AndroidError::BuildToolsNotFound.into());
+            return Err(Error::BundletoolIsNotFound);
         }
     }
     Ok(bundletool_init)
