@@ -6,53 +6,26 @@ use thiserror::Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-/// Android specific error type
-#[derive(Display, Debug, Error)]
-pub enum AndroidError {
-    /// Android SDK or Android NDK is not found.
-    AndroidToolIsNotFound,
-    /// Android SDK is not found
-    AndroidSdkNotFound,
-    /// Android NDK is not found
-    AndroidNdkNotFound,
-    /// Android SDK has no build tools
-    BuildToolsNotFound,
-    /// Android SDK has no platforms installed
-    NoPlatformsFound,
-    /// Failed to create directory
-    DirectoryWasNotCreated,
-    /// Platform {0} is not installed
-    PlatformNotFound(u32),
-    /// Target is not supported
-    UnsupportedTarget,
-    /// Host {0} is not supported
-    UnsupportedHost(String),
-    /// Invalid semver
-    InvalidSemver,
-    /// Unsupported or invalid target: {0}
-    InvalidBuildTarget(String),
-    /// Failed to find AndroidManifest.xml in path: {0}
-    FailedToFindAndroidManifest(String),
-    /// Unable to find NDK file
-    UnableToFindNDKFile,
-}
-
 #[derive(Display, Debug, Error)]
 pub enum Error {
-    /// Path {0:?} doesn't exist
-    PathNotFound(PathBuf),
-    /// Command {0} not found
-    CmdNotFound(String),
+    /// Android SDK or Android NDK is not found. Check the installation path or use crossbundle install command to install it
+    AndroidToolIsNotFound,
+    /// Android SDK is not found. Check the installation path or use crossbundle install command to install it
+    AndroidSdkIsNotFound,
+    /// Bundletool is not found. Check the installation path or use crossbundle install command to install it
+    BundletoolIsNotFound,
+    /// Unable to access to home directory or home directory doesn't exists
+    HomeDirectoryUnableToAccess,
+    /// Path {0:?} doesn't exists
+    PathIsNotFound(PathBuf),
+    /// Command {0} is not found
+    CmdIsNotFound(String),
     /// Command had a non-zero exit code. Stdout: {0} Stderr: {1}
     CmdFailed(String, String),
-    /// Bundletool is not found. Please, use crossbundle install command to setup bundletool
-    BundletoolNotFound,
-    /// Compiled resources not found
-    CompiledResourcesNotFound,
+    /// Compiled resources is not found
+    CompiledResourcesIsNotFound,
     /// IO error
     Io(#[from] std::io::Error),
-    /// IO error
-    AndroidError(#[from] AndroidError),
 }
 
 /// Extension trait for [`Command`] that helps
