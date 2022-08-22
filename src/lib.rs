@@ -58,7 +58,7 @@ pub fn sdk_install_path() -> crate::error::Result<PathBuf> {
     let sdk_path = home_dir_path.join(path);
 
     if !sdk_path.exists() {
-        return Err(Error::AndroidSdkIsNotFound)?;
+        std::fs::create_dir_all(&sdk_path)?;
     }
     Ok(sdk_path)
 }
