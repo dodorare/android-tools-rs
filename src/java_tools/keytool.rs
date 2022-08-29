@@ -948,7 +948,7 @@ pub fn keytool() -> Result<Command> {
             return Ok(Command::new(keytool));
         }
     }
-    Err(Error::CmdIsNotFound("keytool".to_string()))
+    Err(Error::CmdNotFound("keytool".to_string()))
 }
 
 #[derive(Clone)]
@@ -1046,7 +1046,7 @@ impl Key {
 /// Returns or crates it if needed the path to `.android` in the user's home directory.
 pub fn android_dir() -> Result<PathBuf> {
     let android_dir = dirs::home_dir()
-        .ok_or_else(|| Error::PathIsNotFound(PathBuf::from("$HOME")))?
+        .ok_or(Error::UnableToAccessHomeDirectory)?
         .join(".android");
     std::fs::create_dir_all(&android_dir)?;
     Ok(android_dir)

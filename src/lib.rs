@@ -32,16 +32,21 @@ pub fn sdk_path_from_env() -> crate::error::Result<PathBuf> {
             .ok()
             .or_else(|| std::env::var("ANDROID_SDK_PATH").ok())
             .or_else(|| std::env::var("ANDROID_HOME").ok());
-        std::path::PathBuf::from(
-            sdk_path.unwrap_or(sdk_install_path()?.to_str().unwrap().to_string()),
-        )
+        if let Some(path) = sdk_path {
+            std::path::PathBuf::from(path)
+        } else {
+            sdk_install_path()?
+        }
     };
+    if !sdk_path.exists() {
+        return Err(Error::AndroidSdkNotFound)?;
+    }
     Ok(sdk_path)
 }
 
 /// Default installation path
 pub fn sdk_install_path() -> crate::error::Result<PathBuf> {
-    let home_dir_path = dirs::home_dir().ok_or(Error::HomeDirectoryUnableToAccess)?;
+    let home_dir_path = dirs::home_dir().ok_or(Error::UnableToAccessHomeDirectory)?;
     #[cfg(target_os = "windows")]
     let path = std::path::Path::new("Local").join("Android").join("Sdk");
     #[cfg(target_os = "macos")]
@@ -57,9 +62,6 @@ pub fn sdk_install_path() -> crate::error::Result<PathBuf> {
     #[cfg(not(target_os = "windows"))]
     let sdk_path = home_dir_path.join(path);
 
-    if !sdk_path.exists() {
-        return Err(Error::AndroidSdkIsNotFound)?;
-    }
     Ok(sdk_path)
 }
 
@@ -70,6 +72,6 @@ pub fn find_max_version(target_dir: &std::path::Path) -> crate::error::Result<St
         .filter_map(|path| path.file_name().into_string().ok())
         .filter(|name| name.chars().next().unwrap().is_ascii_digit())
         .max()
-        .ok_or(Error::AndroidToolIsNotFound)?;
+        .ok_or(Error::AndroidToolNotFound)?;
     Ok(max_version)
 }

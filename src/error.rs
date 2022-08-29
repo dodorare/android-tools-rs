@@ -9,21 +9,21 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Display, Debug, Error)]
 pub enum Error {
     /// Android SDK or Android NDK is not found. Check the installation path or use crossbundle install command to install it
-    AndroidToolIsNotFound,
+    AndroidToolNotFound,
     /// Android SDK is not found. Check the installation path or use crossbundle install command to install it
-    AndroidSdkIsNotFound,
+    AndroidSdkNotFound,
     /// Bundletool is not found. Check the installation path or use crossbundle install command to install it
-    BundletoolIsNotFound,
+    BundletoolNotFound,
     /// Unable to access to home directory or home directory doesn't exists
-    HomeDirectoryUnableToAccess,
+    UnableToAccessHomeDirectory,
     /// Path {0:?} doesn't exists
-    PathIsNotFound(PathBuf),
+    PathNotFound(PathBuf),
     /// Command {0} is not found
-    CmdIsNotFound(String),
+    CmdNotFound(String),
     /// Command had a non-zero exit code. Stdout: {0} Stderr: {1}
     CmdFailed(String, String),
     /// Compiled resources is not found
-    CompiledResourcesIsNotFound,
+    CompiledResourcesNotFound,
     /// IO error
     Io(#[from] std::io::Error),
 }
